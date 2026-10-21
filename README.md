@@ -1,7 +1,7 @@
 # 動作與思考研究｜招募工作台
 
-GitHub Pages 是研究工作台的公開入口；實際登入與操作介面由 Google Apps Script 提供，因為 `google.script.run` 只能在 Apps Script HTML 服務頁面中安全呼叫。入口會保留 `action`、`t` 等郵件連結參數並轉送到工作台，因此研究者確認、受試者確認與改期連結仍可使用。
+此公開 repository 只承載測試版瀏覽器前端。GitHub Pages 提供介面；介面透過隱藏的 Apps Script HTML bridge 呼叫白名單中的後端方法。登入驗證、角色權限與資料讀寫都由 Apps Script 後端檢查。
 
-登入需要研究團隊信箱的一次性驗證碼。Apps Script 以管理者帳號執行，後端再依角色限制每位研究者可查看和修改的內容。此版本只連接測試表單、測試回覆表、測試工作流程資料庫與獨立測試日曆；測試模式的研究通知會轉寄至管理者測試信箱，不會寄給受試者。請勿將此頁當作正式招募入口。
+前端需要公開測試版 Apps Script Web App 的 `/exec` 網址來建立連線。請勿在此 repository 放入登入憑證、研究者私人聯絡資訊、招募海報、參與者資料、身分證字號、地址、表單／試算表／日曆 ID 或 Apps Script 專案 ID。此網站與後端只連接隔離測試資源，不是正式招募入口。
 
-`src/Index.html` 是 Apps Script 工作台介面的公開前端來源副本，不含研究者私人信箱、電話、招募海報、受試者資料或 Google 資料庫 ID。Apps Script 後端原始碼與 Google 資料庫 ID 不放在此 repo。更新介面後，請同步更新 `src/Index.html` 與私人專案的 `prototype/apps-script/Index.html`，再部署 Apps Script。
+`index.html` 是 GitHub Pages 使用的前端檔案；`src/Index.html` 是同步保留的介面來源副本。更新介面後，先在私有 repository 產生並檢查前端，再同步這兩個檔案至此 repository。

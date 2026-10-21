@@ -11,10 +11,11 @@
     @media(max-width:900px){.layout{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid var(--line);padding:8px 12px;position:sticky;top:77px;z-index:3;overflow:auto}.side nav{display:flex;min-width:max-content}.navbtn{width:auto}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.header{padding:14px 18px}.main{padding-top:22px}}
     @media(max-width:520px){.header{align-items:flex-start}.head-right{align-items:flex-end;flex-direction:column;gap:6px}.pill{font-size:10px}.metrics{gap:8px}.metric{padding:14px}.metric strong{font-size:25px}.panel{padding:15px}.title{font-size:30px}}
   </style>
-  <style>
+<style>
     .calendar-panel{padding:22px}.calendar-top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin:4px 0 18px}.calendar-period{display:flex;align-items:center;gap:14px}.calendar-period h2{min-width:170px;text-align:center;font-family:"Noto Serif TC",serif;font-size:22px;margin:0}.calendar-nav{width:40px;height:40px;padding:0;border-radius:12px;font-size:22px;line-height:1}.calendar-legend{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:700}.calendar-legend-item{white-space:nowrap}.calendar-scroll{overflow:auto;border:1px solid var(--line);border-radius:14px}.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(118px,1fr));min-width:840px}.calendar-weekdays{background:#f1f5f1;border-bottom:1px solid var(--line)}.calendar-weekdays div{text-align:center;padding:12px 6px;color:var(--muted);font-size:12px;font-weight:800}.calendar-grid{grid-auto-rows:minmax(126px,auto)}.calendar-day{min-width:0;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}.calendar-day:nth-child(7n){border-right:0}.calendar-day.outside{background:#f8faf8;color:#a5b2ac}.calendar-day.weekend:not(.outside){background:#fbfcfa}.calendar-day-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}.calendar-day-number{font-size:14px;font-weight:750}.calendar-weekend{font-size:10px;color:#9aa9a1}.calendar-day-add{padding:2px 8px;min-height:27px;border-radius:8px;font-size:16px;line-height:1;color:var(--green)}.calendar-events{display:grid;gap:5px}.calendar-event{border-left:3px solid var(--person,var(--green));background:color-mix(in srgb,var(--person,var(--green)) 15%,white);border-radius:7px;padding:6px 7px;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.calendar-event strong{display:block;font-size:11px;font-variant-numeric:tabular-nums}.calendar-event-name{display:block}.calendar-event .tag{margin-top:3px;padding:2px 6px;font-size:9px}.calendar-event.pending{--person:#bd8a39;background:#fff5e3}.calendar-event.booked{filter:saturate(.78)}.calendar-event.requested{outline:1px dashed #bd8a39}.calendar-section-note{margin:14px 0 0}.day-editor-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.day-editor-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfcfa;font-size:13px}.day-editor-option input{accent-color:var(--green)}.custom-slot-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;margin:7px 0;font-size:13px}.availability-editor-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.appointment-calendar-event{border-left:3px solid var(--person,var(--green));background:color-mix(in srgb,var(--person,var(--green)) 15%,white);border-radius:7px;padding:7px;font-size:11px;line-height:1.4}.appointment-calendar-event strong{display:block;font-size:11px}.appointment-calendar-event span{display:block}
     @media(max-width:680px){.calendar-panel{padding:14px}.calendar-top{align-items:flex-start}.calendar-period{gap:8px}.calendar-period h2{min-width:140px;font-size:19px}.calendar-legend{gap:7px 11px}.day-editor-list{grid-template-columns:1fr}}
   </style>
+
 </head>
 <body>
   <div id="root"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · TEST</div><h1>正在載入測試工作台…</h1><p class="subtitle">如果畫面沒有更新，請稍候片刻後重新整理。</p></section></div>
@@ -29,10 +30,11 @@
       if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台連線失敗</h1><div class="alert error">'+String(e.reason&&e.reason.message||e.reason||'資料載入失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
     });
   </script>
-  <script>
+<script>
     const query = new URLSearchParams(location.search);
     const MODE = query.get('action') || 'login';
     const LINK_TOKEN = query.get('t') || '';
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhnV-8OJxQehl_I-21Hnvi1wTbN_gu6NdDlzOHvvEsXasfEzUDMQ3JSRY7SIPhfiEL0w/exec";
     function readSessionToken(){try{return window.sessionStorage.getItem('mt-session')||''}catch(_){return ''}}
     function saveSessionToken(value){try{window.sessionStorage.setItem('mt-session',value)}catch(_){}}
     function clearSessionToken(){try{window.sessionStorage.removeItem('mt-session')}catch(_){}}
@@ -45,7 +47,64 @@
     const availabilityDefaults = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    function api(name,...args){return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)})}
+    let bridgeFrame=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
+    const bridgeRequests=new Map();
+    function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
+    const bridgeOrigins=new Set(['https://script.google.com','https://script.googleusercontent.com']);
+    window.addEventListener('message',event=>{
+      if(!bridgeFrame||event.source!==bridgeFrame.contentWindow||!bridgeOrigins.has(event.origin))return;
+      const message=event.data;
+      if(!message||message.channel!==bridgeChannel)return;
+      if(message.type==='research-desk:ready'){
+        bridgeOrigin=event.origin;
+        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
+        return;
+      }
+      if(event.origin!==bridgeOrigin||message.type!=='research-desk:result')return;
+      const pending=bridgeRequests.get(message.id);if(!pending)return;
+      clearTimeout(pending.timer);bridgeRequests.delete(message.id);
+      message.ok?pending.resolve(message.value):pending.reject(bridgeError(message.error));
+    });
+    function connectBridge(){
+      if(window.google&&window.google.script&&window.google.script.run)return Promise.resolve();
+      if(bridgeReady)return bridgeReady;
+      if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
+      bridgeChannel='mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+      bridgeReady=new Promise((resolve,reject)=>{
+        bridgeReadyResolve=resolve;bridgeReadyReject=reject;
+        bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請重新整理頁面。')),15000);
+        const frame=document.createElement('iframe');
+        bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
+        frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
+        frame.addEventListener('error',()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線失敗，請稍後重試。')),{once:true});
+        const params=new URLSearchParams({bridge:'1',parentOrigin:location.origin,channel:bridgeChannel});
+        frame.src=BACKEND_URL+'?'+params.toString();
+        document.body.appendChild(frame);
+      }).catch(error=>{
+        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';
+        if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
+        bridgeReady=null;
+        throw error;
+      });
+      return bridgeReady;
+    }
+    function bridgeApi(name,args){
+      return connectBridge().then(()=>new Promise((resolve,reject)=>{
+        const id='rpc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+        const timer=setTimeout(()=>{bridgeRequests.delete(id);reject(bridgeError('後端沒有在期限內回覆，請重試。'))},60000);
+        bridgeRequests.set(id,{resolve,reject,timer});
+        if(!bridgeOrigin){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
+        bridgeFrame.contentWindow.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
+      }));
+    }
+    function api(name,...args){
+      if(window.google&&window.google.script&&window.google.script.run){
+        return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)});
+      }
+      return bridgeApi(name,args);
+    }
     function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else alert(err.message||String(err))}
     function flash(text){const n=$('#flash');if(n){n.classList.remove('error');n.textContent=text;n.hidden=false}}
     function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
@@ -125,9 +184,15 @@
     const statusName={review:'需管理者審核',researcher_pending:'等研究者確認',needs_coordination:'待協調',reschedule_pending:'改期待確認',confirmed:'已錄取',completed:'已完成',no_show:'未到',rejected:'未錄取'};
     function metric(label,value,hint){return `<div class="metric"><small>${label}</small><strong>${value}</strong><span class="help">${hint}</span></div>`}
     function renderDashboard(admin){
-      const booked=state.applications.filter(a=>['confirmed','completed','no_show','researcher_pending','reschedule_pending'].includes(a.status)).length;
-      const pending=admin?state.applications.filter(a=>a.status==='review').length:state.applications.filter(a=>a.status==='researcher_pending'&&a.assignedResearcherId===state.user.researcherId).length;
-      return `<div class="metrics">${metric('已保留／完成',`${booked} / ${state.target}`,'目標 119 位')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):a.status==='researcher_pending'&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherName===state.user.name)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
+      const booked=state.count;
+      const pending=admin?state.applications.filter(a=>a.status==='review').length:state.applications.filter(a=>['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).length;
+      const relay=admin&&state.mailRelay;
+      const mailAlert=relay&&(relay.pending||relay.needsAttention||(relay.enabled&&relay.primaryRemaining<=20))
+        ?`<div class="alert ${relay.needsAttention?'error':''}">主要寄件帳號剩餘 ${relay.primaryRemaining??'未知'} 位收件人額度；寄信佇列待寄 ${relay.pending} 封、需處理 ${relay.needsAttention} 封。${relay.enabled?'':'備援目前未啟用。'}${relay.error?esc(relay.error):'請到獨立寄信佇列查看狀態。'}</div>`:'';
+      const effects=admin&&state.sideEffects;
+      const effectsAlert=effects&&(effects.pending||effects.needsReview||effects.inFlight)
+        ?`<div class="alert ${effects.needsReview?'error':''}">背景寄送／行事曆作業：待處理 ${effects.pending} 項、執行中 ${effects.inFlight} 項、需檢查 ${effects.needsReview} 項。${effects.needsReview?'系統不會自動重送可能已完成的項目，請檢查 Apps Script 執行記錄後再處理。':''}</div>`:'';
+      return `${effectsAlert}${mailAlert}<div class="metrics">${metric('已保留／完成',`${booked} / ${state.target}`,'目標 119 位')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
     }
     function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span></h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
     function calendarDate(year,monthIndex,day){return `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`}
@@ -158,9 +223,9 @@
       return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">月初填寫整月空檔；每個時段顯示開始與結束時間，所有時段完整展開。</p></div><button class="btn primary" id="openAddSlot" type="button">填寫整日時段</button></div>${calendarToolbar(availabilityMonth,'availability')}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,events,renderSlot,true)}</div></div>${calendarHelp}</section>${admin&&unassigned.length?`<section class="panel"><div class="panel-head"><h2>待指派時段</h2><span class="tag amber">${unassigned.length} 個</span></div><p class="help">這些時段來自測試表單，尚未安排研究者，因此不會出現在受試者可選時段中。</p>${pending}</section>`:''}`;
     }
     function renderWorkflow(admin){
-      const cases=state.applications.filter(a=>admin?['review','researcher_pending','needs_coordination','reschedule_pending'].includes(a.status):a.status==='researcher_pending'&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherName===state.user.name));
+      const cases=state.applications.filter(a=>admin?['review','researcher_pending','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId));
       if(!cases.length)return '<section class="panel"><div class="empty">目前沒有待處理案件</div></section>';
-      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${!admin&&a.status==='researcher_pending'?researcherResponseForm(a):''}</section>`).join('');
+      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)?researcherResponseForm(a):''}</section>`).join('');
     }
     function researcherResponseForm(a){return `<form class="response-form" data-response="${esc(a.applicationId)}"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="grid"><div class="field"><label>無法執行原因</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>補充說明（無法執行時必填）</label><input name="detail" placeholder="請簡短說明"></div></div><button class="btn primary" type="submit">送出研究者回覆</button></form>`}
     function renderAppointments(admin){
@@ -243,7 +308,7 @@
         document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=prompt('請填寫不符合資格或需改期的原因：')||'';if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
         document.querySelectorAll('[data-request-support]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.requestSupport,rid=document.querySelector(`[data-support="${id}"]`).value,msg=document.querySelector(`[data-support-message="${id}"]`).value;callAndReload('requestSupport',id,rid,msg)}));
         document.querySelectorAll('[data-sensitive]').forEach(b=>b.addEventListener('click',async()=>{try{const d=await api('getSensitiveApplication',sessionToken,b.dataset.sensitive);modal(`<h2>敏感資格資料</h2><p>身分證字號：<strong>${esc(d.nationalId||'未填')}</strong></p><p>檢查碼格式：${d.idValid==='true'?'通過':'需人工核對'}</p><p>戶籍地址：${esc(d.homeAddress||'未填')}</p><div class="notice">只用於管理者核對資格或重複報名，請勿複製到一般通知或研究者行程。</div><button class="btn" onclick="closeModal()">關閉</button>`)}catch(e){showError(e)}}));
-        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){alert('無法執行時，原因與補充說明都必須填寫。');return}callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'))}));
+        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){alert('無法執行時，原因與補充說明都必須填寫。');return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
       }
       if(view==='sessions')document.querySelectorAll('.session-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form);callAndReload('updateAttendance',form.dataset.session,d.get('attendance'),d.has('result'),d.has('blacklist'),d.get('note'))}));
       if(view==='notes')$('#saveNote')?.addEventListener('click',()=>callAndReload('addOverallNote',{date:$('#noteDate').value,note:$('#noteText').value}));
@@ -264,5 +329,6 @@
       try{const d=await api('getRescheduleOptions',LINK_TOKEN);$('#flash').textContent=`${d.name}，目前預約：${d.currentSlot}。選擇的新時間會先保留，等研究者確認後才會替換原預約。`;$('#action').innerHTML=d.slots.length?`<form id="reschedule"><div class="field"><label>新實驗時段</label><select name="slot" required>${d.slots.map(s=>`<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('')}</select></div><button class="btn primary">送出改期申請</button></form>`:'<div class="empty">目前沒有可選時段，請直接回覆錄取信與研究團隊聯絡。</div>';$('#reschedule')?.addEventListener('submit',async e=>{e.preventDefault();try{const result=await api('requestParticipantReschedule',LINK_TOKEN,new FormData(e.target).get('slot'));$('#action').textContent=result.message;$('#flash').textContent='已收到改期申請'}catch(err){showError(err)}})}catch(e){showError(e)}
     }
   </script>
+
 </body>
 </html>
