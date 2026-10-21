@@ -50,9 +50,26 @@
     let bridgeFrame=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
     const bridgeRequests=new Map();
     function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
-    const bridgeOrigins=new Set(['https://script.google.com','https://script.googleusercontent.com']);
+    function isBridgeOrigin(origin){
+      try{
+        const url=new URL(origin);
+        return url.protocol==='https:'&&!url.port&&(
+          url.hostname==='script.google.com'||
+          url.hostname==='script.googleusercontent.com'||
+          /^[a-z0-9-]+-script\.googleusercontent\.com$/i.test(url.hostname)
+        );
+      }catch(_){return false}
+    }
+    function createBridgeChannel(){
+      try{
+        const bytes=window.crypto.getRandomValues(new Uint8Array(16));
+        return 'mt-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+      }catch(_){return 'mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
+    }
     window.addEventListener('message',event=>{
-      if(!bridgeFrame||event.source!==bridgeFrame.contentWindow||!bridgeOrigins.has(event.origin))return;
+      // Apps Script wraps HtmlService in a Google sandbox iframe, so the sender is a nested
+      // frame and cannot be compared to the outer iframe's contentWindow. Validate origin + channel.
+      if(!bridgeFrame||!isBridgeOrigin(event.origin))return;
       const message=event.data;
       if(!message||message.channel!==bridgeChannel)return;
       if(message.type==='research-desk:ready'){
@@ -70,7 +87,7 @@
       if(window.google&&window.google.script&&window.google.script.run)return Promise.resolve();
       if(bridgeReady)return bridgeReady;
       if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
-      bridgeChannel='mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+      bridgeChannel=createBridgeChannel();
       bridgeReady=new Promise((resolve,reject)=>{
         bridgeReadyResolve=resolve;bridgeReadyReject=reject;
         bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請重新整理頁面。')),15000);
