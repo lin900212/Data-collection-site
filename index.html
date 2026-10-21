@@ -47,7 +47,7 @@
     const availabilityDefaults = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let bridgeFrame=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
+    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
     const bridgeRequests=new Map();
     function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
     function isBridgeOrigin(origin){
@@ -73,12 +73,13 @@
       const message=event.data;
       if(!message||message.channel!==bridgeChannel)return;
       if(message.type==='research-desk:ready'){
+        bridgeSource=event.source;
         bridgeOrigin=event.origin;
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
         if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
         return;
       }
-      if(event.origin!==bridgeOrigin||message.type!=='research-desk:result')return;
+      if(event.source!==bridgeSource||event.origin!==bridgeOrigin||message.type!=='research-desk:result')return;
       const pending=bridgeRequests.get(message.id);if(!pending)return;
       clearTimeout(pending.timer);bridgeRequests.delete(message.id);
       message.ok?pending.resolve(message.value):pending.reject(bridgeError(message.error));
@@ -100,7 +101,7 @@
         document.body.appendChild(frame);
       }).catch(error=>{
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
-        bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';
+        bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
         if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
         bridgeReady=null;
         throw error;
@@ -112,8 +113,8 @@
         const id='rpc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
         const timer=setTimeout(()=>{bridgeRequests.delete(id);reject(bridgeError('後端沒有在期限內回覆，請重試。'))},60000);
         bridgeRequests.set(id,{resolve,reject,timer});
-        if(!bridgeOrigin){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
-        bridgeFrame.contentWindow.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
+        if(!bridgeOrigin||!bridgeSource){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
+        bridgeSource.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
       }));
     }
     function api(name,...args){
