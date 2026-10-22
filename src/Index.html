@@ -12,6 +12,33 @@
     @media(max-width:520px){.header{align-items:flex-start}.head-right{align-items:flex-end;flex-direction:column;gap:6px}.pill{font-size:10px}.metrics{gap:8px}.metric{padding:14px}.metric strong{font-size:25px}.panel{padding:15px}.title{font-size:30px}}
   </style>
 <style>
+    .availability-modal{width:min(920px,100%)}
+    .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(120px,.6fr) minmax(270px,1.35fr) minmax(170px,.9fr) minmax(130px,.8fr)}
+    .availability-modal .schedule-editor-times{gap:10px}
+    .availability-modal .schedule-editor-times .field{flex:1;min-width:0;margin:0}
+    .availability-modal .schedule-editor-times input{min-height:42px;padding:8px 10px;font-variant-numeric:tabular-nums}
+    .availability-modal .published-slot-row{grid-template-columns:minmax(270px,1.4fr) minmax(170px,1fr) auto auto}
+    .availability-modal .published-slot-row>.meta{grid-column:2}
+    .availability-modal .published-slot-row>.tag{grid-column:3}
+    .availability-modal .published-slot-row>.checkrow{grid-column:4;white-space:nowrap}
+    .availability-modal .published-slot-row>.support-actions{grid-column:1/-1}
+    .availability-modal .custom-slot-row{grid-template-columns:minmax(120px,.6fr) minmax(270px,1.35fr) minmax(170px,.9fr) auto}
+    .availability-modal .custom-slot-row>.meta{grid-column:1/-1}
+    .availability-modal .custom-slot-row>.checkrow{white-space:nowrap}
+    @media(max-width:900px){
+      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(115px,.65fr) minmax(230px,1.35fr) minmax(160px,1fr)}
+      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row)>.meta{grid-column:1/-1}
+      .availability-modal .published-slot-row,.availability-modal .custom-slot-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+      .availability-modal .published-slot-row>.support-actions,.availability-modal .custom-slot-row>.meta{grid-column:1/-1}
+      .availability-modal .published-slot-row>.meta,.availability-modal .published-slot-row>.tag,.availability-modal .published-slot-row>.checkrow{grid-column:auto}
+    }
+    @media(max-width:600px){
+      .availability-modal .schedule-editor-row,.availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row),.availability-modal .published-slot-row,.availability-modal .custom-slot-row{grid-template-columns:minmax(0,1fr)}
+      .availability-modal .schedule-editor-row>.meta,.availability-modal .published-slot-row>.meta,.availability-modal .published-slot-row>.tag,.availability-modal .published-slot-row>.checkrow,.availability-modal .published-slot-row>.support-actions,.availability-modal .custom-slot-row>.meta{grid-column:auto}
+      .availability-modal .schedule-editor-times{flex-wrap:wrap}
+    }
+  </style>
+<style>
     .roster-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;margin:12px 0 16px;background:#f1f6f2;border:1px solid var(--line);border-radius:12px}.support-actions{display:flex;gap:5px;margin-top:5px}.schedule-editor-row{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);align-items:center;gap:8px;padding:10px;border:1px solid #e8eeea;border-radius:10px;background:#fff}.schedule-editor-row:last-child{border-bottom:1px solid #e8eeea}.schedule-editor-times{display:flex;align-items:center;gap:6px;min-width:0}.schedule-editor-times input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;padding:7px}.schedule-editor-row select{width:100%;min-width:0;border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px;color:var(--ink)}.schedule-editor-row .checkrow{font-weight:750;color:var(--ink)}.schedule-editor-row .meta{min-width:0;overflow-wrap:anywhere}.custom-slot-row{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;margin:7px 0;font-size:13px}.custom-slot-row .schedule-editor-times{flex-wrap:wrap}.is-locked{background:#f7f8f6}.lunch-toggle{margin:12px 0;padding:10px 12px;background:#f2f6f2;border-radius:9px}.template-row{display:grid;grid-template-columns:80px minmax(150px,240px) 1fr auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #e8eeea}.template-row .field{grid-template-columns:60px 1fr;align-items:center;margin:0}.template-row .field span{color:var(--muted);font-size:12px;font-weight:700}.researcher-row{display:flex;align-items:center;gap:10px}.researcher-row .meta{margin-right:auto}.calendar-event .support-actions .btn{padding:4px 7px;font-size:10px}.calendar-mobile-weekday{display:none}
     @media(max-width:720px){.roster-actions{align-items:flex-start;flex-direction:column}.schedule-editor-row{grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr)}.schedule-editor-row .meta{grid-column:1/-1}.template-row{grid-template-columns:60px minmax(120px,1fr) auto}.template-end{grid-column:2}.researcher-row{flex-wrap:wrap}}
   </style>
@@ -28,220 +55,12 @@
   <div id="root"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · TEST</div><h1>正在載入測試工作台…</h1><p class="subtitle">如果畫面沒有更新，請稍候片刻後重新整理。</p></section></div>
   <div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
   <script>
-    window.addEventListener('error',function(e){
-      const root=document.getElementById('root');
-      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台載入失敗</h1><div class="alert error">'+String(e.message||'前端初始化失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
-    });
-    window.addEventListener('unhandledrejection',function(e){
-      const root=document.getElementById('root');
-      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台連線失敗</h1><div class="alert error">'+String(e.reason&&e.reason.message||e.reason||'資料載入失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
-    });
-  </script>
-<script>
-    const query = new URLSearchParams(location.search);
-    const MODE = query.get('action') || 'login';
-    const LINK_TOKEN = query.get('t') || '';
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhnV-8OJxQehl_I-21Hnvi1wTbN_gu6NdDlzOHvvEsXasfEzUDMQ3JSRY7SIPhfiEL0w/exec";
-    function readSessionToken(){try{return window.sessionStorage.getItem('mt-session')||''}catch(_){return ''}}
-    function saveSessionToken(value){try{window.sessionStorage.setItem('mt-session',value)}catch(_){}}
-    function clearSessionToken(){try{window.sessionStorage.removeItem('mt-session')}catch(_){}}
-    let sessionToken = readSessionToken();
-    let state = null;
-    let availabilityPlan = null;
-    let authFlowSequence = 0;
-    let activeView = 'dashboard';
-    let availabilityMonth = null;
-    let appointmentMonth = new Date();
-    const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
-    const $ = s => document.querySelector(s);
-    const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
-    const bridgeRequests=new Map();
-    function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
-    function isBridgeOrigin(origin){
-      try{
-        const url=new URL(origin);
-        return url.protocol==='https:'&&!url.port&&(
-          url.hostname==='script.google.com'||
-          url.hostname==='script.googleusercontent.com'||
-          /^[a-z0-9-]+-script\.googleusercontent\.com$/i.test(url.hostname)
-        );
-      }catch(_){return false}
-    }
-    function createBridgeChannel(){
-      try{
-        const bytes=window.crypto.getRandomValues(new Uint8Array(16));
-        return 'mt-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
-      }catch(_){return 'mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
-    }
-    window.addEventListener('message',event=>{
-      // Apps Script wraps HtmlService in a Google sandbox iframe, so the sender is a nested
-      // frame and cannot be compared to the outer iframe's contentWindow. Validate origin + channel.
-      if(!bridgeFrame||!isBridgeOrigin(event.origin))return;
-      const message=event.data;
-      if(!message||message.channel!==bridgeChannel)return;
-      if(message.type==='research-desk:ready'){
-        bridgeSource=event.source;
-        bridgeOrigin=event.origin;
-        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
-        if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
-        return;
-      }
-      if(event.source!==bridgeSource||event.origin!==bridgeOrigin||message.type!=='research-desk:result')return;
-      const pending=bridgeRequests.get(message.id);if(!pending)return;
-      clearTimeout(pending.timer);bridgeRequests.delete(message.id);
-      message.ok?pending.resolve(message.value):pending.reject(bridgeError(message.error));
-    });
-    function connectBridge(){
-      if(window.google&&window.google.script&&window.google.script.run)return Promise.resolve();
-      if(bridgeReady)return bridgeReady;
-      if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
-      bridgeChannel=createBridgeChannel();
-      bridgeReady=new Promise((resolve,reject)=>{
-        bridgeReadyResolve=resolve;bridgeReadyReject=reject;
-        bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請重新整理頁面。')),15000);
-        const frame=document.createElement('iframe');
-        bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
-        frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
-        frame.addEventListener('error',()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線失敗，請稍後重試。')),{once:true});
-        const params=new URLSearchParams({bridge:'1',parentOrigin:location.origin,channel:bridgeChannel});
-        frame.src=BACKEND_URL+'?'+params.toString();
-        document.body.appendChild(frame);
-      }).catch(error=>{
-        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
-        bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
-        if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
-        bridgeReady=null;
-        throw error;
-      });
-      return bridgeReady;
-    }
-    function bridgeApi(name,args){
-      return connectBridge().then(()=>new Promise((resolve,reject)=>{
-        const id='rpc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
-        const timer=setTimeout(()=>{bridgeRequests.delete(id);reject(bridgeError('後端沒有在期限內回覆，請重試。'))},60000);
-        bridgeRequests.set(id,{resolve,reject,timer});
-        if(!bridgeOrigin||!bridgeSource){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
-        bridgeSource.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
-      }));
-    }
-    function api(name,...args){
-      if(window.google&&window.google.script&&window.google.script.run){
-        return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)});
-      }
-      return bridgeApi(name,args);
-    }
-    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else alert(err.message||String(err))}
-    function flash(text){const n=$('#flash');if(n){n.classList.remove('error');n.textContent=text;n.hidden=false}}
-    function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
-    function modal(html){$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
-    function closeModal(){$('#modal').classList.remove('show')}
-    $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
-
-    if(MODE==='researcher') renderResearcherAction();
-    else if(MODE==='ack') renderAck();
-    else if(MODE==='reschedule') renderReschedule();
-    else if(sessionToken) load(); else renderLogin();
-
-    function renderLogin(){
-      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><span class="pill">測試版</span></header><section class="panel auth"><div class="eyebrow">SECURE SIGN IN</div><h1>登入研究工作台</h1><p class="subtitle">使用已加入團隊的 Google 信箱收取一次性驗證碼。研究者只能查看自己的案件與行程。</p><div id="flash" class="alert" hidden></div><form id="loginForm"><div class="field"><label for="email">團隊電子郵件</label><input id="email" type="email" autocomplete="email" required placeholder="name@example.com"></div><button class="btn primary" type="submit">寄送登入驗證碼</button></form><form id="verifyForm" hidden><div class="field"><label for="code">6 位驗證碼</label><input id="code" inputmode="numeric" autocomplete="one-time-code" required maxlength="6"></div><div class="actions"><button class="btn primary" type="submit">驗證並登入</button><button class="btn" type="button" id="backLogin">返回</button></div></form><div class="footer">只使用測試表單與測試資料庫。身分證字號與戶籍地址僅管理者可在權限頁查看。</div></section></div>`;
-      let loginEmail='',requestPending=false,verifyPending=false,loginComplete=false;
-      const flowId=++authFlowSequence;
-      const clearLoginError=()=>{const n=$('#flash');if(n){n.hidden=true;n.classList.remove('error');n.textContent=''}};
-      $('#loginForm').addEventListener('submit',async e=>{
-        e.preventDefault();
-        if(requestPending||loginComplete)return;
-        requestPending=true;clearLoginError();
-        const button=$('#loginForm button[type="submit"]');
-        button.disabled=true;button.textContent='寄送中…';
-        try{
-          loginEmail=$('#email').value.trim();
-          await api('requestLoginCode',loginEmail);
-          if(flowId!==authFlowSequence||loginComplete)return;
-          $('#loginForm').hidden=true;$('#verifyForm').hidden=false;flash('已寄出驗證碼，請查看該信箱。');
-        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
-        finally{
-          requestPending=false;
-          if(flowId===authFlowSequence){const current=$('#loginForm button[type="submit"]');if(current){current.disabled=false;current.textContent='寄送登入驗證碼'}}
-        }
-      });
-      $('#verifyForm').addEventListener('submit',async e=>{
-        e.preventDefault();
-        if(verifyPending||loginComplete)return;
-        verifyPending=true;clearLoginError();
-        const button=$('#verifyForm button[type="submit"]'),codeInput=$('#code');
-        button.disabled=true;button.textContent='驗證中…';codeInput.disabled=true;
-        try{
-          const result=await api('verifyLoginCode',loginEmail,codeInput.value.trim());
-          if(flowId!==authFlowSequence||loginComplete)return;
-          loginComplete=true;sessionToken=result.token;saveSessionToken(sessionToken);await load();
-        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
-        finally{
-          verifyPending=false;
-          if(flowId===authFlowSequence&&!loginComplete){const current=$('#verifyForm button[type="submit"]'),input=$('#code');if(current){current.disabled=false;current.textContent='驗證並登入'}if(input)input.disabled=false}
-        }
-      });
-      $('#backLogin').addEventListener('click',()=>{if(requestPending||verifyPending)return;clearLoginError();$('#verifyForm').hidden=true;$('#loginForm').hidden=false});
-    }
-
-    async function load(){try{state=await api('getBootstrap',sessionToken);if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));availabilityPlan=await api('getMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));draw()}catch(e){sessionToken='';clearSessionToken();renderLogin();showError(e)}}
-    function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
-    function calendarMonthDate(key){const [year,month]=String(key).split('-').map(Number);return new Date(year,month-1,1)}
-    async function loadAvailabilityMonth(){availabilityPlan=await api('getMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));draw()}
-    function draw(){
-      const admin=state.user.role==='admin';
-      const nav=admin?[['dashboard','總覽'],['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
-      if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
-      const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
-      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><div class="eyebrow">${activeView==='dashboard'?'STUDY OVERVIEW':'RESEARCH DESK'}</div><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">測試版資料只寫入獨立工作流程資料庫與「${esc(state.calendarName)}」。原始正式表單與原始回覆表未修改。</div></main></div></div>`;
-      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
-      $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
-      bindView(activeView,admin);
-    }
-    function subtitleFor(view,admin){return ({dashboard:admin?'追蹤 119 位招募進度、待審核案件與研究者確認。':'查看指派給你的案件、可收時間與近期場次。',availability:'每個時段只能指派一位研究者；儲存時檢查重複時段與 30 分鐘緩衝。',workflow:admin?'資格初查通過後交由負責研究者確認；疑似重複或資料不完整的案件留給你審核。':'確認指派給你的實驗；若無法執行，請填寫理由。',appointments:'只顯示已確認的受試者場次；姓名與聯絡資訊不會出現在可收時間月曆。',sessions:'實驗結束後紀錄出席、結果摘要需求、黑名單及受試者個別狀況。',notes:'研究者可以隨時新增整體觀察，供研究討論整理。',researchers:'以姓名和個人顏色辨識排班；加入研究者前先確認其團隊信箱。',settings:'目前所有寄出的流程郵件都導向你的測試信箱。'}[view]||'')}
-
-    function renderView(view,admin){
-      if(view==='dashboard')return renderDashboard(admin);
-      if(view==='availability')return renderAvailability(admin);
-      if(view==='workflow')return renderWorkflow(admin);
-      if(view==='appointments')return renderAppointments(admin);
-      if(view==='sessions')return renderSessions(admin);
-      if(view==='notes')return renderNotes();
-      if(view==='researchers')return renderResearchers();
-      return renderSettings();
-    }
-    const statusName={review:'需管理者審核',researcher_pending:'等研究者確認',needs_coordination:'待協調',reschedule_pending:'改期待確認',confirmed:'已錄取',completed:'已完成',no_show:'未到',rejected:'未錄取'};
-    function metric(label,value,hint){return `<div class="metric"><small>${label}</small><strong>${value}</strong><span class="help">${hint}</span></div>`}
-    function renderDashboard(admin){
-      const booked=state.count;
-      const pending=admin?state.applications.filter(a=>a.status==='review').length:state.applications.filter(a=>['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).length;
-      const relay=admin&&state.mailRelay;
-      const mailAlert=relay&&(relay.pending||relay.needsAttention||(relay.enabled&&relay.primaryRemaining<=20))
-        ?`<div class="alert ${relay.needsAttention?'error':''}">主要寄件帳號剩餘 ${relay.primaryRemaining??'未知'} 位收件人額度；寄信佇列待寄 ${relay.pending} 封、需處理 ${relay.needsAttention} 封。${relay.enabled?'':'備援目前未啟用。'}${relay.error?esc(relay.error):'請到獨立寄信佇列查看狀態。'}</div>`:'';
-      const effects=admin&&state.sideEffects;
-      const effectsAlert=effects&&(effects.pending||effects.needsReview||effects.inFlight)
-        ?`<div class="alert ${effects.needsReview?'error':''}">背景寄送／行事曆作業：待處理 ${effects.pending} 項、執行中 ${effects.inFlight} 項、需檢查 ${effects.needsReview} 項。${effects.needsReview?'系統不會自動重送可能已完成的項目，請檢查 Apps Script 執行記錄後再處理。':''}</div>`:'';
-      return `${effectsAlert}${mailAlert}<div class="metrics">${metric('已保留／完成',`${booked} / ${state.target}`,'目標 119 位')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
-    }
-    function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span></h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
-    function calendarDate(year,monthIndex,day){return `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`}
-    function calendarMonthTitle(month){return `${month.getFullYear()} 年 ${month.getMonth()+1} 月`}
-    function shiftCalendarMonth(month,delta){return new Date(month.getFullYear(),month.getMonth()+delta,1)}
-    function calendarLegend(){return state.researchers.map(r=>`<span class="calendar-legend-item"><i class="color-dot" style="--person:${esc(r.color)}"></i>${esc(r.name)}</span>`).join('')}
-    function renderMonthGrid(month,items,renderItem,addButton){
-      const year=month.getFullYear(),monthIndex=month.getMonth(),leading=new Date(year,monthIndex,1).getDay();
-      const dayCount=new Date(year,monthIndex+1,0).getDate(),cellCount=Math.ceil((leading+dayCount)/7)*7;
-      const byDate=items.reduce((map,item)=>{(map[item.date]||(map[item.date]=[])).push(item);return map},{ });
-      return Array.from({length:cellCount},(_,index)=>{
-        const day=index-leading+1;
-        if(day<1||day>dayCount)return '<div class="calendar-day outside" aria-hidden="true"></div>';
-        const date=calendarDate(year,monthIndex,day),dow=new Date(year,monthIndex,day).getDay(),events=(byDate[date]||[]).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
-        const weekday=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][dow];
-        return `<div class="calendar-day ${dow===0||dow===6?'weekend':''}"><div class="calendar-day-head"><span class="calendar-day-number">${day} <small class="calendar-weekend">${dow===0||dow===6?'週末':''}</small><small class="calendar-mobile-weekday">${weekday}</small></span>${addButton?`<button class="btn calendar-day-add" type="button" data-day-add="${date}" aria-label="編輯 ${date} 時段">＋</button>`:''}</div><div class="calendar-events">${events.map(renderItem).join('')}</div></div>`;
-      }).join('');
-    }
-    function calendarToolbar(month,kind){const roster=kind==='availability'?availabilityPlan?.roster:null,nextLabel=roster?(roster.day<20?'下月班表':availabilityPlan.status==='published'?'已發布下月':'下月草稿'):'',shortcuts=roster?`<div class="calendar-shortcuts"><button class="btn small ${calendarMonthKey(month)===roster.currentMonth?'primary':''}" type="button" data-calendar-goto="availability:${roster.currentMonth}">本月</button><button class="btn small ${calendarMonthKey(month)===roster.nextMonth?'primary':''}" type="button" data-calendar-goto="availability:${roster.nextMonth}">${nextLabel}</button></div>`:'';return `<div class="calendar-top"><div class="calendar-period"><button class="btn calendar-nav" type="button" data-calendar-nav="${kind}:-1" aria-label="上個月">‹</button><h2>${calendarMonthTitle(month)}</h2><button class="btn calendar-nav" type="button" data-calendar-nav="${kind}:1" aria-label="下個月">›</button></div>${shortcuts}<div class="calendar-legend">${calendarLegend()}</div></div>`}
+  window.AvailabilityUI=(()=>{
     function renderAvailability(admin){
+      if(availabilityLoading||availabilityLoadError){
+        const status=availabilityLoading?`<div class="notice" role="status">正在載入 ${esc(calendarMonthTitle(availabilityMonth))} 班表…</div>`:`<div class="alert error" role="alert">${esc(availabilityLoadError)} <button class="btn small" id="retryAvailabilityMonth" type="button">重試</button></div>`;
+        return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">每個時段僅指派一位研究者；月曆會顯示全隊排班。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${status}</section>`;
+      }
       const plan=availabilityPlan||{status:'collecting',slots:[],days:{},template:state.scheduleDefaults?.slots||defaultAvailabilitySlots,submittedBy:{}};
       const published=plan.status==='published';
       const editable=Boolean(plan.roster?.canEditDraft);
@@ -262,64 +81,22 @@
         return `<div class="calendar-event ${s.status==='booked'?'booked':''} ${s.supportRequest?'requested':''}" style="--person:${esc(s.color)}">${time}<${eventTag} class="calendar-event-main ${canEditMonth?'':'readonly'}"${eventAttrs}><span class="calendar-event-name">${esc(s.researcherName||'未指派')}</span><span class="tag ${s.status==='available'?'green':s.status==='booked'?'red':'amber'}">${esc(status)}</span>${s.supportRequest?'<span class="tag amber">請求支援</span>':''}</${eventTag}>${pendingSupport&&canEditMonth?`<div class="support-actions"><button class="btn small" data-schedule-support="accept" data-date="${esc(s.date)}" data-slot="${esc(s.slotId)}">接受</button><button class="btn small danger" data-schedule-support="decline" data-date="${esc(s.date)}" data-slot="${esc(s.slotId)}">婉拒</button></div>`:''}</div>`;
       };
       const renderItem=s=>renderSlot(s);
-      const phaseLabel=plan.roster?.phase==='researcher_fill'?'下月班表填寫中':plan.roster?.phase==='manager_review'?'管理者檢查中':plan.roster?.phase==='publish_day'?'管理者發布日':plan.roster?.phase==='late_review'?'待管理者發布':'本月排班';
+      const rosterMonthLabel=calendarMonthTitle(calendarMonthDate(plan.month||calendarMonthKey(availabilityMonth)))+'班表';
+      const phaseLabel=plan.roster?.phase==='researcher_fill'?'開放填寫中':plan.roster?.phase==='manager_review'?'管理者檢查中':plan.roster?.phase==='publish_day'?'管理者發布日':plan.roster?.phase==='late_review'?'待管理者發布':'本月排班';
       const readOnlyReason=()=>{const roster=plan.roster||{},month=String(plan.month||'');if(roster.currentMonth&&month<roster.currentMonth)return '這是過去月份，排班僅供查看。';if(roster.nextMonth&&month>roster.nextMonth)return `目前只開放本月與下個月；${roster.nextMonth}之後的月份尚未開放。`;if(roster.nextMonth&&month===roster.nextMonth&&Number(roster.day)<20&&!published)return '下月排班將於每月 20 日開放填寫。';return '此月份目前僅供查看。'};
       const workflow=published
         ?`<div class="roster-actions"><div><strong>已發布班表${canEditMonth?' · 可微調':' · 僅供查看'}</strong><div class="help">${canEditMonth?'本月與已發布的下月可繼續調整未報名時段；研究者只能調整或取消自己的時段。':''}${canEditMonth&&plan.publishedAt?' ':''}${canEditMonth&&plan.publishedAt?`發布時間：${esc(plan.publishedAt)}`:readOnlyReason()}</div></div><span class="tag green">已發布</span></div>`
         :!editable
         ?`<div class="roster-actions"><div><strong>此月份僅供查看</strong><div class="help">${esc(readOnlyReason())}</div></div><span class="tag">僅供查看</span></div>`
         :admin
-        ?`<div class="roster-actions"><div><strong>${phaseLabel}</strong><div class="help">已送出 ${submittedCount} 位研究者的班表；發布前仍可修改。每月 28 日發布下月班表。</div></div><div class="actions"><button class="btn" id="submitMyMonth">${submitted?'本人已送出':'標記本人班表完成'}</button>${plan.roster?.canPublishDraft?'<button class="btn primary" id="publishMonth">發布班表並同步報名表</button>':''}</div></div>`
-        :`<div class="roster-actions"><div><strong>${submitted?'班表已送出':'填寫可收時間'}</strong><div class="help">${submitted?'發布前仍可修改。':'本月可隨時調整；下月草稿每月 20 日開放，管理者 28 日發布。'}</div></div><button class="btn primary" id="submitMonth">${submitted?'再次通知管理者':'送出班表進度'}</button></div>`;
+        ?`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${phaseLabel}</strong><div class="help">已送出 ${submittedCount} 位研究者的班表；發布前仍可修改。管理者於 28 日一次發布整月班表。</div></div><div class="actions"><button class="btn" id="submitMyMonth">${submitted?'本人已送出':'標記本人班表完成'}</button>${plan.roster?.canPublishDraft?'<button class="btn primary" id="publishMonth">發布班表並同步報名表</button>':''}</div></div>`
+        :`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${submitted?'已送出':'開放填寫'}</strong><div class="help">${submitted?'發布前仍可修改。':'本月可隨時調整；下月班表於每月 20 日開放，管理者 28 日發布。'}</div></div><button class="btn primary" id="submitMonth">${submitted?'再次通知管理者':'送出班表進度'}</button></div>`;
       const help=plan.status==='published'
         ?'已發布後，研究者可微調或取消自己尚未有人報名的時段；一般時段固定 1 小時，儲存後結束時間自動計算。管理者可調整所有未報名時段或新增時段。已報名場次請使用臨時異動流程。'
         :admin
         ?'未發布前只有月曆草稿會更新。按「發布班表並同步報名表」後，系統才會更新可報名選項；每個時段只會有一位研究者。'
         :'月曆顯示整個團隊的班表。你只能勾選或移動自己的時段；若後續時段已由其他研究者填寫，系統會擋下會影響對方的調整。';
       return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">本月可以持續調整；每月 20 日開放填寫下月草稿，28 日由管理者一次發布。發布後研究者仍可微調自己的未報名時段。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 尚未發布的草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待安排時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未指派，發布前請處理或改派。</div></div>`).join('')}</section>`:''}`;
-    }
-    function renderWorkflow(admin){
-      const cases=state.applications.filter(a=>admin?['review','researcher_pending','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId));
-      if(!cases.length)return '<section class="panel"><div class="empty">目前沒有待處理案件</div></section>';
-      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='needs_coordination'&&a.lastStatusNote?`<div class="alert">研究者回覆：${esc(a.lastStatusNote)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&a.status==='needs_coordination'&&a.assignedResearcherId?`<div class="field"><label>再次確認說明（必填）</label><input data-recheck-message="${esc(a.applicationId)}" placeholder="例如：原排班已確認，想請你再評估是否能執行"></div><button class="btn" data-recheck="${esc(a.applicationId)}">請原負責研究者再次確認</button>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)?researcherResponseForm(a):''}</section>`).join('');
-    }
-    function researcherResponseForm(a){return `<form class="response-form" data-response="${esc(a.applicationId)}"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="grid"><div class="field"><label>無法執行原因</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>補充說明（無法執行時必填）</label><input name="detail" placeholder="請簡短說明"></div></div><button class="btn primary" type="submit">送出研究者回覆</button></form>`}
-    function renderAppointments(admin){
-      const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));
-      const calendarItems=apps.map(a=>{const slot=state.slots.find(s=>s.slotId===a.slotId);return slot?{date:slot.date,start:slot.start,end:slot.end,name:a.name,researcherName:a.researcherName,color:a.researcherColor,status:a.status}:null}).filter(Boolean);
-      const renderAppointment=a=>`<div class="appointment-calendar-event" style="--person:${esc(a.color)}"><strong>${esc(a.start)}–${esc(a.end)}</strong><span>${esc(a.name)}</span><span>${esc(a.researcherName)}</span></div>`;
-      const calendarUrl='https://calendar.google.com/calendar/u/0/r?cid='+encodeURIComponent(state.calendarId||'');
-      const mine=state.applications.filter(a=>a.status==='confirmed'&&a.assignedResearcherId===state.user.researcherId).sort((a,b)=>a.slot.localeCompare(b.slot));
-      const changeCards=(state.scheduleChanges||[]).filter(c=>c.status!=='cancelled').sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,10).map(c=>{
-        const app=state.applications.find(a=>a.applicationId===c.applicationId),received=c.targetId===state.user.researcherId&&c.status==='pending_researcher';
-        if(admin&&['pending_manager','declined'].includes(c.status))return `<article class="card"><div class="panel-head"><div><h3>${esc(c.initiatorName)}｜${esc(c.slot)}</h3><div class="meta">${esc(c.reason)}${c.resolutionReason?' · 研究者回覆：'+esc(c.resolutionReason):''}</div></div><span class="tag amber">待管理者協調</span></div><div class="grid"><div class="field"><label>安排支援研究者</label><select data-resolve-target="${esc(c.id)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==c.initiatorId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>處理說明／取消原因</label><input data-resolve-reason="${esc(c.id)}" placeholder="說明支援安排或取消原因"></div></div><div class="actions"><button class="btn primary" data-resolve-change="assign" data-change="${esc(c.id)}">請求支援研究者</button><button class="btn danger" data-resolve-change="cancel" data-change="${esc(c.id)}">取消並通知受試者</button></div>${app?`<div class="meta">受試者：${esc(app.name)}　${esc(app.email)}</div>`:''}</article>`;
-        if(received)return `<article class="card"><div class="panel-head"><div><h3>${c.type==='swap'?'互換場次':'支援場次'}｜${esc(c.slot)}</h3><div class="meta">${esc(c.initiatorName)}提出${c.otherSlot?'互換 '+esc(c.otherSlot):''}。原因：${esc(c.reason)}${c.managerNote?'；管理者說明：'+esc(c.managerNote):''}</div></div><span class="tag amber">需要你回覆</span></div><div class="actions"><button class="btn primary" data-respond-change="accept" data-change="${esc(c.id)}">接受</button><button class="btn danger" data-respond-change="decline" data-change="${esc(c.id)}">婉拒</button></div></article>`;
-        if(admin)return `<article class="card"><strong>${esc(c.slot)}</strong><span class="tag amber">${c.status==='pending_researcher'?'等待 '+esc(c.targetName)+' 回覆':'已處理'}</span><div class="meta">${esc(c.initiatorName)}提出：${esc(c.reason)}${c.managerNote?'；管理者說明：'+esc(c.managerNote):''}</div></article>`;
-        return `<article class="card"><strong>${esc(c.slot)}</strong><span class="tag ${['pending_manager','pending_researcher'].includes(c.status)?'amber':c.status==='accepted'?'green':'red'}">${c.status==='pending_manager'?'等待管理者協調':c.status==='pending_researcher'?'等待對方研究者回覆':c.status==='declined'?'對方婉拒':c.status==='accepted'?'已完成':'處理中'}</span><div class="meta">${esc(c.reason)}${c.resolutionReason?' · '+esc(c.resolutionReason):''}${c.managerNote?' · 管理者：'+esc(c.managerNote):''}</div></article>`;
-      }).join('');
-      const mineCards=mine.map(a=>{const pending=(state.scheduleChanges||[]).some(c=>['pending_manager','pending_researcher','declined'].includes(c.status)&&(c.applicationId===a.applicationId||c.otherApplicationId===a.applicationId));return `<article class="card"><div class="panel-head"><div><h3>${esc(a.name)}</h3><div class="meta">${esc(a.slot)}</div></div>${pending?'<span class="tag amber">異動處理中</span>':`<button class="btn small" data-request-change="${esc(a.applicationId)}">臨時有事／需要調整</button>`}</div></article>`}).join('');
-      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>受試者實際行程</h2><p class="help">受試者確認錄取後才顯示。研究者可提出互換、找人代班或交由管理者協調。</p></div><a class="link" target="_blank" href="${esc(calendarUrl)}">開啟測試 Google 日曆 →</a></div>${calendarToolbar(appointmentMonth,'appointments')}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(appointmentMonth,calendarItems,renderAppointment,false)}</div></div>${calendarItems.length?'':'<div class="empty">這個月份尚無已確認的實驗場次</div>'}</section><section class="panel"><h2>我的已排實驗</h2><p class="help">提出臨時異動後，原時間會保留，直到代班或換班研究者接受。</p>${mineCards||'<div class="empty">目前沒有指派給你的已確認場次</div>'}</section>${changeCards?`<section class="panel"><h2>${admin?'待協調的臨時異動':'臨時異動與支援邀請'}</h2>${changeCards}</section>`:''}`;
-    }
-    function openScheduleChangeRequest(applicationId){
-      const app=state.applications.find(item=>item.applicationId===applicationId);
-      if(!app)return showError(new Error('找不到這筆已確認場次，請重新整理。'));
-      const targets=state.researchers.filter(r=>r.researcherId!==state.user.researcherId);
-      const pendingIds=new Set((state.scheduleChanges||[]).filter(change=>['pending_manager','pending_researcher','declined'].includes(change.status)).flatMap(change=>[change.applicationId,change.otherApplicationId].filter(Boolean)));
-      const otherSessions=(state.teamSessions||[]).filter(item=>item.researcherId!==state.user.researcherId&&item.applicationId!==applicationId&&!pendingIds.has(item.applicationId));
-      modal(`<h2>申請臨時調整</h2><p class="help">${esc(app.name)} · ${esc(app.slot)}。在對方或管理者確認前，原安排維持不變。</p><form id="scheduleChangeRequest"><div class="field"><label>處理方式</label><select name="kind" required><option value="">請選擇</option><option value="swap">和其他研究者互換場次</option><option value="cover">請其他研究者代班</option><option value="manager">交由管理者協調</option></select></div><div class="field" data-change-target-kind="swap" hidden><label>選擇要互換的已確認場次</label><select name="swapTarget"><option value="">請選擇場次</option>${otherSessions.map(item=>`<option value="${esc(item.applicationId)}">${esc(item.slot)} · ${esc(item.researcherName)}</option>`).join('')}</select>${otherSessions.length?'':'<small class="help">目前沒有其他研究者的已確認場次可互換。</small>'}</div><div class="field" data-change-target-kind="cover" hidden><label>選擇代班研究者</label><select name="coverTarget"><option value="">請選擇研究者</option>${targets.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select>${targets.length?'':'<small class="help">目前沒有其他啟用中的研究者。</small>'}</div><div class="field"><label>原因（必填）</label><textarea name="reason" required maxlength="500" placeholder="請說明臨時狀況，讓管理者或支援研究者了解"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelScheduleChange">返回</button><button class="btn primary" type="submit">送出異動請求</button></div></form>`);
-      const form=$('#scheduleChangeRequest'),kind=form.elements.kind;
-      const updateTargets=()=>{form.querySelectorAll('[data-change-target-kind]').forEach(group=>{const active=group.dataset.changeTargetKind===kind.value;group.hidden=!active;group.style.display=active?'':'none';const select=group.querySelector('select');select.required=active;if(!active)select.value=''})};
-      kind.addEventListener('change',updateTargets);
-      $('#cancelScheduleChange').addEventListener('click',closeModal);
-      form.addEventListener('submit',async event=>{event.preventDefault();const targetValue=kind.value==='swap'?form.elements.swapTarget.value:kind.value==='cover'?form.elements.coverTarget.value:'';if(kind.value!=='manager'&&!targetValue){showError(new Error('請先選擇互換場次或代班研究者。'));return}const submit=form.querySelector('[type="submit"]');submit.disabled=true;try{const result=await api('requestSessionChange',sessionToken,applicationId,kind.value,targetValue,form.elements.reason.value.trim());closeModal();await load();flash(result.message)}catch(error){submit.disabled=false;showError(error)}});
-    }
-    function renderSessions(admin){const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));return `<section class="panel"><h2>實驗紀錄</h2>${apps.map(a=>{const rec=state.records.find(r=>r.applicationId===a.applicationId)||{};return `<form class="session-form card" data-session="${esc(a.applicationId)}"><div class="card-top"><div><h3>${esc(a.name)}</h3><div class="meta">${esc(a.slot)} · ${esc(a.researcherName)}</div></div></div><div class="grid"><div class="field"><label>出席狀況</label><select name="attendance"><option value="">尚未紀錄</option>${['出席','遲到','未到'].map(x=>`<option ${rec.attendance===x?'selected':''}>${x}</option>`).join('')}</select></div><label class="checkrow"><input type="checkbox" name="result" ${rec.requestedResult==='TRUE'?'checked':''}>受試者主動想收到研究結果</label><label class="checkrow"><input type="checkbox" name="blacklist" ${rec.blacklist==='TRUE'?'checked':''}>黑名單（原因填在備註）</label></div><div class="field"><label>受試者個別狀況</label><textarea name="note" placeholder="例如：不專心作答、看過答案、做過相似測驗">${esc(rec.individualNote||'')}</textarea></div><button class="btn primary" type="submit">儲存紀錄</button></form>`}).join('')||'<div class="empty">確認錄取後，場次會出現在這裡</div>'}</section>`}
-    function renderNotes(){return `<section class="panel"><h2>新增整體觀察</h2><div class="grid"><div class="field"><label>日期</label><input id="noteDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>觀察札記</label><textarea id="noteText" placeholder="例如：動作情境下受試者明顯喘，可能影響後續認知作業表現"></textarea></div></div><button class="btn primary" id="saveNote">儲存札記</button></section><section class="panel"><h2>研究觀察紀錄</h2>${state.notes.slice().reverse().map(n=>`<div class="card"><div class="meta">${esc(n.date)} · ${esc(n.observerId)}</div><div>${esc(n.note)}</div></div>`).join('')||'<div class="empty">尚無整體觀察札記</div>'}</section>`}
-    function renderResearchers(){return `<section class="panel"><h2>新增研究者</h2><p class="help">新增後，研究者可用團隊信箱收取一次性登入碼。</p><form id="researcherForm"><div class="grid"><div class="field"><label>研究者姓名</label><input name="name" required placeholder="只填名字"></div><div class="field"><label>研究者 Email</label><input name="email" type="email" required></div><div class="field"><label>月曆顏色</label><input name="color" type="color" value="#2b8678"></div></div><button class="btn primary">加入研究者</button></form></section><section class="panel"><h2>研究團隊</h2>${state.researchers.map(r=>`<div class="slotline researcher-row" style="--person:${esc(r.color)}"><span class="color-dot" style="--person:${esc(r.color)}"></span><strong>${esc(r.name)}</strong><span class="meta">${esc(r.email||'研究者帳號')}</span>${r.researcherId!==state.user.researcherId?`<button class="btn small danger" data-remove-researcher="${esc(r.researcherId)}" data-name="${esc(r.name)}">移除</button>`:'<span class="tag">你</span>'}</div>`).join('')||'<div class="empty">尚未加入其他研究者</div>'}<p class="help">移除會立即停用登入並撤銷既有工作階段。若仍有待確認或已排定案件，需先完成支援或改期。</p></section>`}
-    function renderSettings(){
-      const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
-      const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="time" data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
-      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button></div><p class="help">只有管理者發布月份班表時，表單選項才會同步。時段需距離開始至少 12 小時；達到招募目標或沒有可選時段時，系統會暫停收件。</p><p class="help">確認錄取後的事件只建立在「${esc(state.calendarName)}」；管理者本人排班時會檢查其主要日曆。其他研究者的個人日曆未連接。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
     }
     function addMinutesLabel(time,minutes){const [h,m]=String(time||'00:00').split(':').map(Number),n=h*60+m+minutes;return `${String(Math.floor(n/60)%24).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
 
@@ -337,6 +114,7 @@
       }).join('');
       const add=admin?`<section class="panel"><h3>新增已發布時段</h3><div class="grid"><div class="field"><label>開始時間</label><input type="time" id="publishedAddStart" value="09:30"></div><div class="field"><label>結束時間</label><input type="time" id="publishedAddEnd" value="10:30"></div><div class="field"><label>負責研究者</label><select id="publishedAddOwner"><option value="${esc(myId)}">${esc(state.user.name)}（管理者本人）</option>${state.researchers.filter(r=>r.researcherId!==myId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}（請求支援）</option>`).join('')}</select></div></div><label class="checkrow"><input type="checkbox" id="publishedAddEnabled">新增時段</label></section>`:'';
       modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜已發布班表</div><h2>${esc(date)} 時段管理</h2></div><button class="btn" type="button" id="closePublishedEditor" aria-label="關閉">×</button></div><p class="help">研究者可調整或取消自己的未報名時段，開始時間變更後結束時間自動加 1 小時；管理者可調整所有未報名時段或新增時段。已報名場次需使用臨時異動流程。${day.mode==='custom'?'此日使用完全自訂模式，研究者不能更動時間。':''}</p><div class="day-editor-list">${rows||'<div class="empty">此日目前沒有開放或已報名的時段。</div>'}</div>${add}<div id="publishedEditorError" class="alert error" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelPublishedEditor">取消</button><button class="btn primary" id="savePublishedSlots">儲存並更新報名表</button></div>`);
+      $('#modalbox').classList.add('availability-modal');
       const error=message=>{const box=$('#publishedEditorError');box.textContent=message;box.hidden=false};
       $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
       document.querySelectorAll('[data-published-auto-end]').forEach(output=>document.querySelector(`[data-published-start="${output.dataset.publishedAutoEnd}"]`)?.addEventListener('input',event=>{output.textContent=addMinutesLabel(event.target.value,60)}));
@@ -376,6 +154,7 @@
       }).join('');
       const customTools=admin?`<section class="panel"><h3>管理者新增時段</h3><label class="checkrow"><input id="enableCustomSlot" type="checkbox">新增一個時段（指派其他研究者會標示「請求支援」）</label><div class="grid"><div class="field"><label>開始時間</label><input id="customStart" type="time" value="09:30"></div><div class="field"><label>結束時間</label><input id="customEnd" type="time" value="10:30"></div></div><label class="checkrow"><input id="fullyCustom" type="checkbox" ${day.mode==='custom'?'checked':''}>完全自訂（管理者可任意調整，不套用緩衝、午休與 18:30 限制）</label></section>`:'';
       modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜團隊排班</div><h2>${esc(date)} 可收時間</h2></div><button class="btn" type="button" id="closeDayEditor" aria-label="關閉">×</button></div><p class="help">時段固定 1 小時。一般模式至少間隔 30 分鐘；午休預設 1 小時，可取消或調整至最多 1 小時。已由其他研究者填寫的時段不會被你移動。</p>${researcherField}<label class="checkrow"><input id="selectAllDaySlots" type="checkbox">一鍵勾選當日所有可選時段</label><div class="day-editor-list">${rows}</div>${customRows?`<section class="panel"><h3>自訂時段</h3>${customRows}</section>`:''}<label class="checkrow lunch-toggle"><input id="lunchBreak" type="checkbox" ${day.lunchBreak!==false?'checked':''}>保留午休（1 小時；取消後後續未填或自己的時段以 30 分鐘間隔重新排列）</label>${customTools}<div id="dayEditorError" class="alert error" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelDayEditor">取消</button><button class="btn primary" type="button" id="saveDaySlots">儲存當日班表</button></div>`);
+      $('#modalbox').classList.add('availability-modal');
       const editorError=message=>{const box=$('#dayEditorError');box.textContent=message;box.hidden=false};
       $('#closeDayEditor').addEventListener('click',closeModal);$('#cancelDayEditor').addEventListener('click',closeModal);
       const checks=[...document.querySelectorAll('[data-day-slot]')];
@@ -467,19 +246,321 @@
       closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
+    return {renderAvailability,addMinutesLabel,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
+  })();
+</script>
+
+  <script>
+    window.addEventListener('error',function(e){
+      const root=document.getElementById('root');
+      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台載入失敗</h1><div class="alert error">'+String(e.message||'前端初始化失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
+    });
+    window.addEventListener('unhandledrejection',function(e){
+      const root=document.getElementById('root');
+      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台連線失敗</h1><div class="alert error">'+String(e.reason&&e.reason.message||e.reason||'資料載入失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
+    });
+  </script>
+<script>
+    const query = new URLSearchParams(location.search);
+    const MODE = query.get('action') || 'login';
+    const LINK_TOKEN = query.get('t') || '';
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhnV-8OJxQehl_I-21Hnvi1wTbN_gu6NdDlzOHvvEsXasfEzUDMQ3JSRY7SIPhfiEL0w/exec";
+    const AvailabilityUI = window.AvailabilityUI;
+    function readSessionToken(){try{return window.sessionStorage.getItem('mt-session')||''}catch(_){return ''}}
+    function saveSessionToken(value){try{window.sessionStorage.setItem('mt-session',value)}catch(_){}}
+    function clearSessionToken(){try{window.sessionStorage.removeItem('mt-session')}catch(_){}}
+    let sessionToken = readSessionToken();
+    let state = null;
+    let availabilityPlan = null;
+    let authFlowSequence = 0;
+    let activeView = 'dashboard';
+    let availabilityMonth = null;
+    let availabilityRequestSequence = 0;
+    let bootstrapRequestSequence = 0;
+    let availabilityMonthCache = new Map();
+    let availabilityLoading = false;
+    let availabilityLoadError = '';
+    let appointmentMonth = new Date();
+    const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
+    const $ = s => document.querySelector(s);
+    const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
+    const bridgeRequests=new Map();
+    function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
+    function isBridgeOrigin(origin){
+      try{
+        const url=new URL(origin);
+        return url.protocol==='https:'&&!url.port&&(
+          url.hostname==='script.google.com'||
+          url.hostname==='script.googleusercontent.com'||
+          /^[a-z0-9-]+-script\.googleusercontent\.com$/i.test(url.hostname)
+        );
+      }catch(_){return false}
+    }
+    function createBridgeChannel(){
+      try{
+        const bytes=window.crypto.getRandomValues(new Uint8Array(16));
+        return 'mt-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+      }catch(_){return 'mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
+    }
+    window.addEventListener('message',event=>{
+      // Apps Script wraps HtmlService in a Google sandbox iframe, so the sender is a nested
+      // frame and cannot be compared to the outer iframe's contentWindow. Validate origin + channel.
+      if(!bridgeFrame||!isBridgeOrigin(event.origin))return;
+      const message=event.data;
+      if(!message||message.channel!==bridgeChannel)return;
+      if(message.type==='research-desk:ready'){
+        bridgeSource=event.source;
+        bridgeOrigin=event.origin;
+        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
+        return;
+      }
+      if(event.source!==bridgeSource||event.origin!==bridgeOrigin||message.type!=='research-desk:result')return;
+      const pending=bridgeRequests.get(message.id);if(!pending)return;
+      clearTimeout(pending.timer);bridgeRequests.delete(message.id);
+      message.ok?pending.resolve(message.value):pending.reject(bridgeError(message.error));
+    });
+    function connectBridge(){
+      if(window.google&&window.google.script&&window.google.script.run)return Promise.resolve();
+      if(bridgeReady)return bridgeReady;
+      if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
+      bridgeChannel=createBridgeChannel();
+      bridgeReady=new Promise((resolve,reject)=>{
+        bridgeReadyResolve=resolve;bridgeReadyReject=reject;
+        bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請重新整理頁面。')),15000);
+        const frame=document.createElement('iframe');
+        bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
+        frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
+        frame.addEventListener('error',()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線失敗，請稍後重試。')),{once:true});
+        const params=new URLSearchParams({bridge:'1',parentOrigin:location.origin,channel:bridgeChannel});
+        frame.src=BACKEND_URL+'?'+params.toString();
+        document.body.appendChild(frame);
+      }).catch(error=>{
+        clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
+        if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
+        bridgeReady=null;
+        throw error;
+      });
+      return bridgeReady;
+    }
+    function bridgeApi(name,args){
+      return connectBridge().then(()=>new Promise((resolve,reject)=>{
+        const id='rpc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+        const timer=setTimeout(()=>{bridgeRequests.delete(id);reject(bridgeError('後端沒有在期限內回覆，請重試。'))},60000);
+        bridgeRequests.set(id,{resolve,reject,timer});
+        if(!bridgeOrigin||!bridgeSource){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
+        bridgeSource.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
+      }));
+    }
+    function api(name,...args){
+      if(window.google&&window.google.script&&window.google.script.run){
+        return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)});
+      }
+      return bridgeApi(name,args);
+    }
+    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else alert(err.message||String(err))}
+    function flash(text){const n=$('#flash');if(n){n.classList.remove('error');n.textContent=text;n.hidden=false}}
+    function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
+    function modal(html){$('#modalbox').className='modalbox';$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
+    function closeModal(){$('#modal').classList.remove('show')}
+    $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+    if(MODE==='researcher') renderResearcherAction();
+    else if(MODE==='ack') renderAck();
+    else if(MODE==='reschedule') renderReschedule();
+    else if(sessionToken) load(); else renderLogin();
+
+    function renderLogin(){
+      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><span class="pill">測試版</span></header><section class="panel auth"><div class="eyebrow">SECURE SIGN IN</div><h1>登入研究工作台</h1><p class="subtitle">使用已加入團隊的 Google 信箱收取一次性驗證碼。研究者只能查看自己的案件與行程。</p><div id="flash" class="alert" hidden></div><form id="loginForm"><div class="field"><label for="email">團隊電子郵件</label><input id="email" type="email" autocomplete="email" required placeholder="name@example.com"></div><button class="btn primary" type="submit">寄送登入驗證碼</button></form><form id="verifyForm" hidden><div class="field"><label for="code">6 位驗證碼</label><input id="code" inputmode="numeric" autocomplete="one-time-code" required maxlength="6"></div><div class="actions"><button class="btn primary" type="submit">驗證並登入</button><button class="btn" type="button" id="backLogin">返回</button></div></form><div class="footer">只使用測試表單與測試資料庫。身分證字號與戶籍地址僅管理者可在權限頁查看。</div></section></div>`;
+      let loginEmail='',requestPending=false,verifyPending=false,loginComplete=false;
+      const flowId=++authFlowSequence;
+      const clearLoginError=()=>{const n=$('#flash');if(n){n.hidden=true;n.classList.remove('error');n.textContent=''}};
+      $('#loginForm').addEventListener('submit',async e=>{
+        e.preventDefault();
+        if(requestPending||loginComplete)return;
+        requestPending=true;clearLoginError();
+        const button=$('#loginForm button[type="submit"]');
+        button.disabled=true;button.textContent='寄送中…';
+        try{
+          loginEmail=$('#email').value.trim();
+          await api('requestLoginCode',loginEmail);
+          if(flowId!==authFlowSequence||loginComplete)return;
+          $('#loginForm').hidden=true;$('#verifyForm').hidden=false;flash('已寄出驗證碼，請查看該信箱。');
+        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
+        finally{
+          requestPending=false;
+          if(flowId===authFlowSequence){const current=$('#loginForm button[type="submit"]');if(current){current.disabled=false;current.textContent='寄送登入驗證碼'}}
+        }
+      });
+      $('#verifyForm').addEventListener('submit',async e=>{
+        e.preventDefault();
+        if(verifyPending||loginComplete)return;
+        verifyPending=true;clearLoginError();
+        const button=$('#verifyForm button[type="submit"]'),codeInput=$('#code');
+        button.disabled=true;button.textContent='驗證中…';codeInput.disabled=true;
+        try{
+          const result=await api('verifyLoginCode',loginEmail,codeInput.value.trim());
+          if(flowId!==authFlowSequence||loginComplete)return;
+          loginComplete=true;sessionToken=result.token;saveSessionToken(sessionToken);await load();
+        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
+        finally{
+          verifyPending=false;
+          if(flowId===authFlowSequence&&!loginComplete){const current=$('#verifyForm button[type="submit"]'),input=$('#code');if(current){current.disabled=false;current.textContent='驗證並登入'}if(input)input.disabled=false}
+        }
+      });
+      $('#backLogin').addEventListener('click',()=>{if(requestPending||verifyPending)return;clearLoginError();$('#verifyForm').hidden=true;$('#loginForm').hidden=false});
+    }
+
+    function isSessionError(error){return /請重新登入|登入已逾時|帳號權限已變更|尚未加入研究團隊|沒有此操作權限/.test(String(error&&error.message||error))}
+    function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',load)}
+    async function load(){
+      const requestId=++bootstrapRequestSequence;
+      try{
+        const nextState=await api('getBootstrap',sessionToken);
+        if(requestId!==bootstrapRequestSequence)return;
+        state=nextState;
+        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));
+        const monthKey=calendarMonthKey(availabilityMonth),monthRequest=++availabilityRequestSequence;
+        availabilityLoading=true;availabilityLoadError='';
+        const plan=await api('getMonthSchedule',sessionToken,monthKey);
+        if(requestId!==bootstrapRequestSequence||monthRequest!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
+        availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;draw();
+      }catch(error){
+        if(requestId!==bootstrapRequestSequence)return;
+        availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);
+        if(isSessionError(error)){sessionToken='';clearSessionToken();state=null;renderLogin();showError(error);return}
+        if(state){draw();showError(error)}else renderLoadError(error);
+      }
+    }
+    function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
+    function calendarMonthDate(key){const [year,month]=String(key).split('-').map(Number);return new Date(year,month-1,1)}
+    async function loadAvailabilityMonth(options={}){
+      const monthKey=calendarMonthKey(availabilityMonth),requestId=++availabilityRequestSequence,cached=availabilityMonthCache.get(monthKey);
+      availabilityLoadError='';
+      if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();return}
+      availabilityPlan=null;availabilityLoading=true;draw();
+      try{
+        const plan=await api('getMonthSchedule',sessionToken,monthKey);
+        if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
+        availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;availabilityLoadError='';draw();
+      }catch(error){
+        if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
+        availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);draw();showError(error);
+      }
+    }
+    function draw(){
+      const admin=state.user.role==='admin';
+      const nav=admin?[['dashboard','總覽'],['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
+      if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
+      const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
+      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><div class="eyebrow">${activeView==='dashboard'?'STUDY OVERVIEW':'RESEARCH DESK'}</div><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">測試版資料只寫入獨立工作流程資料庫與「${esc(state.calendarName)}」。原始正式表單與原始回覆表未修改。</div></main></div></div>`;
+      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
+      $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
+      bindView(activeView,admin);
+    }
+    function subtitleFor(view,admin){return ({dashboard:admin?'追蹤 119 位招募進度、待審核案件與研究者確認。':'查看指派給你的案件、可收時間與近期場次。',availability:'每個時段只能指派一位研究者；儲存時檢查重複時段與 30 分鐘緩衝。',workflow:admin?'資格初查通過後交由負責研究者確認；疑似重複或資料不完整的案件留給你審核。':'確認指派給你的實驗；若無法執行，請填寫理由。',appointments:'只顯示已確認的受試者場次；姓名與聯絡資訊不會出現在可收時間月曆。',sessions:'實驗結束後紀錄出席、結果摘要需求、黑名單及受試者個別狀況。',notes:'研究者可以隨時新增整體觀察，供研究討論整理。',researchers:'以姓名和個人顏色辨識排班；加入研究者前先確認其團隊信箱。',settings:'目前所有寄出的流程郵件都導向你的測試信箱。'}[view]||'')}
+
+    function renderView(view,admin){
+      if(view==='dashboard')return renderDashboard(admin);
+      if(view==='availability')return AvailabilityUI.renderAvailability(admin);
+      if(view==='workflow')return renderWorkflow(admin);
+      if(view==='appointments')return renderAppointments(admin);
+      if(view==='sessions')return renderSessions(admin);
+      if(view==='notes')return renderNotes();
+      if(view==='researchers')return renderResearchers();
+      return renderSettings();
+    }
+    const statusName={review:'需管理者審核',researcher_pending:'等研究者確認',needs_coordination:'待協調',reschedule_pending:'改期待確認',confirmed:'已錄取',completed:'已完成',no_show:'未到',rejected:'未錄取'};
+    function metric(label,value,hint){return `<div class="metric"><small>${label}</small><strong>${value}</strong><span class="help">${hint}</span></div>`}
+    function renderDashboard(admin){
+      const booked=state.count;
+      const pending=admin?state.applications.filter(a=>a.status==='review').length:state.applications.filter(a=>['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).length;
+      const relay=admin&&state.mailRelay;
+      const mailAlert=relay&&(relay.pending||relay.needsAttention||(relay.enabled&&relay.primaryRemaining<=20))
+        ?`<div class="alert ${relay.needsAttention?'error':''}">主要寄件帳號剩餘 ${relay.primaryRemaining??'未知'} 位收件人額度；寄信佇列待寄 ${relay.pending} 封、需處理 ${relay.needsAttention} 封。${relay.enabled?'':'備援目前未啟用。'}${relay.error?esc(relay.error):'請到獨立寄信佇列查看狀態。'}</div>`:'';
+      const effects=admin&&state.sideEffects;
+      const effectsAlert=effects&&(effects.pending||effects.needsReview||effects.inFlight)
+        ?`<div class="alert ${effects.needsReview?'error':''}">背景寄送／行事曆作業：待處理 ${effects.pending} 項、執行中 ${effects.inFlight} 項、需檢查 ${effects.needsReview} 項。${effects.needsReview?'系統不會自動重送可能已完成的項目，請檢查 Apps Script 執行記錄後再處理。':''}</div>`:'';
+      const formSyncAlert=admin&&state.formSync?.pending?`<div class="alert error">報名表同步失敗，系統會在背景重試；目前表單選項可能尚未反映最新班表。${esc(state.formSync.error||'')}</div>`:'';
+      return `${formSyncAlert}${effectsAlert}${mailAlert}<div class="metrics">${metric('已保留／完成',`${booked} / ${state.target}`,'目標 119 位')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
+    }
+    function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span></h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
+    function calendarDate(year,monthIndex,day){return `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`}
+    function calendarMonthTitle(month){return `${month.getFullYear()} 年 ${month.getMonth()+1} 月`}
+    function shiftCalendarMonth(month,delta){return new Date(month.getFullYear(),month.getMonth()+delta,1)}
+    function calendarLegend(){return state.researchers.map(r=>`<span class="calendar-legend-item"><i class="color-dot" style="--person:${esc(r.color)}"></i>${esc(r.name)}</span>`).join('')}
+    function renderMonthGrid(month,items,renderItem,addButton){
+      const year=month.getFullYear(),monthIndex=month.getMonth(),leading=new Date(year,monthIndex,1).getDay();
+      const dayCount=new Date(year,monthIndex+1,0).getDate(),cellCount=Math.ceil((leading+dayCount)/7)*7;
+      const byDate=items.reduce((map,item)=>{(map[item.date]||(map[item.date]=[])).push(item);return map},{ });
+      return Array.from({length:cellCount},(_,index)=>{
+        const day=index-leading+1;
+        if(day<1||day>dayCount)return '<div class="calendar-day outside" aria-hidden="true"></div>';
+        const date=calendarDate(year,monthIndex,day),dow=new Date(year,monthIndex,day).getDay(),events=(byDate[date]||[]).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+        const weekday=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][dow];
+        return `<div class="calendar-day ${dow===0||dow===6?'weekend':''}"><div class="calendar-day-head"><span class="calendar-day-number">${day} <small class="calendar-weekend">${dow===0||dow===6?'週末':''}</small><small class="calendar-mobile-weekday">${weekday}</small></span>${addButton?`<button class="btn calendar-day-add" type="button" data-day-add="${date}" aria-label="編輯 ${date} 時段">＋</button>`:''}</div><div class="calendar-events">${events.map(renderItem).join('')}</div></div>`;
+      }).join('');
+    }
+    function calendarToolbar(month,kind){const roster=kind==='availability'?availabilityPlan?.roster:null,nextLabel=roster?(roster.day<20?'下月班表':availabilityPlan.status==='published'?'已發布下月':'下月草稿'):'',shortcuts=roster?`<div class="calendar-shortcuts"><button class="btn small ${calendarMonthKey(month)===roster.currentMonth?'primary':''}" type="button" data-calendar-goto="availability:${roster.currentMonth}">本月</button><button class="btn small ${calendarMonthKey(month)===roster.nextMonth?'primary':''}" type="button" data-calendar-goto="availability:${roster.nextMonth}">${nextLabel}</button></div>`:'';return `<div class="calendar-top"><div class="calendar-period"><button class="btn calendar-nav" type="button" data-calendar-nav="${kind}:-1" aria-label="上個月">‹</button><h2>${calendarMonthTitle(month)}</h2><button class="btn calendar-nav" type="button" data-calendar-nav="${kind}:1" aria-label="下個月">›</button></div>${shortcuts}<div class="calendar-legend">${calendarLegend()}</div></div>`}
+    function renderWorkflow(admin){
+      const cases=state.applications.filter(a=>admin?['review','researcher_pending','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId));
+      if(!cases.length)return '<section class="panel"><div class="empty">目前沒有待處理案件</div></section>';
+      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='needs_coordination'&&a.lastStatusNote?`<div class="alert">研究者回覆：${esc(a.lastStatusNote)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&a.status==='needs_coordination'&&a.assignedResearcherId?`<div class="field"><label>再次確認說明（必填）</label><input data-recheck-message="${esc(a.applicationId)}" placeholder="例如：原排班已確認，想請你再評估是否能執行"></div><button class="btn" data-recheck="${esc(a.applicationId)}">請原負責研究者再次確認</button>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)?researcherResponseForm(a):''}</section>`).join('');
+    }
+    function researcherResponseForm(a){return `<form class="response-form" data-response="${esc(a.applicationId)}"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="grid"><div class="field"><label>無法執行原因</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>補充說明（無法執行時必填）</label><input name="detail" placeholder="請簡短說明"></div></div><button class="btn primary" type="submit">送出研究者回覆</button></form>`}
+    function renderAppointments(admin){
+      const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));
+      const calendarItems=apps.map(a=>{const slot=state.slots.find(s=>s.slotId===a.slotId);return slot?{date:slot.date,start:slot.start,end:slot.end,name:a.name,researcherName:a.researcherName,color:a.researcherColor,status:a.status}:null}).filter(Boolean);
+      const renderAppointment=a=>`<div class="appointment-calendar-event" style="--person:${esc(a.color)}"><strong>${esc(a.start)}–${esc(a.end)}</strong><span>${esc(a.name)}</span><span>${esc(a.researcherName)}</span></div>`;
+      const calendarUrl='https://calendar.google.com/calendar/u/0/r?cid='+encodeURIComponent(state.calendarId||'');
+      const mine=state.applications.filter(a=>a.status==='confirmed'&&a.assignedResearcherId===state.user.researcherId).sort((a,b)=>a.slot.localeCompare(b.slot));
+      const changeCards=(state.scheduleChanges||[]).filter(c=>c.status!=='cancelled').sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,10).map(c=>{
+        const app=state.applications.find(a=>a.applicationId===c.applicationId),received=c.targetId===state.user.researcherId&&c.status==='pending_researcher';
+        if(admin&&['pending_manager','declined'].includes(c.status))return `<article class="card"><div class="panel-head"><div><h3>${esc(c.initiatorName)}｜${esc(c.slot)}</h3><div class="meta">${esc(c.reason)}${c.resolutionReason?' · 研究者回覆：'+esc(c.resolutionReason):''}</div></div><span class="tag amber">待管理者協調</span></div><div class="grid"><div class="field"><label>安排支援研究者</label><select data-resolve-target="${esc(c.id)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==c.initiatorId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>處理說明／取消原因</label><input data-resolve-reason="${esc(c.id)}" placeholder="說明支援安排或取消原因"></div></div><div class="actions"><button class="btn primary" data-resolve-change="assign" data-change="${esc(c.id)}">請求支援研究者</button><button class="btn danger" data-resolve-change="cancel" data-change="${esc(c.id)}">取消並通知受試者</button></div>${app?`<div class="meta">受試者：${esc(app.name)}　${esc(app.email)}</div>`:''}</article>`;
+        if(received)return `<article class="card"><div class="panel-head"><div><h3>${c.type==='swap'?'互換場次':'支援場次'}｜${esc(c.slot)}</h3><div class="meta">${esc(c.initiatorName)}提出${c.otherSlot?'互換 '+esc(c.otherSlot):''}。原因：${esc(c.reason)}${c.managerNote?'；管理者說明：'+esc(c.managerNote):''}</div></div><span class="tag amber">需要你回覆</span></div><div class="actions"><button class="btn primary" data-respond-change="accept" data-change="${esc(c.id)}">接受</button><button class="btn danger" data-respond-change="decline" data-change="${esc(c.id)}">婉拒</button></div></article>`;
+        if(admin)return `<article class="card"><strong>${esc(c.slot)}</strong><span class="tag amber">${c.status==='pending_researcher'?'等待 '+esc(c.targetName)+' 回覆':'已處理'}</span><div class="meta">${esc(c.initiatorName)}提出：${esc(c.reason)}${c.managerNote?'；管理者說明：'+esc(c.managerNote):''}</div></article>`;
+        return `<article class="card"><strong>${esc(c.slot)}</strong><span class="tag ${['pending_manager','pending_researcher'].includes(c.status)?'amber':c.status==='accepted'?'green':'red'}">${c.status==='pending_manager'?'等待管理者協調':c.status==='pending_researcher'?'等待對方研究者回覆':c.status==='declined'?'對方婉拒':c.status==='accepted'?'已完成':'處理中'}</span><div class="meta">${esc(c.reason)}${c.resolutionReason?' · '+esc(c.resolutionReason):''}${c.managerNote?' · 管理者：'+esc(c.managerNote):''}</div></article>`;
+      }).join('');
+      const mineCards=mine.map(a=>{const pending=(state.scheduleChanges||[]).some(c=>['pending_manager','pending_researcher','declined'].includes(c.status)&&(c.applicationId===a.applicationId||c.otherApplicationId===a.applicationId));return `<article class="card"><div class="panel-head"><div><h3>${esc(a.name)}</h3><div class="meta">${esc(a.slot)}</div></div>${pending?'<span class="tag amber">異動處理中</span>':`<button class="btn small" data-request-change="${esc(a.applicationId)}">臨時有事／需要調整</button>`}</div></article>`}).join('');
+      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>受試者實際行程</h2><p class="help">受試者確認錄取後才顯示。研究者可提出互換、找人代班或交由管理者協調。</p></div><a class="link" target="_blank" href="${esc(calendarUrl)}">開啟測試 Google 日曆 →</a></div>${calendarToolbar(appointmentMonth,'appointments')}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(appointmentMonth,calendarItems,renderAppointment,false)}</div></div>${calendarItems.length?'':'<div class="empty">這個月份尚無已確認的實驗場次</div>'}</section><section class="panel"><h2>我的已排實驗</h2><p class="help">提出臨時異動後，原時間會保留，直到代班或換班研究者接受。</p>${mineCards||'<div class="empty">目前沒有指派給你的已確認場次</div>'}</section>${changeCards?`<section class="panel"><h2>${admin?'待協調的臨時異動':'臨時異動與支援邀請'}</h2>${changeCards}</section>`:''}`;
+    }
+    function openScheduleChangeRequest(applicationId){
+      const app=state.applications.find(item=>item.applicationId===applicationId);
+      if(!app)return showError(new Error('找不到這筆已確認場次，請重新整理。'));
+      const targets=state.researchers.filter(r=>r.researcherId!==state.user.researcherId);
+      const pendingIds=new Set((state.scheduleChanges||[]).filter(change=>['pending_manager','pending_researcher','declined'].includes(change.status)).flatMap(change=>[change.applicationId,change.otherApplicationId].filter(Boolean)));
+      const otherSessions=(state.teamSessions||[]).filter(item=>item.researcherId!==state.user.researcherId&&item.applicationId!==applicationId&&!pendingIds.has(item.applicationId));
+      modal(`<h2>申請臨時調整</h2><p class="help">${esc(app.name)} · ${esc(app.slot)}。在對方或管理者確認前，原安排維持不變。</p><form id="scheduleChangeRequest"><div class="field"><label>處理方式</label><select name="kind" required><option value="">請選擇</option><option value="swap">和其他研究者互換場次</option><option value="cover">請其他研究者代班</option><option value="manager">交由管理者協調</option></select></div><div class="field" data-change-target-kind="swap" hidden><label>選擇要互換的已確認場次</label><select name="swapTarget"><option value="">請選擇場次</option>${otherSessions.map(item=>`<option value="${esc(item.applicationId)}">${esc(item.slot)} · ${esc(item.researcherName)}</option>`).join('')}</select>${otherSessions.length?'':'<small class="help">目前沒有其他研究者的已確認場次可互換。</small>'}</div><div class="field" data-change-target-kind="cover" hidden><label>選擇代班研究者</label><select name="coverTarget"><option value="">請選擇研究者</option>${targets.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select>${targets.length?'':'<small class="help">目前沒有其他啟用中的研究者。</small>'}</div><div class="field"><label>原因（必填）</label><textarea name="reason" required maxlength="500" placeholder="請說明臨時狀況，讓管理者或支援研究者了解"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelScheduleChange">返回</button><button class="btn primary" type="submit">送出異動請求</button></div></form>`);
+      const form=$('#scheduleChangeRequest'),kind=form.elements.kind;
+      const updateTargets=()=>{form.querySelectorAll('[data-change-target-kind]').forEach(group=>{const active=group.dataset.changeTargetKind===kind.value;group.hidden=!active;group.style.display=active?'':'none';const select=group.querySelector('select');select.required=active;if(!active)select.value=''})};
+      kind.addEventListener('change',updateTargets);
+      $('#cancelScheduleChange').addEventListener('click',closeModal);
+      form.addEventListener('submit',async event=>{event.preventDefault();const targetValue=kind.value==='swap'?form.elements.swapTarget.value:kind.value==='cover'?form.elements.coverTarget.value:'';if(kind.value!=='manager'&&!targetValue){showError(new Error('請先選擇互換場次或代班研究者。'));return}const submit=form.querySelector('[type="submit"]');submit.disabled=true;try{const result=await api('requestSessionChange',sessionToken,applicationId,kind.value,targetValue,form.elements.reason.value.trim());closeModal();await load();flash(result.message)}catch(error){submit.disabled=false;showError(error)}});
+    }
+    function renderSessions(admin){const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));return `<section class="panel"><h2>實驗紀錄</h2>${apps.map(a=>{const rec=state.records.find(r=>r.applicationId===a.applicationId)||{};return `<form class="session-form card" data-session="${esc(a.applicationId)}"><div class="card-top"><div><h3>${esc(a.name)}</h3><div class="meta">${esc(a.slot)} · ${esc(a.researcherName)}</div></div></div><div class="grid"><div class="field"><label>出席狀況</label><select name="attendance"><option value="">尚未紀錄</option>${['出席','遲到','未到'].map(x=>`<option ${rec.attendance===x?'selected':''}>${x}</option>`).join('')}</select></div><label class="checkrow"><input type="checkbox" name="result" ${rec.requestedResult==='TRUE'?'checked':''}>受試者主動想收到研究結果</label><label class="checkrow"><input type="checkbox" name="blacklist" ${rec.blacklist==='TRUE'?'checked':''}>黑名單（原因填在備註）</label></div><div class="field"><label>受試者個別狀況</label><textarea name="note" placeholder="例如：不專心作答、看過答案、做過相似測驗">${esc(rec.individualNote||'')}</textarea></div><button class="btn primary" type="submit">儲存紀錄</button></form>`}).join('')||'<div class="empty">確認錄取後，場次會出現在這裡</div>'}</section>`}
+    function renderNotes(){return `<section class="panel"><h2>新增整體觀察</h2><div class="grid"><div class="field"><label>日期</label><input id="noteDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>觀察札記</label><textarea id="noteText" placeholder="例如：動作情境下受試者明顯喘，可能影響後續認知作業表現"></textarea></div></div><button class="btn primary" id="saveNote">儲存札記</button></section><section class="panel"><h2>研究觀察紀錄</h2>${state.notes.slice().reverse().map(n=>`<div class="card"><div class="meta">${esc(n.date)} · ${esc(n.observerId)}</div><div>${esc(n.note)}</div></div>`).join('')||'<div class="empty">尚無整體觀察札記</div>'}</section>`}
+    function renderResearchers(){return `<section class="panel"><h2>新增研究者</h2><p class="help">新增後，研究者可用團隊信箱收取一次性登入碼。</p><form id="researcherForm"><div class="grid"><div class="field"><label>研究者姓名</label><input name="name" required placeholder="只填名字"></div><div class="field"><label>研究者 Email</label><input name="email" type="email" required></div><div class="field"><label>月曆顏色</label><input name="color" type="color" value="#2b8678"></div></div><button class="btn primary">加入研究者</button></form></section><section class="panel"><h2>研究團隊</h2>${state.researchers.map(r=>`<div class="slotline researcher-row" style="--person:${esc(r.color)}"><span class="color-dot" style="--person:${esc(r.color)}"></span><strong>${esc(r.name)}</strong><span class="meta">${esc(r.email||'研究者帳號')}</span>${r.researcherId!==state.user.researcherId?`<button class="btn small danger" data-remove-researcher="${esc(r.researcherId)}" data-name="${esc(r.name)}">移除</button>`:'<span class="tag">你</span>'}</div>`).join('')||'<div class="empty">尚未加入其他研究者</div>'}<p class="help">移除會立即停用登入並撤銷既有工作階段。若仍有待確認或已排定案件，需先完成支援或改期。</p></section>`}
+    function renderSettings(){
+      const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
+      const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="time" data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
+      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button></div><p class="help">只有管理者發布月份班表時，表單選項才會同步。時段需距離開始至少 12 小時；達到招募目標或沒有可選時段時，系統會暫停收件。</p><p class="help">確認錄取後的事件只建立在「${esc(state.calendarName)}」；管理者本人排班時會檢查其主要日曆。其他研究者的個人日曆未連接。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
+    }
     function bindView(view,admin){
       $('#content').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
       if(view==='availability'){
         document.querySelectorAll('[data-calendar-nav^="availability:"]').forEach(b=>b.addEventListener('click',()=>{availabilityMonth=shiftCalendarMonth(availabilityMonth,Number(b.dataset.calendarNav.split(':')[1]));loadAvailabilityMonth().catch(showError)}));
         document.querySelectorAll('[data-calendar-goto^="availability:"]').forEach(b=>b.addEventListener('click',()=>{availabilityMonth=calendarMonthDate(b.dataset.calendarGoto.split(':')[1]);loadAvailabilityMonth().catch(showError)}));
-        document.querySelectorAll('[data-day-add]').forEach(b=>b.addEventListener('click',()=>openAvailabilityEditor(b.dataset.dayAdd,admin)));
-        document.querySelectorAll('[data-day-open]').forEach(b=>b.addEventListener('click',()=>openAvailabilityEditor(b.dataset.dayOpen,admin)));
-        document.querySelectorAll('[data-adjust-slot]').forEach(b=>b.addEventListener('click',event=>{event.stopPropagation();openDraftSlotTimeEditor(b.dataset.adjustDate,b.dataset.adjustSlot)}));
+        document.querySelectorAll('[data-day-add]').forEach(b=>b.addEventListener('click',()=>AvailabilityUI.openAvailabilityEditor(b.dataset.dayAdd,admin)));
+        document.querySelectorAll('[data-day-open]').forEach(b=>b.addEventListener('click',()=>AvailabilityUI.openAvailabilityEditor(b.dataset.dayOpen,admin)));
+        document.querySelectorAll('[data-adjust-slot]').forEach(b=>b.addEventListener('click',event=>{event.stopPropagation();AvailabilityUI.openDraftSlotTimeEditor(b.dataset.adjustDate,b.dataset.adjustSlot)}));
+        $('#retryAvailabilityMonth')?.addEventListener('click',()=>loadAvailabilityMonth({force:true}));
         $('#submitMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#submitMyMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#publishMonth')?.addEventListener('click',async()=>{if(!confirm(`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
         document.querySelectorAll('[data-schedule-support]').forEach(button=>button.addEventListener('click',async()=>{const reason=button.dataset.scheduleSupport==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(button.dataset.scheduleSupport==='decline'&&!reason)return;try{if(availabilityPlan.status==='published')await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,button.dataset.scheduleSupport,reason);else await api('setScheduleSupportResponse',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.date,button.dataset.slot,button.dataset.scheduleSupport,reason);await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
-        document.querySelectorAll('.assign-btn').forEach(b=>b.addEventListener('click',()=>{const select=document.querySelector(`[data-assign="${b.dataset.slot}"]`);if(!select.value){showError(new Error('請先選擇研究者。'));return}submitSlotAssignment(b.dataset.slot,select.value).catch(showError)}));
+        document.querySelectorAll('.assign-btn').forEach(b=>b.addEventListener('click',()=>{const select=document.querySelector(`[data-assign="${b.dataset.slot}"]`);if(!select.value){showError(new Error('請先選擇研究者。'));return}AvailabilityUI.submitSlotAssignment(b.dataset.slot,select.value).catch(showError)}));
       }
       if(view==='appointments'){
         document.querySelectorAll('[data-calendar-nav^="appointments:"]').forEach(b=>b.addEventListener('click',()=>{appointmentMonth=shiftCalendarMonth(appointmentMonth,Number(b.dataset.calendarNav.split(':')[1]));draw()}));
@@ -520,14 +601,14 @@
       }
       if(view==='settings'){
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
-        $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],last=rows.length?rows[rows.length-1].value:'09:30',start=addMinutesLabel(last,90),index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="time" data-template-start="${index}" value="${esc(start)}"></label><span class="template-end">結束：${esc(addMinutesLabel(start,60))}</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
+        $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],last=rows.length?rows[rows.length-1].value:'09:30',start=AvailabilityUI.addMinutesLabel(last,90),index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="time" data-template-start="${index}" value="${esc(start)}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(start,60))}</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
         bindTemplateControls();
-        $('#saveScheduleTemplate')?.addEventListener('click',async()=>{const starts=[...document.querySelectorAll('[data-template-start]')].map(input=>input.value);try{await api('updateScheduleDefaults',sessionToken,{slots:starts.map(start=>[start,addMinutesLabel(start,60)])});await load();flash('未來月份的預設時段已更新。')}catch(err){showError(err)}});
+        $('#saveScheduleTemplate')?.addEventListener('click',async()=>{const starts=[...document.querySelectorAll('[data-template-start]')].map(input=>input.value);try{await api('updateScheduleDefaults',sessionToken,{slots:starts.map(start=>[start,AvailabilityUI.addMinutesLabel(start,60)])});await load();flash('未來月份的預設時段已更新。')}catch(err){showError(err)}});
       }
     }
     function bindTemplateControls(){
       document.querySelectorAll('[data-template-remove]').forEach(button=>{if(button.dataset.bound)return;button.dataset.bound='1';button.addEventListener('click',()=>{if(document.querySelectorAll('[data-template-start]').length<=1){showError(new Error('至少保留一個預設時段。'));return}button.closest('.template-row').remove();[...document.querySelectorAll('.template-row')].forEach((row,index)=>{row.querySelector('strong').textContent=`時段 ${index+1}`;row.querySelector('[data-template-start]').dataset.templateStart=index;row.querySelector('[data-template-remove]').dataset.templateRemove=index})})});
-      document.querySelectorAll('[data-template-start]').forEach(input=>{if(input.dataset.bound)return;input.dataset.bound='1';input.addEventListener('change',()=>{input.closest('.template-row').querySelector('.template-end').textContent='結束：'+addMinutesLabel(input.value,60)})});
+      document.querySelectorAll('[data-template-start]').forEach(input=>{if(input.dataset.bound)return;input.dataset.bound='1';input.addEventListener('change',()=>{input.closest('.template-row').querySelector('.template-end').textContent='結束：'+AvailabilityUI.addMinutesLabel(input.value,60)})});
     }
 
     async function renderResearcherAction(){
