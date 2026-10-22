@@ -138,6 +138,47 @@
     .availability-modal .availability-editor-actions{margin-top:10px}
     @media(max-width:900px){.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:68px minmax(0,1.25fr) minmax(170px,1fr)}.availability-modal .custom-editor-header,.availability-modal .custom-slot-row{grid-template-columns:68px minmax(0,1.25fr) minmax(170px,1fr) auto}}
     @media(max-width:600px){.availability-modal{padding:14px}.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(68px,.5fr) minmax(0,1fr);gap:5px}.availability-modal .draft-slot-row{min-height:0;padding:7px}.availability-modal .draft-slot-row>.schedule-editor-times{grid-column:1/-1;grid-row:2}.availability-modal .draft-slot-row>.slot-assignee{grid-column:2;grid-row:1}.availability-modal .custom-slot-row{grid-template-columns:minmax(64px,.5fr) minmax(0,1fr);gap:5px}.availability-modal .custom-slot-row>.schedule-editor-times{grid-column:1/-1;grid-row:2}.availability-modal .custom-slot-row>.slot-assignee{grid-column:2;grid-row:1}.availability-modal .custom-slot-row>.checkrow{grid-column:2;grid-row:3;justify-self:end}.availability-modal .availability-add-fields{grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr);gap:5px}.availability-modal .availability-add-fields>.field:nth-of-type(3),.availability-modal .availability-add-fields>.add-owner{grid-column:1/-1}.availability-modal .availability-add-fields>.help,.availability-modal .availability-add-fields>.add-slot-enable{grid-column:1/-1}.availability-modal .availability-add-fields input[type=time],.availability-modal .availability-add-fields .time-readout,.availability-modal .draft-slot-row select,.availability-modal .published-slot-row select,.availability-modal .custom-slot-row select,.availability-modal .availability-add-fields select{height:42px;min-height:42px}.availability-modal .draft-slot-row .schedule-editor-times input[data-time-24h],.availability-modal .draft-slot-row .time-readout{height:42px;min-height:42px}.availability-modal .draft-slot-row .time-pair>.field,.availability-modal .custom-slot-row .time-pair>.field{grid-template-rows:42px}.availability-modal .published-slot-row{grid-template-columns:minmax(0,1fr) auto;gap:6px}.availability-modal .published-slot-row>.time-pair,.availability-modal .published-slot-row>.slot-time-range{grid-column:1/-1}}
+
+    @media(min-width:901px){.layout{grid-template-columns:185px minmax(0,1fr)}.side{padding-inline:8px}.navbtn{padding:10px 8px}}
+    .time-wheel-control{position:relative;display:flex;align-items:stretch;width:100%;min-width:0;gap:3px}
+    .time-wheel-control>input[data-time-24h]{flex:1 1 auto;width:0;min-width:0;height:38px;min-height:38px;padding:5px 7px;font-variant-numeric:tabular-nums;text-align:center}
+    .time-wheel-trigger{flex:0 0 28px;width:28px;border:1px solid var(--line);border-radius:8px;background:#f7faf8;color:var(--green);font-size:18px;line-height:1}
+    .time-wheel-popover{position:absolute;right:0;bottom:calc(100% + 5px);z-index:20;display:flex;align-items:center;gap:5px;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:0 8px 24px rgba(20,56,48,.16)}
+    .time-wheel-popover[hidden]{display:none}
+    .time-wheel-popover label{display:grid;gap:3px;text-align:center;color:var(--muted);font-size:10px;font-weight:700}
+    .time-wheel-popover select{width:52px;height:112px;padding:2px;border:1px solid var(--line);border-radius:6px;color:var(--ink);font-variant-numeric:tabular-nums}
+    .time-wheel-popover .btn{align-self:flex-end;white-space:nowrap;padding:7px 8px}
+    .availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(88px,.5fr) minmax(250px,1.35fr) minmax(170px,1fr);gap:8px;min-height:46px;padding:5px 8px}
+    .availability-modal .schedule-editor-header{grid-template-columns:minmax(88px,.5fr) minmax(250px,1.35fr) minmax(170px,1fr);gap:8px}
+    .availability-modal .draft-slot-row .time-pair,.availability-modal .published-slot-row .time-pair{grid-template-rows:38px;align-items:center}
+    .availability-modal .draft-slot-row .time-pair>.field,.availability-modal .published-slot-row .time-pair>.field{grid-template-rows:38px;min-width:0}
+    .availability-modal .draft-slot-row .time-pair input[data-time-24h],.availability-modal .published-slot-row .time-pair input[data-time-24h]{height:38px;min-height:38px}
+    .availability-modal .published-slot-row>.checkrow{justify-self:end;white-space:nowrap}
+    .availability-modal .published-slot-row .slot-assignee,.availability-modal .draft-slot-row .slot-assignee{min-width:0}
+    .availability-modal .slot-number{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;font-weight:750}
+    .availability-modal .slot-number input{accent-color:var(--green)}
+    .availability-modal .assignee-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .availability-modal .custom-slot-row .time-wheel-control{max-width:100%}
+    @media(max-width:900px){.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(76px,.5fr) minmax(210px,1.3fr) minmax(150px,1fr)}}
+    @media(max-width:600px){.availability-modal .schedule-editor-header{display:none}.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:6px}.availability-modal .draft-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.slot-time-range{grid-column:1/-1}.availability-modal .draft-slot-row>.slot-assignee,.availability-modal .published-slot-row>.slot-assignee{grid-column:2;grid-row:1}.availability-modal .published-slot-row>.checkrow{grid-column:1/-1;justify-self:end}.time-wheel-popover{right:-2px}}
+    .compact-action{width:min(460px,100%);margin:7vh auto;padding:20px}
+    .compact-action h1{margin:0 0 8px;font-size:24px}
+    .compact-action>#flash{margin:6px 0 14px;padding:0;background:transparent;color:var(--muted)}
+    .compact-action>#flash.error{background:transparent;color:var(--red)}
+    .ack-card{display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .ack-card>strong{font-size:16px}
+    .ack-slot{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.4;overflow-wrap:break-word}
+    .ack-confirm-button{width:100%;background:#b42318!important;border-color:#b42318!important}
+    .researcher-action-card .ack-slot{font-size:16px}
+    .compact-form{display:grid;gap:10px}
+    .researcher-choice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;border:0}
+    .researcher-choice label{display:flex;align-items:center;gap:8px;min-height:42px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:700}
+    .researcher-choice input{accent-color:var(--green)}
+    .reason-fields{display:grid;gap:2px}
+    .reason-fields[hidden]{display:none!important}
+    .reason-fields .field{margin:4px 0}
+    .compact-form>.btn{width:100%}
+    @media(max-width:600px){.compact-action{margin:4vh auto;padding:14px}.ack-card{padding:13px}.ack-slot{font-size:16px}.researcher-choice{grid-template-columns:1fr}}
 </style>
 
 </head>
@@ -146,6 +187,7 @@
   <div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
   <script>
   window.AvailabilityUI=(()=>{
+    let wheelPointerHandlerBound=false;
     function renderAvailability(admin){
       if(availabilityLoading||availabilityLoadError){
         const status=availabilityLoading?`<div class="notice" role="status">正在載入 ${esc(calendarMonthTitle(availabilityMonth))} 班表…</div>`:`<div class="alert error" role="alert">${esc(availabilityLoadError)} <button class="btn small" id="retryAvailabilityMonth" type="button">重試</button></div>`;
@@ -175,7 +217,7 @@
       const phaseLabel=plan.roster?.phase==='researcher_fill'?'開放填寫中':plan.roster?.phase==='manager_review'?'管理者檢查中':plan.roster?.phase==='publish_day'?'管理者發布日':plan.roster?.phase==='late_review'?'待管理者發布':'本月排班';
       const readOnlyReason=()=>{const roster=plan.roster||{},month=String(plan.month||'');if(roster.currentMonth&&month<roster.currentMonth)return '這是過去月份，排班僅供查看。';if(roster.nextMonth&&month>roster.nextMonth)return `目前只開放本月與下個月；${roster.nextMonth}之後的月份尚未開放。`;if(roster.nextMonth&&month===roster.nextMonth&&Number(roster.day)<20&&!published)return '下月排班將於每月 20 日開放填寫。';return '此月份目前僅供查看。'};
       const workflow=published
-        ?`<div class="roster-actions"><div><strong>已發布班表${canEditMonth?' · 可微調':' · 僅供查看'}</strong><div class="help">${canEditMonth?'本月與已發布的下月可繼續調整未報名時段；研究者只能調整或取消自己的時段。':''}${canEditMonth&&plan.publishedAt?' ':''}${canEditMonth&&plan.publishedAt?`發布時間：${esc(plan.publishedAt)}`:readOnlyReason()}</div></div><span class="tag green">已發布</span></div>`
+        ?`<div class="roster-actions"><div><strong>已發布班表${canEditMonth?' · 可微調':' · 僅供查看'}</strong><div class="help">${canEditMonth?`${admin?'管理者可調整未鎖定時段':'研究者可調整或取消自己的未報名時段'}；已報名場次請用臨時異動。`:''}${canEditMonth&&plan.publishedAt?' ':''}${canEditMonth&&plan.publishedAt?`發布時間：${esc(plan.publishedAt)}`:readOnlyReason()}</div></div><span class="tag green">已發布</span></div>`
         :!editable
         ?`<div class="roster-actions"><div><strong>此月份僅供查看</strong><div class="help">${esc(readOnlyReason())}</div></div><span class="tag">僅供查看</span></div>`
         :admin
@@ -190,136 +232,203 @@
     }
     function isValidTime24h(time){return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(time||''))}
     function normalizeTimeEntry(time){const value=String(time||'').trim();if(isValidTime24h(value))return value;const partial=value.match(/^((?:[01]\d|2[0-3])):([0-5])$/);if(partial)return partial[1]+':'+partial[2]+'0';const digits=value.replace(/\D/g,'');if(/^\d{3,4}$/.test(digits)){const normalized=digits.length===3?(digits[0]==='0'?digits.slice(0,2)+':'+digits[2]+'0':'0'+digits[0]+':'+digits.slice(1)):digits.slice(0,2)+':'+digits.slice(2);return isValidTime24h(normalized)?normalized:value}return value}
-    function bind24HourFields(root=document){root.querySelectorAll('[data-time-24h]').forEach(input=>{if(input.type==='time'||input.dataset.timeBound)return;input.dataset.timeBound='1';input.addEventListener('input',()=>{const digits=input.value.replace(/\D/g,'').slice(0,4);input.value=digits.length===3&&digits[0]!=='0'?'0'+digits[0]+':'+digits.slice(1):digits.length>2?digits.slice(0,2)+':'+digits.slice(2):digits});input.addEventListener('blur',()=>{const normalized=normalizeTimeEntry(input.value);if(normalized!==input.value){input.value=normalized;input.dispatchEvent(new Event('input',{bubbles:true}))}})})}
+    function bind24HourFields(root=document){root.querySelectorAll('[data-time-24h]').forEach(input=>{
+      if(input.dataset.timeBound)return;input.dataset.timeBound='1';input.type='text';input.inputMode='numeric';input.maxLength=5;input.placeholder='HH:mm';input.autocomplete='off';
+      input.addEventListener('input',()=>{input.value=input.value.replace(/[^0-9:]/g,'').slice(0,5)});
+      input.addEventListener('blur',()=>{const normalized=normalizeTimeEntry(input.value);if(normalized!==input.value){input.value=normalized;input.dispatchEvent(new Event('change',{bubbles:true}))}});
+      const wheel=document.createElement('div');wheel.className='time-wheel-control';input.parentNode.insertBefore(wheel,input);wheel.appendChild(input);
+      const trigger=document.createElement('button');trigger.type='button';trigger.className='time-wheel-trigger';trigger.setAttribute('aria-label','使用 24 小時制選擇時間');trigger.textContent='◷';trigger.disabled=input.disabled;wheel.appendChild(trigger);
+      const popover=document.createElement('div');popover.className='time-wheel-popover';popover.hidden=true;
+      const [initialHour='00',initialMinute='00']=(isValidTime24h(input.value)?input.value:'00:00').split(':');
+      const column=(label,count,selected)=>`<label><span>${label}</span><select size="5" aria-label="${label}">${Array.from({length:count},(_,i)=>{const value=String(i).padStart(2,'0');return `<option value="${value}" ${value===selected?'selected':''}>${value}</option>`}).join('')}</select></label>`;
+      popover.innerHTML=`${column('時',24,initialHour)}${column('分',60,initialMinute)}<button type="button" class="btn small">完成</button>`;wheel.appendChild(popover);
+      const selects=[...popover.querySelectorAll('select')];
+      const sync=()=>{if(selects[0].value&&selects[1].value){input.value=selects[0].value+':'+selects[1].value;input.dispatchEvent(new Event('input',{bubbles:true}))}};
+      selects.forEach(select=>select.addEventListener('change',sync));
+      trigger.addEventListener('click',()=>{popover.hidden=!popover.hidden;if(!popover.hidden){const [hour,minute]=(isValidTime24h(input.value)?input.value:'00:00').split(':');selects[0].value=hour;selects[1].value=minute;selects[0].focus()}});
+      popover.querySelector('button').addEventListener('click',()=>{popover.hidden=true;input.dispatchEvent(new Event('change',{bubbles:true}));input.focus()});
+    });if(!wheelPointerHandlerBound){document.addEventListener('pointerdown',event=>document.querySelectorAll('.time-wheel-popover:not([hidden])').forEach(popover=>{if(!popover.parentElement?.contains(event.target))popover.hidden=true}));wheelPointerHandlerBound=true}}
     function addMinutesLabel(time,minutes){if(!isValidTime24h(time))return '';const parts=String(time).split(':').map(Number),n=parts[0]*60+parts[1]+minutes;return String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
     function openPublishedAvailabilityEditor(date,admin){
-      const day=availabilityPlan.days?.[date]||{mode:availabilityPlan.mode||'standard',slots:[]},myId=state.user.researcherId||'';
-      const slots=(day.slots||[]).slice().sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+      const day=availabilityPlan.days?.[date]||{mode:availabilityPlan.mode||'standard',lunchBreak:true,slots:[]},myId=state.user.researcherId||'';
+      const slots=(day.slots||[]).slice().sort((a,b)=>String(a.start).localeCompare(String(b.start))).map(s=>Object.assign({},s));
+      let working=slots.map(s=>Object.assign({},s)),workingLunch=day.lunchBreak!==false;
+      const scheduleEdits=[];
+      const protectedSlot=s=>Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold'].includes(s.status);
+      const ownerSelect=s=>`<select data-published-owner="${esc(s.slotId)}" aria-label="${esc(s.start)} 研究者" ${protectedSlot(s)?'disabled':''}><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`;
       const rows=slots.map(slot=>{
-        const locked=Boolean(slot.locked)||['held','booked','completed','reschedule_hold'].includes(slot.status),editable=admin&&!locked&&['available','support_pending','needs_assignment'].includes(slot.status),researcherCanAdjust=!admin&&!locked&&slot.status==='available'&&slot.researcherId===myId&&day.mode!=='custom',canCancel=!locked&&(admin?['available','support_pending','needs_assignment'].includes(slot.status):slot.status==='available'&&slot.researcherId===myId);
-        const owner=admin&&editable?`<select data-published-owner="${esc(slot.slotId)}" aria-label="${esc(slot.start)} 時段研究者"><option value="" ${slot.researcherId?'':'selected'}>待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${slot.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:`<span class="assignee-name">${esc(slot.researcherName||'待認領')}</span>`;
-        const times=editable?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">${esc(slot.start)} 時段開始時間</span><input type="time" lang="en-GB" step="60" aria-label="${esc(slot.start)} 時段開始時間" data-time-24h data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">${esc(slot.start)} 時段結束時間${day.mode==='custom'?'':'（自動）'}</span>${day.mode==='custom'?`<input type="time" lang="en-GB" step="60" aria-label="${esc(slot.start)} 時段結束時間" data-time-24h data-published-end="${esc(slot.slotId)}" value="${esc(slot.end)}">`:`<output class="time-readout" data-published-auto-end="${esc(slot.slotId)}">${esc(slot.end)}</output>`}</label></div>`:researcherCanAdjust?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">${esc(slot.start)} 時段開始時間</span><input type="time" lang="en-GB" step="60" aria-label="${esc(slot.start)} 時段開始時間" data-time-24h data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">${esc(slot.start)} 時段結束時間（自動）</span><output class="time-readout" data-published-auto-end="${esc(slot.slotId)}">${esc(slot.end)}</output></label></div>`:`<strong class="slot-time-range">${esc(slot.start)}–${esc(slot.end)}</strong>`;
-        const status=slot.status==='available'?'可報名':slot.status==='booked'?'已報名':slot.status==='support_pending'?'待回覆支援':slot.status==='needs_assignment'?'待安排':slot.status;
-        const support=slot.status==='support_pending'&&slot.researcherId===myId&&!admin?`<div class="actions"><button class="btn small" data-published-support="accept" data-slot="${esc(slot.slotId)}">接受</button><button class="btn small danger" data-published-support="decline" data-slot="${esc(slot.slotId)}">婉拒</button></div>`:'';
-        return `<div class="schedule-editor-row published-slot-row" data-published-row="${esc(slot.slotId)}" data-published-status="${esc(slot.status)}" data-published-owner-id="${esc(slot.researcherId||'')}" data-published-original-start="${esc(slot.start)}">${times}${owner}<span class="tag ${slot.status==='booked'?'red':slot.status==='available'?'green':'amber'}">${esc(status)}</span>${canCancel?`<label class="checkrow"><input type="checkbox" data-published-cancel="${esc(slot.slotId)}">${admin?'關閉':'取消我的時段'}</label>`:''}${support}</div>`;
+        const locked=protectedSlot(slot),editableAdmin=admin&&!locked&&['available','needs_assignment'].includes(slot.status),editableResearcher=!admin&&!locked&&slot.status==='available'&&slot.researcherId===myId&&day.mode!=='custom',canEdit=editableAdmin||editableResearcher;
+        const owner=admin&&!locked?ownerSelect(slot):`<span class="assignee-name">${esc(slot.researcherName||'待認領')}</span>`;
+        const times=canEdit?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">開始時間</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" aria-label="開始時間" data-time-24h data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><span class="time-separator">–</span><label class="field"><span class="sr-only">結束時間</span>${day.mode==='custom'&&admin?`<input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-published-end="${esc(slot.slotId)}" value="${esc(slot.end)}">`:`<output class="time-readout" data-published-auto-end="${esc(slot.slotId)}">${esc(slot.end)}</output>`}</label></div>`:`<strong class="slot-time-range">${esc(slot.start)}–${esc(slot.end)}</strong>`;
+        const status=slot.status==='support_pending'?'待確認':slot.status==='needs_assignment'?'待認領':slot.status==='booked'?'已報名':'';
+        const canCancel=!locked&&(admin?['available','support_pending','needs_assignment'].includes(slot.status):slot.status==='available'&&slot.researcherId===myId);
+        const support=slot.status==='support_pending'&&slot.researcherId===myId&&!admin?`<div class="support-actions"><button class="btn small" data-published-support="accept" data-slot="${esc(slot.slotId)}">接受</button><button class="btn small danger" data-published-support="decline" data-slot="${esc(slot.slotId)}">婉拒</button></div>`:'';
+        return `<div class="schedule-editor-row published-slot-row ${locked?'is-locked':''}" data-published-row="${esc(slot.slotId)}" data-published-status="${esc(slot.status)}" data-published-owner-id="${esc(slot.researcherId||'')}" data-published-original-start="${esc(slot.start)}" data-published-original-end="${esc(slot.end)}">${times}<div class="slot-assignee">${owner}${status?`<span class="meta">${status}</span>`:''}${support}</div>${canCancel?`<label class="checkrow"><input type="checkbox" data-published-cancel="${esc(slot.slotId)}">${admin?'關閉':'取消'}</label>`:''}</div>`;
       }).join('');
-      const add=admin?`<details class="availability-add-slot"><summary>＋ 新增時段</summary><div class="availability-add-fields"><label class="field"><span class="sr-only">新增時段開始時間</span><input type="time" lang="en-GB" step="60" aria-label="新增時段開始時間" data-time-24h id="publishedAddStart" value="00:00"></label><span class="time-readout" id="publishedAddEnd" aria-label="結束時間，開始後一小時">01:00</span><label class="field add-owner"><span class="sr-only">負責研究者</span><select id="publishedAddOwner" aria-label="新增時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></label><span class="help">時段固定 1 小時；指派其他研究者後會送出支援請求。</span><label class="checkrow add-slot-enable"><input id="publishedAddEnabled" type="checkbox">新增這個時段</label></div></details>`:'';
-      const header=admin?`<div class="schedule-editor-header published-editor-header"><span>時間</span><span>研究者</span><span>狀態</span><span>操作</span></div>`:'';
-      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜已發布班表</div><h2>${esc(date)} 時段管理</h2></div><button class="btn" type="button" id="closePublishedEditor" aria-label="關閉">×</button></div><p class="help">一般時段固定 1 小時，開始時間變更後會自動計算結束時間。${day.mode==='custom'?'此日使用完全自訂模式，研究者不能更動時間。':'已報名場次請使用臨時異動流程。'}</p>${header}<div class="day-editor-list">${rows||'<div class="empty">此日目前沒有開放或已報名的時段。</div>'}</div>${add}<div id="publishedEditorError" class="alert error" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelPublishedEditor">取消</button><button class="btn primary" id="savePublishedSlots">儲存並更新報名表</button></div>`);
+      const add=admin?`<details class="availability-add-slot"><summary>＋ 新增時段</summary><div class="availability-add-fields"><label class="field"><span class="sr-only">開始時間</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h id="publishedAddStart" value="00:00"></label><span class="time-readout" id="publishedAddEnd">01:00</span><label class="field add-owner"><span class="sr-only">研究者</span><select id="publishedAddOwner" aria-label="新增時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></label><label class="checkrow add-slot-enable"><input id="publishedAddEnabled" type="checkbox">新增這個時段</label></div></details>`:'';
+      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜已發布</div><h2>${esc(date)} 時段</h2></div><button class="btn" type="button" id="closePublishedEditor" aria-label="關閉">×</button></div><p class="help availability-summary">每場 60 分鐘 · 間隔至少 30 分鐘 · 最晚 18:30</p><div class="schedule-editor-header"><span>時間</span><span>研究者</span><span>操作</span></div><div class="day-editor-list">${rows||'<div class="empty">沒有時段</div>'}</div>${day.mode==='custom'?'':`<label class="checkrow lunch-toggle"><input id="publishedLunchBreak" type="checkbox" ${workingLunch?'checked':''}>保留 1 小時午休</label>`}${add}<div id="publishedEditorError" class="alert error" role="alert" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelPublishedEditor">取消</button><button class="btn primary" id="savePublishedSlots">儲存</button></div>`);
       $('#modalbox').classList.add('availability-modal');bind24HourFields($('#modalbox'));
       const error=message=>{const box=$('#publishedEditorError');box.textContent=message;box.hidden=false};
-      $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
-      $('#publishedAddStart')?.addEventListener('input',event=>{$('#publishedAddEnd').textContent=addMinutesLabel(event.target.value,60)||'—'});
-      document.querySelectorAll('[data-published-auto-end]').forEach(output=>document.querySelector(`[data-published-start="${output.dataset.publishedAutoEnd}"]`)?.addEventListener('input',event=>{output.textContent=addMinutesLabel(event.target.value,60)||'—'}));
-      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
-      $('#savePublishedSlots').addEventListener('click',async()=>{
-        const changes=[];
-        document.querySelectorAll('[data-published-row]').forEach(row=>{
-          const slotId=row.dataset.publishedRow,cancel=row.querySelector('[data-published-cancel]')?.checked,status=row.dataset.publishedStatus;
-          if(cancel){changes.push({slotId,action:'cancel'});return}
-          if(admin&&['available','support_pending','needs_assignment'].includes(status)){const start=row.querySelector('[data-published-start]')?.value,end=day.mode==='custom'?row.querySelector('[data-published-end]')?.value:addMinutesLabel(start,60);changes.push({slotId,action:'save',start,end,researcherId:row.querySelector('[data-published-owner]')?.value||''})}
-          else if(!admin&&status==='available'&&row.querySelector('[data-published-start]')?.value!==row.dataset.publishedOriginalStart)changes.push({slotId,action:'adjust',start:row.querySelector('[data-published-start]')?.value,researcherId:row.dataset.publishedOwnerId});
-        });
-        const addStart=$('#publishedAddStart')?.value||'',addOwner=$('#publishedAddOwner')?.value||'';
-        const addSlot=admin&&$('#publishedAddEnabled')?.checked?{start:addStart,end:addMinutesLabel(addStart,60),researcherId:addOwner}:null;
-        if(addSlot&&(!isValidTime24h(addSlot.start)||!isValidTime24h(addSlot.end))){error('新增時段請填寫有效的 24 小時制開始與結束時間，例如 09:30。');return}
-        const button=$('#savePublishedSlots');button.disabled=true;
-        try{await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,{changes,addSlot});closeModal();await load();flash('已更新已發布班表與測試報名表。')}catch(err){button.disabled=false;error(err.message||String(err))}
+      const clearError=()=>{const box=$('#publishedEditorError');box.textContent='';box.hidden=true};
+      const draw=()=>working.forEach(slot=>{const row=document.querySelector('[data-published-row="'+slot.slotId+'"]'),input=row?.querySelector('[data-published-start]'),end=row?.querySelector('[data-published-auto-end]'),customEnd=row?.querySelector('[data-published-end]');if(input)input.value=slot.start;if(end)end.textContent=slot.end;if(customEnd)customEnd.value=slot.end});
+      const validate=(candidate,lunch)=>{
+        const active=candidate.filter(s=>!['closed','expired'].includes(s.status)).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+        for(let i=0;i<active.length;i++){const slot=active[i],start=slot.start,end=slot.end;if(!isValidTime24h(start)||!isValidTime24h(end)||end<=start)throw new Error('請輸入有效的 24 小時制時間。');if(i){const gap=(Number(start.slice(0,2))*60+Number(start.slice(3)))-(Number(active[i-1].end.slice(0,2))*60+Number(active[i-1].end.slice(3)));if(gap<0)throw new Error('時段不可重疊。');if(day.mode!=='custom'&&gap<30)throw new Error('時段至少需間隔 30 分鐘。')}if(day.mode!=='custom'){const duration=(Number(end.slice(0,2))*60+Number(end.slice(3)))-(Number(start.slice(0,2))*60+Number(start.slice(3)));if(duration!==60)throw new Error('一般時段固定 60 分鐘。');if(end>'18:30')throw new Error('一般時段最晚於 18:30 結束。')}}
+        if(lunch&&day.mode!=='custom'&&active.length>=3){const boundary=active.findIndex(s=>String(s.slotId)===String(day.lunchAfterSlotId||active[1].slotId));if(boundary>=0&&boundary<active.length-1){const gap=(Number(active[boundary+1].start.slice(0,2))*60+Number(active[boundary+1].start.slice(3)))-(Number(active[boundary].end.slice(0,2))*60+Number(active[boundary].end.slice(3)));if(gap!==60)throw new Error('午休前後需保留 60 分鐘。')}}
+      };
+      const shift=(candidate,first,delta)=>{for(let i=first;i<candidate.length;i++){const s=candidate[i];if(protectedSlot(s)||s.status==='support_pending')throw new Error('後續時段已鎖定或待確認，無法連動。');if(!admin&&s.researcherId&&s.researcherId!==myId)throw new Error('後續時段由其他研究者負責，無法連動。')}for(let i=first;i<candidate.length;i++){const s=candidate[i],start=Number(s.start.slice(0,2))*60+Number(s.start.slice(3))+delta,end=Number(s.end.slice(0,2))*60+Number(s.end.slice(3))+delta;if(start<0||end>=1440)throw new Error('調整會跨日，請縮小時間變更。');s.start=String(Math.floor(start/60)).padStart(2,'0')+':'+String(start%60).padStart(2,'0');s.end=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0')}};
+      document.querySelectorAll('[data-published-start]').forEach(input=>input.addEventListener('change',()=>{
+        const row=input.closest('[data-published-row]'),id=row?.dataset.publishedRow,index=working.findIndex(s=>String(s.slotId)===String(id)),next=working.map(s=>Object.assign({},s)),target=next[index];
+        try{if(!target||!isValidTime24h(input.value))throw new Error('請輸入有效時間，例如 09:30。');if(protectedSlot(target)||target.status==='support_pending')throw new Error('此時段不能調整。');if(admin&&!['available','needs_assignment'].includes(target.status))throw new Error('此時段不能調整。');if(!admin&&(target.status!=='available'||target.researcherId!==myId))throw new Error('只能調整自己的可報名時段。');const start=Number(input.value.slice(0,2))*60+Number(input.value.slice(3)),old=Number(target.start.slice(0,2))*60+Number(target.start.slice(3)),delta=start-old;if(day.mode==='custom'){target.start=input.value;target.end=row.querySelector('[data-published-end]')?.value||target.end}else{const end=start+60;if(end>=1440)throw new Error('結束時間不能跨日。');target.start=input.value;target.end=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0');shift(next,index+1,delta)}validate(next,workingLunch);working=next;scheduleEdits.push({type:'time',slotId:id,start:input.value});clearError();draw()}catch(err){error(err.message||String(err));draw()}
+      }));
+      document.querySelectorAll('[data-published-end]').forEach(input=>input.addEventListener('change',()=>{
+        const row=input.closest('[data-published-row]'),id=row?.dataset.publishedRow,index=working.findIndex(s=>String(s.slotId)===String(id)),next=working.map(s=>Object.assign({},s)),target=next[index];
+        try{if(day.mode!=='custom'||!admin||!target||!isValidTime24h(input.value))throw new Error('請輸入有效的 24 小時制時間。');target.end=input.value;validate(next,workingLunch);working=next;clearError();draw()}catch(err){error(err.message||String(err));draw()}
+      }));
+      $('#publishedAddStart')?.addEventListener('change',event=>{$('#publishedAddEnd').textContent=addMinutesLabel(event.target.value,60)||'—'});
+      $('#publishedLunchBreak')?.addEventListener('change',event=>{const enabled=event.target.checked,next=working.map(s=>Object.assign({},s));try{const id=day.lunchAfterSlotId||next[1]?.slotId,index=next.findIndex(s=>String(s.slotId)===String(id));if(index<0||index>=next.length-1)throw new Error('這天沒有可調整午休的位置。');shift(next,index+1,enabled?30:-30);validate(next,enabled);working=next;workingLunch=enabled;scheduleEdits.push({type:'lunch',enabled});clearError();draw()}catch(err){event.target.checked=workingLunch;error(err.message||String(err))}});
+      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援','請填寫婉拒原因。'):'';if(decision==='decline'&&!reason)return;button.disabled=true;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){button.disabled=false;error(err.message||String(err))}}));
+      $('#savePublishedSlots').addEventListener('click',async event=>{
+        const button=event.currentTarget,changes=[];
+        document.querySelectorAll('[data-published-row]').forEach(row=>{const slotId=row.dataset.publishedRow,cancel=row.querySelector('[data-published-cancel]')?.checked,select=row.querySelector('[data-published-owner]'),oldOwner=row.dataset.publishedOwnerId,start=row.querySelector('[data-published-start]')?.value||row.dataset.publishedOriginalStart,end=row.querySelector('[data-published-end]')?.value||row.dataset.publishedOriginalEnd,owner=select?select.value:oldOwner,timeChanged=day.mode==='custom'&&(start!==row.dataset.publishedOriginalStart||end!==row.dataset.publishedOriginalEnd),ownerChanged=admin&&select&&select.value!==oldOwner;if(cancel){changes.push({slotId,action:'cancel'});return}if(ownerChanged||timeChanged)changes.push({slotId,action:'save',researcherId:owner,start,end})});
+        const addStart=$('#publishedAddStart')?.value||'',addOwner=$('#publishedAddOwner')?.value||'',addSlot=admin&&$('#publishedAddEnabled')?.checked?{start:addStart,end:addMinutesLabel(addStart,60),researcherId:addOwner}:null;
+        if(addSlot&&(!isValidTime24h(addStart)||!isValidTime24h(addSlot.end))){error('新增時段請填寫 HH:mm。');return}
+        const expectedSlots=slots.map(s=>({slotId:s.slotId,start:s.start,end:s.end,researcherId:s.researcherId||'',status:s.status||'',locked:protectedSlot(s)}));
+        const input={changes,addSlot,scheduleEdits,lunchBreak:workingLunch,expectedSlots};
+        const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await load();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await load();flash('班表已儲存。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
+        save().catch(err=>{button.disabled=false;button.textContent='儲存';error(err.message||String(err))});
       });
+      $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
     }
-
     function openAvailabilityEditor(date,admin){
       if(availabilityPlan?.status==='published')return openPublishedAvailabilityEditor(date,admin);
       const plan=availabilityPlan||{},day=plan.days?.[date]||{slots:(plan.template||defaultAvailabilitySlots).map((t,index)=>({index,start:t[0],end:t[1],researcherId:'',status:'open'})),customSlots:[],lunchBreak:true,mode:'standard'};
-      const myId=state.user.researcherId||'';
-      const rows=(day.slots||[]).map((s,index)=>{
-        const other=!admin&&s.researcherId&&s.researcherId!==myId,locked=Boolean(s.locked)||['held','booked','completed','reschedule_hold'].includes(s.status),support=s.status==='support_pending'&&s.researcherId===myId;
-        const checked=Boolean(s.researcherId&&s.researcherId===myId)||locked;
-        const disabled=other||locked||support;
-        const ownerSelect=admin?`<select data-slot-owner="${index}" aria-label="時段 ${index+1} 研究者" ${locked?'disabled':''}><option value="" ${s.researcherId?'':'selected'}>待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:`<span class="assignee-name">${esc(s.researcherName||'待認領')}</span>`;
-        const timeInput=admin?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">時段 ${index+1} 開始時間</span><input type="time" lang="en-GB" step="60" aria-label="時段 ${index+1} 開始時間" data-time-24h data-start-index="${index}" value="${esc(s.start)}" ${locked?'disabled':''}></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">時段 ${index+1} 結束時間</span><input class="custom-end-input" type="time" lang="en-GB" step="60" aria-label="時段 ${index+1} 結束時間" data-time-24h data-end-index="${index}" value="${esc(s.end)}" ${day.mode==='custom'?'':'hidden'} ${locked?'disabled':''}><output class="time-readout end-time" data-end-label="${index}" ${day.mode==='custom'?'hidden':''}>${esc(s.end)}</output></label></div>`:`<div class="schedule-editor-times"><span class="slot-time-range" data-slot-time-label="${index}">${esc(s.start)}–${esc(s.end)}</span></div>`;
-        const status=locked?'已報名':support?'待回覆支援':s.supportRequest&&s.supportRequest.includes('已接受')?'已接受支援':s.status==='support_pending'?'待回覆支援':'';
-        const slotControl=admin?`<span class="slot-number">時段 ${index+1}</span>`:`<label class="checkrow slot-number"><input type="checkbox" data-day-slot data-index="${index}" ${checked?'checked':''} ${disabled?'disabled':''}>時段 ${index+1}</label>`;
-        return `<div class="schedule-editor-row draft-slot-row ${locked?'is-locked':''}">${slotControl}${timeInput}<div class="slot-assignee">${ownerSelect}${status?`<span class="tag ${locked?'red':'amber'}">${esc(status)}</span>`:''}</div></div>`;
+      const myId=state.user.researcherId||'',slots=(day.slots||[]).map(s=>Object.assign({},s)),customSlots=(day.customSlots||[]).map(s=>Object.assign({},s));
+      let workingSlots=slots.map(s=>Object.assign({},s)),workingCustomSlots=customSlots.map(s=>Object.assign({},s)),workingLunch=day.lunchBreak!==false;
+      const scheduleEdits=[];
+      const locked=s=>Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold','support_pending'].includes(s.status);
+      const ownerOptions=(s,index)=>`<select data-slot-owner="${index}" aria-label="時段 ${index+1} 研究者" ${Boolean(s.locked)||['held','booked','completed','reschedule_hold'].includes(s.status)?'disabled':''}><option value="" ${s.researcherId?'':'selected'}>待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`;
+      const rows=slots.map((s,index)=>{
+        const other=!admin&&s.researcherId&&s.researcherId!==myId,slotLocked=Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold'].includes(s.status),pending=s.status==='support_pending',canEditTime=!slotLocked&&!pending&&!other&&(day.mode!=='custom'||admin);
+        const checked=Boolean(s.researcherId&&s.researcherId===myId)||slotLocked,disabled=other||slotLocked||pending;
+        const owner=admin?ownerOptions(s,index):`<span class="assignee-name">${esc(s.researcherName||'待認領')}</span>`;
+        const time=canEditTime?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">時段 ${index+1} 開始時間</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" aria-label="時段 ${index+1} 開始時間" data-time-24h data-start-index="${index}" value="${esc(s.start)}"></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">時段 ${index+1} 結束時間</span>${day.mode==='custom'&&admin?`<input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" aria-label="時段 ${index+1} 結束時間" data-time-24h data-end-index="${index}" value="${esc(s.end)}">`:`<output class="time-readout" data-end-label="${index}">${esc(s.end)}</output>`}</label></div>`:`<strong class="slot-time-range">${esc(s.start)}–${esc(s.end)}</strong>`;
+        const stateLabel=slotLocked?'已報名':pending?'待確認':'';
+        const number=admin?`<span class="slot-number">時段 ${index+1}</span>`:`<label class="slot-number"><input type="checkbox" data-day-slot data-index="${index}" ${checked?'checked':''} ${disabled?'disabled':''}>時段 ${index+1}</label>`;
+        const support=pending&&s.researcherId===myId&&!admin?`<div class="support-actions"><button class="btn small" data-day-support="accept" data-slot="${esc(s.slotId)}">接受</button><button class="btn small danger" data-day-support="decline" data-slot="${esc(s.slotId)}">婉拒</button></div>`:'';
+        return `<div class="schedule-editor-row draft-slot-row ${slotLocked?'is-locked':''}" data-draft-row="${index}">${number}${time}<div class="slot-assignee">${owner}${stateLabel?`<span class="meta">${stateLabel}</span>`:''}${support}</div></div>`;
       }).join('');
-      const customRows=(day.customSlots||[]).map(s=>{
-        const locked=Boolean(s.locked)||['held','booked','completed','reschedule_hold'].includes(s.status);
-        const owner=admin?`<select data-extra-owner="${esc(s.slotId)}" aria-label="自訂時段研究者" ${locked?'disabled':''}><option value="" ${s.researcherId?'':'selected'}>待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:`<span class="assignee-name">${esc(s.researcherName||'待認領')}</span>`;
-        const status=locked?'已報名':s.status==='support_pending'?'待回覆支援':s.supportRequest&&s.supportRequest.includes('已接受')?'已接受支援':'';
-        if(!admin)return `<div class="schedule-editor-row custom-slot-row"><span class="slot-number">自訂</span><strong class="slot-time-range">${esc(s.start)}–${esc(s.end)}</strong><span class="slot-assignee">${owner}${status?`<span class="tag amber">${esc(status)}</span>`:''}</span>${s.status==='support_pending'&&s.researcherId===myId?`<span class="actions"><button class="btn small" data-day-support="accept" data-slot="${esc(s.slotId)}">接受</button><button class="btn small danger" data-day-support="decline" data-slot="${esc(s.slotId)}">婉拒</button></span>`:''}</div>`;
-        return `<div class="schedule-editor-row custom-slot-row" data-custom-slot-row="${esc(s.slotId)}"><span class="slot-number">自訂</span><div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">自訂時段開始時間</span><input type="time" lang="en-GB" step="60" aria-label="自訂時段開始時間" data-time-24h data-extra-start="${esc(s.slotId)}" value="${esc(s.start)}" ${day.mode==='custom'&&!locked?'':'disabled'}></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">自訂時段結束時間</span><input type="time" lang="en-GB" step="60" aria-label="自訂時段結束時間" data-time-24h data-extra-end="${esc(s.slotId)}" value="${esc(s.end)}" ${day.mode==='custom'&&!locked?'':'disabled'}></label></div><span class="slot-assignee">${owner}${status?`<span class="tag ${locked?'red':'amber'}">${esc(status)}</span>`:''}</span><label class="checkrow"><input type="checkbox" data-remove-custom-slot="${esc(s.slotId)}" ${locked?'disabled':''}>移除</label></div>`;
+      const customRows=customSlots.map(s=>{
+        const slotLocked=locked(s),owner=admin?`<select data-extra-owner="${esc(s.slotId)}" aria-label="自訂時段研究者" ${slotLocked?'disabled':''}><option value="" ${s.researcherId?'':'selected'}>待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:`<span class="assignee-name">${esc(s.researcherName||'待認領')}</span>`;
+        const time=admin&&day.mode==='custom'&&!slotLocked?`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">自訂時段開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-extra-start="${esc(s.slotId)}" value="${esc(s.start)}"></label><span class="time-separator">–</span><label class="field"><span class="sr-only">自訂時段結束</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-extra-end="${esc(s.slotId)}" value="${esc(s.end)}"></label></div>`:`<strong class="slot-time-range">${esc(s.start)}–${esc(s.end)}</strong>`;
+        return `<div class="schedule-editor-row custom-slot-row" data-custom-slot-row="${esc(s.slotId)}"><span class="slot-number">自訂</span>${time}<div class="slot-assignee">${owner}${s.status==='support_pending'?'<span class="meta">待確認</span>':''}</div>${admin?`<label class="checkrow"><input type="checkbox" data-remove-custom-slot="${esc(s.slotId)}" ${slotLocked?'disabled':''}>移除</label>`:''}</div>`;
       }).join('');
-      const addSlotTools=admin?`<details class="availability-add-slot"><summary>＋ 新增時段</summary><div class="availability-add-fields"><label class="field"><span class="sr-only">新增時段開始時間</span><input id="customStart" type="time" lang="en-GB" step="60" aria-label="新增時段開始時間" data-time-24h value="00:00"></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">新增時段結束時間</span><input id="customEnd" type="time" lang="en-GB" step="60" aria-label="新增時段結束時間" data-time-24h value="01:00" ${day.mode==='custom'?'':'hidden'}><output class="time-readout" id="customEndLabel" aria-label="結束時間，開始後一小時" ${day.mode==='custom'?'hidden':''}>01:00</output></label><label class="field add-owner"><span class="sr-only">新增時段研究者</span><select id="customSlotOwner" aria-label="新增時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></label><span class="help">每場 1 小時；指派其他研究者後會送出支援請求。</span><label class="checkrow add-slot-enable"><input id="customSlotEnabled" type="checkbox">新增這個時段</label></div></details><label class="checkrow advanced-mode-toggle" title="管理者可調整所有時段，並略過一般間隔與最晚時間限制"><input id="fullyCustom" type="checkbox" ${day.mode==='custom'?'checked':''}>完全自訂</label>`:'';
-      const header=admin?`<div class="schedule-editor-header draft-editor-header"><span>時段</span><span>時間</span><span>研究者</span></div>`:`<div class="schedule-editor-header researcher-editor-header"><span>時段</span><span>時間</span><span>研究者</span></div>`;
-      const selectAll=admin?'':`<label class="checkrow select-all-slots"><input id="selectAllDaySlots" type="checkbox">全選可認領時段</label>`;
-      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜團隊排班</div><h2>${esc(date)} 可收時間</h2></div><button class="btn" type="button" id="closeDayEditor" aria-label="關閉">×</button></div><p class="help availability-summary">每場 1 小時 · 間隔至少 30 分鐘 · 最晚 18:30。尚未指派的時段不會同步到報名表。</p>${selectAll}${header}<div class="day-editor-list">${rows}</div>${customRows?`<section class="custom-slots-section"><h3>自訂時段</h3><div class="schedule-editor-header custom-editor-header"><span>時段</span><span>時間</span><span>研究者</span><span>操作</span></div>${customRows}</section>`:''}<label class="checkrow lunch-toggle"><input id="lunchBreak" type="checkbox" ${day.lunchBreak!==false?'checked':''}>保留午休（最多 1 小時）</label>${addSlotTools}<div id="dayEditorError" class="alert error" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelDayEditor">取消</button><button class="btn primary" type="button" id="saveDaySlots">儲存當日班表</button></div>`);
+      const addTools=admin?`<details class="availability-add-slot"><summary>＋ 新增時段</summary><div class="availability-add-fields"><label class="field"><span class="sr-only">開始時間</span><input id="customStart" type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h value="00:00"></label><span class="time-separator">–</span><label class="field"><span class="sr-only">結束時間</span><output class="time-readout" id="customEndLabel">01:00</output><input id="customEnd" type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h value="01:00" hidden></label><label class="field add-owner"><span class="sr-only">研究者</span><select id="customSlotOwner" aria-label="新增時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></label><label class="checkrow add-slot-enable"><input id="customSlotEnabled" type="checkbox">新增這個時段</label></div></details><label class="checkrow advanced-mode-toggle"><input id="fullyCustom" type="checkbox" ${day.mode==='custom'?'checked':''}>完全自訂</label>`:'';
+      const selectAll=admin?'':`<label class="checkrow select-all-slots"><input id="selectAllDaySlots" type="checkbox">全選待認領時段</label>`;
+      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜月班表</div><h2>${esc(date)} 可收時間</h2></div><button class="btn" type="button" id="closeDayEditor" aria-label="關閉">×</button></div><p class="help availability-summary">每場 60 分鐘 · 間隔至少 30 分鐘 · 最晚 18:30</p>${selectAll}<div class="schedule-editor-header"><span>時段</span><span>時間</span><span>研究者</span></div><div class="day-editor-list">${rows}</div>${customRows?`<section class="custom-slots-section"><h3>其他時段</h3>${customRows}</section>`:''}<label class="checkrow lunch-toggle" ${day.mode==='custom'?'hidden':''}><input id="lunchBreak" type="checkbox" ${workingLunch?'checked':''}>保留 1 小時午休</label>${addTools}<div id="dayEditorError" class="alert error" role="alert" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelDayEditor">取消</button><button class="btn primary" type="button" id="saveDaySlots">儲存</button></div>`);
       $('#modalbox').classList.add('availability-modal');bind24HourFields($('#modalbox'));
       const editorError=message=>{const box=$('#dayEditorError');box.textContent=message;box.hidden=false};
-      $('#closeDayEditor').addEventListener('click',closeModal);$('#cancelDayEditor').addEventListener('click',closeModal);
+      const clearError=()=>{const box=$('#dayEditorError');box.hidden=true;box.textContent=''};
+      const isCustomMode=()=>admin&&Boolean($('#fullyCustom')?.checked);
+      const renderWorking=()=>{workingSlots.forEach((slot,index)=>{const start=document.querySelector('[data-start-index="'+index+'"]'),end=document.querySelector('[data-end-label="'+index+'"]'),customEnd=document.querySelector('[data-end-index="'+index+'"]');if(start)start.value=slot.start;if(end)end.textContent=slot.end;if(customEnd)customEnd.value=slot.end});workingCustomSlots.forEach(slot=>{const row=document.querySelector('[data-custom-slot-row="'+slot.slotId+'"]'),start=row?.querySelector('[data-extra-start]'),end=row?.querySelector('[data-extra-end]');if(start)start.value=slot.start;if(end)end.value=slot.end})};
+      const validatePreview=(candidate,lunch)=>{
+        const active=[...candidate,...workingCustomSlots].filter(s=>s.start&&s.end&&!['closed','expired'].includes(s.status)).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+        for(let i=0;i<active.length;i++){
+          const start=active[i].start,end=active[i].end;
+          if(!isValidTime24h(start)||!isValidTime24h(end)||end<=start)throw new Error('請輸入有效的 24 小時制時間。');
+          const duration=(Number(end.slice(0,2))*60+Number(end.slice(3)))-(Number(start.slice(0,2))*60+Number(start.slice(3)));
+          if(!isCustomMode()&&duration!==60)throw new Error('一般時段固定 60 分鐘。');
+          if(!isCustomMode()&&end>'18:30')throw new Error('一般時段最晚於 18:30 結束。');
+          if(i){const gap=(Number(start.slice(0,2))*60+Number(start.slice(3)))-(Number(active[i-1].end.slice(0,2))*60+Number(active[i-1].end.slice(3)));if(gap<0)throw new Error('時段不可重疊。');if(!isCustomMode()&&gap<30)throw new Error('時段至少需間隔 30 分鐘。')}
+        }
+        if(lunch&&!isCustomMode()&&candidate.length>=3){const boundaryId=day.lunchAfterSlotId||candidate[1]?.slotId,index=candidate.findIndex(s=>String(s.slotId)===String(boundaryId));if(index>=0&&index<candidate.length-1){const left=candidate[index],right=candidate[index+1];const gap=(Number(right.start.slice(0,2))*60+Number(right.start.slice(3)))-(Number(left.end.slice(0,2))*60+Number(left.end.slice(3)));if(gap!==60)throw new Error('已保留午休，午休前後需剛好 60 分鐘。')}}
+      };
+      const shift=(candidate,first,delta)=>{
+        for(let i=first;i<candidate.length;i++){const slot=candidate[i];if(locked(slot))throw new Error('後續時段已鎖定或待確認，無法連動調整。');if(!admin&&slot.researcherId&&slot.researcherId!==myId)throw new Error('後續時段由其他研究者負責，無法連動調整。')}
+        for(let i=first;i<candidate.length;i++){const slot=candidate[i],start=Number(slot.start.slice(0,2))*60+Number(slot.start.slice(3))+delta,end=Number(slot.end.slice(0,2))*60+Number(slot.end.slice(3))+delta;if(start<0||end>=1440)throw new Error('調整會跨到隔日，請縮小時間變更。');slot.start=String(Math.floor(start/60)).padStart(2,'0')+':'+String(start%60).padStart(2,'0');slot.end=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0')}
+      };
+      const timePair=(slot,startAttr,endAttr,custom)=>`<div class="schedule-editor-times time-pair compact-time-pair"><label class="field"><span class="sr-only">開始時間</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" aria-label="開始時間" data-time-24h ${startAttr} value="${esc(slot.start)}"></label><span class="time-separator" aria-hidden="true">–</span><label class="field"><span class="sr-only">結束時間</span>${custom?`<input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" aria-label="結束時間" data-time-24h ${endAttr} value="${esc(slot.end)}">`:`<output class="time-readout" ${endAttr}>${esc(slot.end)}</output>`}</label></div>`;
+      const renderTimeMode=()=>{
+        const custom=isCustomMode();
+        workingSlots.forEach((slot,index)=>{const row=document.querySelector('[data-draft-row="'+index+'"]'),current=row?.querySelector('.schedule-editor-times,.slot-time-range');if(!current)return;const canEdit=!locked(slot)&&slot.status!=='support_pending'&&(admin||!slot.researcherId||slot.researcherId===myId);if(!canEdit)return;current.outerHTML=custom?timePair(slot,`data-start-index="${index}"`,`data-end-index="${index}"`,true):timePair(slot,`data-start-index="${index}"`,`data-end-label="${index}"`,false)});
+        workingCustomSlots.forEach(slot=>{const row=document.querySelector('[data-custom-slot-row="'+slot.slotId+'"]'),current=row?.querySelector('.schedule-editor-times,.slot-time-range');if(!current||locked(slot)||!admin)return;current.outerHTML=custom?timePair(slot,`data-extra-start="${esc(slot.slotId)}"`,`data-extra-end="${esc(slot.slotId)}"`,true):`<strong class="slot-time-range">${esc(slot.start)}–${esc(slot.end)}</strong>`});
+        bind24HourFields($('#modalbox'));bindDraftTimeListeners();renderWorking();
+      };
       const checks=[...document.querySelectorAll('[data-day-slot]')];
-      $('#selectAllDaySlots')?.addEventListener('change',e=>{checks.filter(box=>!box.disabled).forEach(box=>{box.checked=e.target.checked})});
-      checks.forEach(box=>box.addEventListener('change',()=>{const selectAll=$('#selectAllDaySlots');if(selectAll)selectAll.checked=checks.filter(x=>!x.disabled).length>0&&checks.filter(x=>!x.disabled).every(x=>x.checked)}));
-      document.querySelectorAll('[data-start-index]').forEach(input=>input.addEventListener('input',()=>{const end=document.querySelector(`[data-end-label="${input.dataset.startIndex}"]`);if(end)end.textContent=addMinutesLabel(input.value,60)||''}));
-      $('#customStart')?.addEventListener('input',event=>{const end=addMinutesLabel(event.target.value,60)||'';if($('#fullyCustom')?.checked)$('#customEnd').value=end;else $('#customEndLabel').textContent=end||'—'});
-      $('#customEnd')?.addEventListener('input',event=>{$('#customEndLabel').textContent=event.target.value||'—'});
-      $('#fullyCustom')?.addEventListener('change',e=>{document.querySelectorAll('.custom-end-input').forEach(input=>{input.hidden=!e.target.checked;const label=document.querySelector(`[data-end-label="${input.dataset.endIndex}"]`);if(label)label.hidden=e.target.checked});document.querySelectorAll('[data-extra-start],[data-extra-end]').forEach(input=>{input.disabled=!e.target.checked||Boolean(input.closest('.custom-slot-row')?.querySelector('[data-remove-custom-slot]')?.disabled)});const autoEnd=$('#customEndLabel'),customEnd=$('#customEnd');if(e.target.checked){if(customEnd&&!customEnd.value)customEnd.value=addMinutesLabel($('#customStart')?.value||'',60);if(autoEnd)autoEnd.hidden=true;if(customEnd)customEnd.hidden=false}else{if(autoEnd){autoEnd.textContent=addMinutesLabel($('#customStart')?.value||'',60)||'—';autoEnd.hidden=false}if(customEnd)customEnd.hidden=true}});
-      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.daySupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
-      $('#saveDaySlots').addEventListener('click',async()=>{
-        const mode=admin&&$('#fullyCustom')?.checked?'custom':'standard';
-        const assignments={};if(admin)document.querySelectorAll('[data-slot-owner]').forEach(select=>{assignments[Number(select.dataset.slotOwner)]=select.value});
-        const selectedIndexes=admin?Object.keys(assignments).filter(index=>assignments[index]).map(Number):checks.filter(box=>box.checked).map(box=>Number(box.dataset.index));
-        if(admin&&[...document.querySelectorAll('[data-start-index]')].some(input=>!isValidTime24h(input.value))){editorError('請確認每個時段的 24 小時制開始時間，例如 09:30。');return}
-        const changed=[...document.querySelectorAll('[data-start-index]')].filter(input=>input.value&&input.value!==day.slots[Number(input.dataset.startIndex)]?.start);
-        if(mode==='standard'&&changed.length>1){editorError('一般模式一次只能調整一個時段開始時間；系統會安全地順延後續時段。');return}
-        const customTimes=mode==='custom'?[...[...document.querySelectorAll('[data-start-index]')].map(input=>{const index=Number(input.dataset.startIndex),start=input.value||day.slots[index]?.start||'',end=document.querySelector(`[data-end-index="${input.dataset.startIndex}"]`)?.value||addMinutesLabel(start,60);return {slotId:day.slots[index]?.slotId,index,start,end}}),...[...document.querySelectorAll('[data-extra-start]')].filter(input=>!input.closest('.custom-slot-row')?.querySelector('[data-remove-custom-slot]')?.checked).map(input=>({slotId:input.dataset.extraStart,start:input.value,end:document.querySelector(`[data-extra-end="${input.dataset.extraStart}"]`)?.value}))]:[];
-        const customSlotAssignments=admin?[...document.querySelectorAll('[data-extra-owner]')].filter(select=>!document.querySelector(`[data-remove-custom-slot="${select.dataset.extraOwner}"]`)?.checked).map(select=>({slotId:select.dataset.extraOwner,researcherId:select.value})):[];
+      $('#selectAllDaySlots')?.addEventListener('change',e=>checks.filter(box=>!box.disabled).forEach(box=>{box.checked=e.target.checked}));
+      checks.forEach(box=>box.addEventListener('change',()=>{const all=$('#selectAllDaySlots');if(all)all.checked=checks.filter(x=>!x.disabled).length>0&&checks.filter(x=>!x.disabled).every(x=>x.checked)}));
+      const bindDraftTimeListeners=()=>{
+        document.querySelectorAll('[data-start-index]').forEach(input=>{if(input.dataset.changeBound)return;input.dataset.changeBound='1';input.addEventListener('change',()=>{
+          const index=Number(input.dataset.startIndex),next=workingSlots.map(s=>Object.assign({},s)),target=next[index];
+          try{
+            if(!target||!isValidTime24h(input.value))throw new Error('請輸入有效時間，例如 09:30。');
+            if(locked(target))throw new Error('此時段已鎖定，不能調整。');
+            if(!admin&&target.researcherId&&target.researcherId!==myId)throw new Error('你只能調整自己的時段或待認領時段。');
+            if(isCustomMode()){const row=input.closest('[data-draft-row]'),end=row?.querySelector('[data-end-index]')?.value||target.end;target.start=input.value;target.end=end;validatePreview(next,false);workingSlots=next;clearError();renderWorking();return}
+            const start=Number(input.value.slice(0,2))*60+Number(input.value.slice(3)),old=Number(target.start.slice(0,2))*60+Number(target.start.slice(3)),delta=start-old,end=start+60;
+            if(end>=1440)throw new Error('結束時間不能跨日。');
+            target.start=input.value;target.end=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0');
+            shift(next,index+1,delta);validatePreview(next,workingLunch);
+            workingSlots=next;scheduleEdits.push({type:'time',index,start:input.value});clearError();renderWorking();
+          }catch(error){editorError(error.message||String(error));renderWorking()}
+        })});
+        document.querySelectorAll('[data-end-index]').forEach(input=>{if(input.dataset.changeBound)return;input.dataset.changeBound='1';input.addEventListener('change',()=>{
+          const index=Number(input.dataset.endIndex),next=workingSlots.map(s=>Object.assign({},s)),target=next[index];
+          try{if(!isCustomMode()||!target||!isValidTime24h(input.value))throw new Error('請輸入有效的 24 小時制時間。');target.end=input.value;validatePreview(next,false);workingSlots=next;clearError();renderWorking()}catch(error){editorError(error.message||String(error));renderWorking()}
+        })});
+        document.querySelectorAll('[data-extra-start],[data-extra-end]').forEach(input=>{if(input.dataset.changeBound)return;input.dataset.changeBound='1';input.addEventListener('change',()=>{
+          const row=input.closest('[data-custom-slot-row]'),slotId=row?.dataset.customSlotRow,target=workingCustomSlots.find(s=>String(s.slotId)===String(slotId)),next=workingCustomSlots.map(s=>Object.assign({},s)),prior=workingCustomSlots;
+          try{if(!isCustomMode()||!target||!isValidTime24h(input.value))throw new Error('請輸入有效的 24 小時制時間。');const edited=next.find(s=>String(s.slotId)===String(slotId));edited[input.hasAttribute('data-extra-start')?'start':'end']=input.value;workingCustomSlots=next;validatePreview(workingSlots,false);clearError();renderWorking()}catch(error){workingCustomSlots=prior;editorError(error.message||String(error));renderWorking()}
+        })});
+      };
+      bindDraftTimeListeners();
+      $('#lunchBreak').addEventListener('change',event=>{
+        const enabled=event.target.checked,next=workingSlots.map(s=>Object.assign({},s));
+        try{
+          const boundaryId=day.lunchAfterSlotId||next[1]?.slotId,boundary=next.findIndex(s=>String(s.slotId)===String(boundaryId));
+          if(boundary<0||boundary>=next.length-1)throw new Error('這天沒有可調整午休的時段位置。');
+          shift(next,boundary+1,enabled?30:-30);validatePreview(next,enabled);
+          workingSlots=next;workingLunch=enabled;scheduleEdits.push({type:'lunch',enabled});clearError();renderWorking();
+        }catch(error){event.target.checked=workingLunch;editorError(error.message||String(error))}
+      });
+      $('#customStart')?.addEventListener('change',event=>{const end=addMinutesLabel(event.target.value,60)||'—';if($('#fullyCustom')?.checked)$('#customEnd').value=end;else $('#customEndLabel').textContent=end});
+      $('#fullyCustom')?.addEventListener('change',event=>{if(!event.target.checked)try{validatePreview(workingSlots,workingLunch)}catch(error){event.target.checked=true;editorError(error.message||String(error));return}const end=$('#customEnd'),label=$('#customEndLabel');if(end)end.hidden=!event.target.checked;if(label)label.hidden=event.target.checked;const lunch=$('#lunchBreak')?.closest('.lunch-toggle');if(lunch)lunch.hidden=event.target.checked;renderTimeMode();clearError()});
+      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{
+        const decision=button.dataset.daySupport,reason=decision==='decline'?await window.askForReason('婉拒支援','請填寫婉拒原因。'):'';
+        if(decision==='decline'&&!reason)return;
+        button.disabled=true;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}
+        catch(error){button.disabled=false;editorError(error.message||String(error))}
+      }));
+      $('#saveDaySlots').addEventListener('click',async event=>{
+        const button=event.currentTarget,mode=admin&&$('#fullyCustom')?.checked?'custom':'standard';
+        const assignments={},selectedIndexes=[];
+        if(admin)document.querySelectorAll('[data-slot-owner]').forEach(select=>{const index=Number(select.dataset.slotOwner);assignments[index]=select.value;if(select.value)selectedIndexes.push(index)});
+        else checks.filter(box=>box.checked).forEach(box=>selectedIndexes.push(Number(box.dataset.index)));
+        try{validatePreview(workingSlots,mode==='standard'&&workingLunch)}catch(error){editorError(error.message||String(error));return}
+        const customTimes=mode==='custom'?[...document.querySelectorAll('[data-start-index]')].map(input=>{const index=Number(input.dataset.startIndex),start=input.value,end=document.querySelector('[data-end-index="'+index+'"]')?.value||'';return {index,start,end}}).concat([...document.querySelectorAll('[data-extra-start]')].map(input=>{const row=input.closest('[data-custom-slot-row]'),slotId=row?.dataset.customSlotRow,start=input.value,end=row?.querySelector('[data-extra-end]')?.value||'';return {slotId,start,end}})):[];
+        if(mode==='custom'&&customTimes.some(item=>!isValidTime24h(item.start)||!isValidTime24h(item.end)||item.end<=item.start)){editorError('完全自訂時段的開始與結束時間都必須有效，且結束時間要晚於開始時間。');return}
+        const customSlotAssignments=admin?[...document.querySelectorAll('[data-extra-owner]')].filter(select=>!document.querySelector('[data-remove-custom-slot="'+select.dataset.extraOwner+'"]')?.checked).map(select=>({slotId:select.dataset.extraOwner,researcherId:select.value})):[];
         const removeCustomSlotIds=admin?[...document.querySelectorAll('[data-remove-custom-slot]:checked')].map(input=>input.dataset.removeCustomSlot):[];
         const customStart=$('#customStart')?.value||'',customEnd=mode==='custom'?($('#customEnd')?.value||''):addMinutesLabel(customStart,60)||'',customOwner=$('#customSlotOwner')?.value||'';
         const customSlot=admin&&$('#customSlotEnabled')?.checked?{start:customStart,end:customEnd,researcherId:customOwner}:null;
-        if(customSlot&&(!isValidTime24h(customSlot.start)||!isValidTime24h(customSlot.end))){editorError(mode==='custom'?'新增時段請填寫有效的開始與結束時間。':'新增時段請填寫有效的 24 小時制開始時間，例如 09:30。');return}
-        const input={selectedIndexes,assignments,researcherId:admin?myId:'',lunchBreak:$('#lunchBreak').checked,mode,customTimes:mode==='custom'?customTimes:undefined,customSlot,customSlotAssignments,removeCustomSlotIds,expectedRevision:availabilityPlan?.revision};
-        if(mode==='standard'&&changed.length===1)input.timeEdit={index:Number(changed[0].dataset.startIndex),start:changed[0].value};
-        const saveWithCalendarCheck=async(confirmedPairs=[])=>{
-          input.ownerCalendarConfirmedKeys=confirmedPairs;
+        if(customSlot&&(!isValidTime24h(customStart)||!isValidTime24h(customEnd))){editorError('新增時段請使用 24 小時制 HH:mm。');return}
+        const input={selectedIndexes,assignments,researcherId:admin?myId:'',lunchBreak:workingLunch,mode,scheduleEdits,customTimes:mode==='custom'?customTimes:undefined,customSlot,customSlotAssignments,removeCustomSlotIds,expectedRevision:availabilityPlan?.revision};
+        const save=async(confirmedPairs=[])=>{
+          input.ownerCalendarConfirmedKeys=confirmedPairs;button.disabled=true;button.textContent='儲存中…';
           try{
             const result=await api('saveAvailabilityDay',sessionToken,availabilityPlan.month,date,input);
-            if(result.calendarConflict){
-              showCalendarConflict(result,keys=>saveWithCalendarCheck([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await load();openAvailabilityEditor(date,admin)});
-              return;
-            }
-            closeModal();await load();flash(result.calendarConflictAccepted?'已確認主要日曆的衝突可同時執行，當日班表已儲存。':'當日班表已儲存；未發布的時段尚未同步到報名表。');
-          }catch(err){closeModal();showError(err)}
+            if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await load();openAvailabilityEditor(date,admin)});return}
+            closeModal();await load();flash(result.calendarConflictAccepted?'已確認主要日曆衝突，班表已儲存。':'班表已儲存。');
+          }catch(error){button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))}
         };
-        saveWithCalendarCheck().catch(err=>{closeModal();showError(err)});
+        save().catch(error=>{button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))});
       });
+      $('#closeDayEditor').addEventListener('click',closeModal);$('#cancelDayEditor').addEventListener('click',closeModal);
     }
     function openDraftSlotTimeEditor(date,slotId){
-      const day=availabilityPlan?.days?.[date],slot=(day?.slots||[]).find(item=>String(item.slotId)===String(slotId));
-      const admin=state.user.role==='admin',myId=state.user.researcherId||'';
-      if(!slot||availabilityPlan?.status==='published'||day.mode==='custom'||!myId||(!admin&&slot.researcherId!==myId)||!['draft_available','available'].includes(slot.status)||slot.locked){showError(new Error('這個時段目前不能直接修改，請重新整理班表。'));return}
-      const assigned=(day.slots||[]).filter(item=>item.researcherId);
-      const selectedIndexes=assigned.filter(item=>admin||item.researcherId===myId).map(item=>Number(item.index));
-      const assignments={};
-      if(admin)assigned.forEach(item=>{assignments[Number(item.index)]=item.researcherId});
-      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜調整可收時段</div><h2>${esc(date)} ${esc(slot.researcherName||state.user.name)}</h2></div><button class="btn" type="button" id="closeQuickTimeEditor" aria-label="關閉">×</button></div><div class="grid quick-time-grid"><label class="field"><span>開始時間</span><input id="quickSlotStart" type="time" lang="en-GB" step="60" data-time-24h value="${esc(slot.start)}"></label><div class="quick-time-end"><span class="meta">結束時間（自動）</span><strong id="quickSlotEnd">${esc(addMinutesLabel(slot.start,60))}</strong><span class="meta">固定為開始後 1 小時</span></div></div><p class="help">儲存後，後續時段會一併順延或提前。若會移動其他研究者已填、受試者已報名或待確認支援的時段，系統會阻止變更；標準時段仍須保留 30 分鐘間隔並於 18:30 前結束。</p><div id="quickTimeError" class="alert error" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelQuickTimeEditor">取消</button><button class="btn primary" type="button" id="saveQuickTimeEditor">儲存時間</button></div>`);
-      bind24HourFields($('#modalbox'));const close=()=>closeModal();
-      $('#closeQuickTimeEditor').addEventListener('click',close);$('#cancelQuickTimeEditor').addEventListener('click',close);
-      $('#quickSlotStart').addEventListener('input',event=>{$('#quickSlotEnd').textContent=addMinutesLabel(event.target.value,60)||'—'});
-      $('#saveQuickTimeEditor').addEventListener('click',async event=>{
-        const start=$('#quickSlotStart').value,button=event.currentTarget;
-        if(!isValidTime24h(start)){$('#quickTimeError').textContent='請輸入有效的 24 小時制開始時間，例如 09:30。';$('#quickTimeError').hidden=false;return}
-        const input={selectedIndexes,assignments,researcherId:myId,lunchBreak:day.lunchBreak!==false,mode:'standard',timeEdit:{index:Number(slot.index),start},expectedRevision:availabilityPlan.revision};
-        const save=async(confirmedPairs=[])=>{
-          input.ownerCalendarConfirmedKeys=confirmedPairs;button.disabled=true;
-          try{
-            const result=await api('saveAvailabilityDay',sessionToken,availabilityPlan.month,date,input);
-            if(result.calendarConflict){button.disabled=false;showCalendarConflict(result,keys=>save([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await load()});return}
-            closeModal();await load();flash(result.calendarConflictAccepted?'已儲存時間，並確認管理者主要日曆的行程衝突。':'已更新時段；結束時間為開始後 1 小時。');
-          }catch(error){button.disabled=false;const box=$('#quickTimeError');if(box){box.textContent=error.message||String(error);box.hidden=false}else showError(error)}
-        };
-        save().catch(showError);
-      });
+      const admin=state.user.role==='admin';
+      return openAvailabilityEditor(date,admin);
     }
     async function addAvailabilityBatch(date,slots,researcherId,index=0,added=0,confirmedKeys=[]){
       if(index>=slots.length){closeModal();await load();flash(`已新增 ${added} 個可收時段。`);return}
@@ -351,7 +460,7 @@
       closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
-    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
+    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
   })();
 </script>
 
@@ -618,12 +727,12 @@
       const nav=admin?[['dashboard','總覽'],['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
       if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
       const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
-      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><div class="eyebrow">${activeView==='dashboard'?'STUDY OVERVIEW':'RESEARCH DESK'}</div><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">測試版資料只寫入獨立工作流程資料庫與「${esc(state.calendarName)}」。原始正式表單與原始回覆表未修改。</div></main></div></div>`;
+      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${state.testMode?'測試資料僅寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
       document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
       $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
       bindView(activeView,admin);
     }
-    function subtitleFor(view,admin){return ({dashboard:admin?'追蹤 119 位招募進度、待審核案件與研究者確認。':'查看指派給你的案件、可收時間與近期場次。',availability:'每個時段只能指派一位研究者；儲存時檢查重複時段與 30 分鐘緩衝。',workflow:admin?'資格初查通過後交由負責研究者確認；疑似重複或資料不完整的案件留給你審核。':'確認指派給你的實驗；若無法執行，請填寫理由。',appointments:'只顯示已確認的受試者場次；姓名與聯絡資訊不會出現在可收時間月曆。',sessions:'實驗結束後紀錄出席、結果摘要需求、黑名單及受試者個別狀況。',notes:'研究者可以隨時新增整體觀察，供研究討論整理。',researchers:'以姓名和個人顏色辨識排班；加入研究者前先確認其團隊信箱。',settings:'目前所有寄出的流程郵件都導向你的測試信箱。'}[view]||'')}
+    function subtitleFor(view,admin){return ({dashboard:admin?'招募進度與待處理案件。':'你的待辦與近期場次。',availability:'每場 60 分鐘，場次至少間隔 30 分鐘。',workflow:admin?'處理資格審核與研究者確認。':'確認指派給你的場次。',appointments:'已確認場次與臨時異動。',sessions:'記錄出席與實驗結果。',notes:'團隊共用觀察。',researchers:'管理研究團隊與排班顏色。',settings:'管理測試表單與預設時段。'}[view]||'')}
 
     function renderView(view,admin){
       if(view==='dashboard')return renderDashboard(admin);
@@ -707,7 +816,7 @@
     function renderResearchers(){return `<section class="panel"><h2>新增研究者</h2><p class="help">新增後，研究者可用團隊信箱收取一次性登入碼。</p><form id="researcherForm"><div class="grid"><div class="field"><label>研究者姓名</label><input name="name" required placeholder="只填名字"></div><div class="field"><label>研究者 Email</label><input name="email" type="email" required></div><div class="field"><label>月曆顏色</label><input name="color" type="color" value="#2b8678"></div></div><button class="btn primary">加入研究者</button></form></section><section class="panel"><h2>研究團隊</h2>${state.researchers.map(r=>`<div class="slotline researcher-row" style="--person:${esc(r.color)}"><span class="color-dot" style="--person:${esc(r.color)}"></span><strong>${esc(r.name)}</strong><span class="meta">${esc(r.email||'研究者帳號')}</span>${r.researcherId!==state.user.researcherId?`<button class="btn small danger" data-remove-researcher="${esc(r.researcherId)}" data-name="${esc(r.name)}">移除</button>`:'<span class="tag">你</span>'}</div>`).join('')||'<div class="empty">尚未加入其他研究者</div>'}<p class="help">移除會立即停用登入並撤銷既有工作階段。若仍有待確認或已排定案件，需先完成支援或改期。</p></section>`}
     function renderSettings(){
       const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
-      const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="time" lang="en-GB" step="60" data-time-24h data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
+      const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
       return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button></div><p class="help">只有管理者發布月份班表時，表單選項才會同步。時段需距離開始至少 12 小時；達到招募目標或沒有可選時段時，系統會暫停收件。</p><p class="help">確認錄取後的事件只建立在「${esc(state.calendarName)}」；管理者本人排班時會檢查其主要日曆。其他研究者的個人日曆未連接。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
     }
     function bindView(view,admin){
@@ -764,47 +873,53 @@
       }
       if(view==='settings'){
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
-        $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="time" lang="en-GB" step="60" data-time-24h data-template-start="${index}" value=""></label><span class="template-end">結束：—</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
+        $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${index}" value=""></label><span class="template-end">結束：—</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
         bindTemplateControls();
         $('#saveScheduleTemplate')?.addEventListener('click',async()=>{const starts=[...document.querySelectorAll('[data-template-start]')].map(input=>AvailabilityUI.normalizeTimeEntry(input.value));if(starts.some(start=>!AvailabilityUI.isValidTime24h(start))){showError(new Error('所有預設時段都需要填寫有效的 24 小時制開始時間，例如 09:30。'));return}try{await api('updateScheduleDefaults',sessionToken,{slots:starts.map(start=>[start,AvailabilityUI.addMinutesLabel(start,60)])});await load();flash('未來月份的預設時段已更新。')}catch(err){showError(err)}});
       }
     }
     function bindTemplateControls(){
+      AvailabilityUI.bind24HourFields($('#scheduleTemplateRows'));
       document.querySelectorAll('[data-template-remove]').forEach(button=>{if(button.dataset.bound)return;button.dataset.bound='1';button.addEventListener('click',()=>{if(document.querySelectorAll('[data-template-start]').length<=1){showError(new Error('至少保留一個預設時段。'));return}button.closest('.template-row').remove();[...document.querySelectorAll('.template-row')].forEach((row,index)=>{row.querySelector('strong').textContent=`時段 ${index+1}`;row.querySelector('[data-template-start]').dataset.templateStart=index;row.querySelector('[data-template-remove]').dataset.templateRemove=index})})});
       document.querySelectorAll('[data-template-start]').forEach(input=>{if(input.dataset.bound)return;input.dataset.bound='1';input.addEventListener('blur',()=>{input.value=AvailabilityUI.normalizeTimeEntry(input.value);input.closest('.template-row').querySelector('.template-end').textContent='結束：'+(AvailabilityUI.addMinutesLabel(input.value,60)||'—')})});
     }
 
     async function renderResearcherAction(){
-      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCHER CONFIRMATION</div><h1>研究者確認</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取指派資料…</div><div id="action"></div></section>`;
+      $('#root').innerHTML=`<section class="panel auth compact-action"><h1>研究者確認</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取場次…</div><div id="action"></div></section>`;
       try{
         const d=await api('requestResearcherAction',LINK_TOKEN);
-        $('#flash').textContent=d.support?'這是額外的「請求支援」，你未曾填寫該時段可收。請確認是否願意支援。':d.actionType==='reschedule'?'受試者提出改期；原時段暫時保留，請確認新時段。':'請確認你能否執行這場實驗。';
-        $('#action').innerHTML=`<div class="card"><h3>${esc(d.participantName)} · ${esc(d.slot)}</h3><div class="meta">負責研究者：${esc(d.researcherName)}<br>${esc(d.managerMessage)}</div></div><form id="answer"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="field"><label>無法執行原因類別</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>具體理由（無法執行時必填）</label><textarea name="detail" placeholder="請說明原因"></textarea></div><button class="btn primary" type="submit">送出回覆</button></form>`;
+        const context=d.support?'受邀支援此場次，請確認是否接受。':d.actionType==='reschedule'?'請確認受試者提出的新時段。':'請確認是否可執行此場次。';
+        flash(context);
+        $('#action').innerHTML=`<div class="ack-card researcher-action-card"><strong>${esc(d.participantName)}</strong><span class="ack-slot">${esc(d.slot)}</span>${d.managerMessage?`<p class="help">${esc(d.managerMessage)}</p>`:''}<form id="answer" class="compact-form"><fieldset class="researcher-choice"><legend class="sr-only">回覆場次安排</legend><label><input type="radio" name="decision" value="accept" required> 可以執行</label><label><input type="radio" name="decision" value="decline" required> 無法執行</label></fieldset><div id="researcherActionReasons" class="reason-fields" hidden><label class="field">原因<select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></label><label class="field">補充說明<textarea name="detail" placeholder="請簡述原因"></textarea></label></div><div id="researcherActionError" class="alert error" role="alert" hidden></div><button class="btn primary" type="submit">送出回覆</button></form></div>`;
         $('#answer').addEventListener('submit',async e=>{
           e.preventDefault();const form=e.currentTarget,d=new FormData(form);
-          if(d.get('decision')==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因類別與具體理由都必須填寫。'));return}
-          try{await api('respondResearcher',LINK_TOKEN,d.get('decision'),d.get('reason'),d.get('detail'));$('#action').innerHTML='';flash('已記錄你的回覆。')}
-          catch(err){showError(err)}
+          const decline=d.get('decision')==='decline',reasons=$('#researcherActionReasons'),reason=form.elements.reason,detail=form.elements.detail,error=$('#researcherActionError');
+          reasons.hidden=!decline;reason.required=decline;detail.required=decline;
+          if(decline&&(!d.get('reason')||!d.get('detail'))){error.textContent='請填寫婉拒原因與補充說明。';error.hidden=false;return}
+          error.hidden=true;
+          try{await api('respondResearcher',LINK_TOKEN,d.get('decision'),d.get('reason'),d.get('detail'));$('#action').innerHTML='<div class="ack-card"><strong>已記錄你的回覆。</strong></div>';flash('已收到回覆。')}
+          catch(err){error.textContent=err.message||String(err);error.hidden=false}
         });
+        $('#answer').addEventListener('change',event=>{if(event.target.name!=='decision')return;const decline=event.target.value==='decline',reasons=$('#researcherActionReasons');reasons.hidden=!decline;$('#answer').elements.reason.required=decline;$('#answer').elements.detail.required=decline;$('#researcherActionError').hidden=true});
       }catch(error){showError(error)}
     }
     async function renderAck(){
-      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">CONFIRMATION</div><h1>確認已收到錄取通知</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取確認資料…</div><div id="action"></div></section>`;
+      $('#root').innerHTML=`<section class="panel auth compact-action"><h1>確認參加</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取時段…</div><div id="action"></div></section>`;
       try{
         const details=await api('getParticipantAck',LINK_TOKEN);
         if(details.alreadyConfirmed){
-          flash(`謝謝 ${details.name}，系統已記錄你確認收到通知並會依約到場。`);
-          $('#action').innerHTML=`<div class="card"><strong>${esc(details.slot)}</strong><p class="help">請以最新錄取信中的時間與地點為準。如需改期，請使用錄取信中的改期連結。</p><span class="tag green">已確認收到</span></div>`;
+          flash('已記錄，謝謝。');
+          $('#action').innerHTML=`<div class="ack-card"><strong>${esc(details.slot)}</strong><span class="tag green">已確認參加</span><p class="help">如需改期，請使用錄取信中的連結。</p></div>`;
           return;
         }
-        flash(`請確認你已收到通知，並會依約參加：${details.slot}`);
-        $('#action').innerHTML=`<div class="card"><p><strong>實驗時間</strong><br>${esc(details.slot)}</p><p class="ack-emphasis"><strong>請按下方按鈕，告訴研究團隊你已收到通知並會依約到場。</strong></p><p class="help">不用另外回覆電子郵件。若需要改期，請回到錄取信使用「查看其他時段／申請改期」連結。</p><button class="btn primary ack-confirm-button" id="confirmParticipantAck" type="button">確認收到，我會依約到場</button></div>`;
+        flash('請確認你會依約參加以下時段。');
+        $('#action').innerHTML=`<div class="ack-card"><strong class="ack-slot">${esc(details.slot)}</strong><button class="btn primary ack-confirm-button" id="confirmParticipantAck" type="button">確認收到，我會依約到場</button></div>`;
         $('#confirmParticipantAck').addEventListener('click',async buttonEvent=>{
-          const button=buttonEvent.currentTarget;button.disabled=true;
-          try{const result=await api('acknowledgeParticipant',LINK_TOKEN);flash(`謝謝 ${result.name}，系統已記錄你確認收到通知並會依約到場。`);$('#action').innerHTML=`<div class="card"><strong>${esc(result.slot||details.slot)}</strong><p class="help">請以最新錄取信中的時間與地點為準。</p><span class="tag green">已確認收到</span></div>`}
-          catch(error){button.disabled=false;showError(error)}
+          const button=buttonEvent.currentTarget;button.disabled=true;button.textContent='記錄中…';
+          try{const result=await api('acknowledgeParticipant',LINK_TOKEN);flash('已記錄，你已確認參加。');$('#action').innerHTML=`<div class="ack-card"><strong>${esc(result.slot||details.slot)}</strong><span class="tag green">已確認參加</span></div>`}
+          catch(error){button.disabled=false;button.textContent='確認收到，我會依約到場';flash(`記錄失敗：${error.message||String(error)}`)}
         });
-      }catch(error){showError(error)}
+      }catch(error){flash(`無法讀取確認資料：${error.message||String(error)}`)}
     }
     async function renderReschedule(){
       $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESCHEDULE REQUEST</div><h1>申請改期</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取可選時段…</div><div id="action"></div></section>`;
