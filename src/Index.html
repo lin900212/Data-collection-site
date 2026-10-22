@@ -48,6 +48,20 @@
     @media(max-width:680px){.calendar-panel{padding:14px}.calendar-top{align-items:flex-start}.calendar-period{gap:8px}.calendar-period h2{min-width:140px;font-size:19px}.calendar-legend{gap:7px 11px}.day-editor-list{grid-template-columns:1fr}}
     @media(max-width:600px){.calendar-scroll{overflow:visible;border:0}.calendar-weekdays{display:none}.calendar-weekdays,.calendar-grid{min-width:0}.calendar-grid{grid-template-columns:minmax(0,1fr);grid-auto-rows:auto;gap:8px}.calendar-day.outside{display:none}.calendar-day{min-height:0;padding:10px;border:1px solid var(--line);border-radius:10px}.calendar-day:nth-child(7n){border-right:1px solid var(--line)}.calendar-day-number{display:flex;align-items:baseline;gap:7px}.calendar-mobile-weekday{display:inline;color:var(--muted);font-size:11px;font-weight:600}.calendar-day-add{min-width:40px;min-height:40px}.modal{align-items:flex-end;padding:8px}.modalbox{width:100%;max-height:calc(100dvh - 16px);padding:18px;border-radius:16px;overflow:auto}.schedule-editor-row,.custom-slot-row{grid-template-columns:minmax(0,1fr)}.schedule-editor-row .meta{grid-column:auto}.schedule-editor-times input{min-width:0}.availability-editor-actions{position:sticky;bottom:-18px;z-index:1;background:#fff;padding:12px 0 4px;box-shadow:0 -8px 12px #fff}.availability-editor-actions .btn{min-height:44px}}
     @media(max-width:420px){.header{gap:8px}.brand{font-size:14px}.head-right{max-width:60%}.person{font-size:11px}.calendar-period h2{min-width:120px;font-size:17px}.calendar-nav{width:38px;height:38px}.calendar-legend{font-size:11px}.calendar-event{font-size:12px}.schedule-editor-times{width:100%}.schedule-editor-times .field{min-width:0;flex:1}.actions>.btn,.availability-editor-actions>.btn{flex:1}}
+    @keyframes request-spin{to{transform:rotate(360deg)}}
+    .button-spinner{display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:-2px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:request-spin .75s linear infinite}
+    .alert.is-pending{display:flex;align-items:center;gap:9px;background:#e9f3ef;color:#315f52;border:1px solid var(--line)}
+    .alert.is-pending::before{content:"";flex:0 0 15px;width:15px;height:15px;border:2px solid #8db9a8;border-right-color:transparent;border-radius:50%;animation:request-spin .75s linear infinite}
+    .request-pending{cursor:progress}
+    .ack-emphasis{color:var(--red);font-size:16px;line-height:1.6}
+    .ack-confirm-button{min-height:48px}
+    .availability-modal .time-pair{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:end;gap:8px;width:100%;min-width:0}
+    .availability-modal .time-pair>.field{display:grid;grid-template-rows:auto 42px;gap:6px;min-width:0;margin:0}
+    .availability-modal .time-pair>.field>span{font-size:11px;color:var(--muted);font-weight:750}
+    .availability-modal .time-pair input[type="time"],.availability-modal .time-readout{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;height:42px;min-height:42px;padding:6px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums}
+    .availability-modal .time-readout{background:#f5f8f5;font-weight:750}
+    .availability-modal .time-separator{align-self:end;margin-bottom:12px;text-align:center;color:var(--muted);font-size:12px;font-weight:700}
+    @media(max-width:600px){.availability-modal .time-pair{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);gap:5px}.availability-modal .time-pair input[type="time"],.availability-modal .time-readout{padding:5px 3px;font-size:14px}.availability-modal .time-separator{margin-bottom:12px;font-size:11px}.availability-modal .time-pair>.field{grid-template-rows:auto 42px}.availability-modal .day-editor-option{min-height:46px}}
   </style>
 
 </head>
@@ -107,7 +121,7 @@
       const rows=slots.map(slot=>{
         const locked=Boolean(slot.locked)||['held','booked','completed','reschedule_hold'].includes(slot.status),editable=admin&&!locked&&['available','support_pending','needs_assignment'].includes(slot.status),researcherCanAdjust=!admin&&!locked&&slot.status==='available'&&slot.researcherId===myId&&day.mode!=='custom',canCancel=!locked&&(admin?['available','support_pending','needs_assignment'].includes(slot.status):slot.status==='available'&&slot.researcherId===myId);
         const owner=admin&&editable?`<select data-published-owner="${esc(slot.slotId)}"><option value="">未指派</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${slot.researcherId===r.researcherId?'selected':''}>${esc(r.name)}${r.researcherId!==myId?'（指派他人會請求支援）':''}</option>`).join('')}</select>`:`<span class="meta">${esc(slot.researcherName||'未指派')}</span>`;
-        const times=editable?`<div class="schedule-editor-times"><label class="field"><span>開始</span><input type="time" data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><label class="field"><span>結束</span><input type="time" data-published-end="${esc(slot.slotId)}" value="${esc(slot.end)}"></label></div>`:researcherCanAdjust?`<div class="schedule-editor-times"><label class="field"><span>開始</span><input type="time" data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><div class="quick-time-end"><span class="meta">結束時間（自動）</span><strong data-published-auto-end="${esc(slot.slotId)}">${esc(slot.end)}</strong></div></div>`:`<strong>${esc(slot.start)}–${esc(slot.end)}</strong>`;
+        const times=editable?`<div class="schedule-editor-times time-pair"><label class="field"><span>開始時間</span><input type="time" data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><span class="time-separator" aria-hidden="true">至</span><label class="field"><span>結束時間</span><input type="time" data-published-end="${esc(slot.slotId)}" value="${esc(slot.end)}"></label></div>`:researcherCanAdjust?`<div class="schedule-editor-times time-pair"><label class="field"><span>開始時間</span><input type="time" data-published-start="${esc(slot.slotId)}" value="${esc(slot.start)}"></label><span class="time-separator" aria-hidden="true">至</span><label class="field"><span>結束時間</span><output class="time-readout" data-published-auto-end="${esc(slot.slotId)}">${esc(slot.end)}</output></label></div>`:`<strong>${esc(slot.start)}–${esc(slot.end)}</strong>`;
         const status=slot.status==='available'?'可報名':slot.status==='booked'?'已報名':slot.status==='support_pending'?'請求支援':slot.status==='needs_assignment'?'待安排':slot.status;
         const support=slot.status==='support_pending'&&slot.researcherId===myId&&!admin?`<div class="actions"><button class="btn small" data-published-support="accept" data-slot="${esc(slot.slotId)}">接受</button><button class="btn small danger" data-published-support="decline" data-slot="${esc(slot.slotId)}">婉拒</button></div>`:'';
         return `<div class="schedule-editor-row published-slot-row" data-published-row="${esc(slot.slotId)}" data-published-status="${esc(slot.status)}" data-published-owner-id="${esc(slot.researcherId||'')}" data-published-original-start="${esc(slot.start)}">${times}${owner}<span class="tag ${slot.status==='booked'?'red':slot.status==='available'?'green':'amber'}">${esc(status)}</span>${canCancel?`<label class="checkrow"><input type="checkbox" data-published-cancel="${esc(slot.slotId)}">${admin?'關閉':'取消我的時段'}</label>`:''}${support}</div>`;
@@ -118,7 +132,7 @@
       const error=message=>{const box=$('#publishedEditorError');box.textContent=message;box.hidden=false};
       $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
       document.querySelectorAll('[data-published-auto-end]').forEach(output=>document.querySelector(`[data-published-start="${output.dataset.publishedAutoEnd}"]`)?.addEventListener('input',event=>{output.textContent=addMinutesLabel(event.target.value,60)}));
-      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(decision==='decline'&&!reason)return;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
       $('#savePublishedSlots').addEventListener('click',async()=>{
         const changes=[];
         document.querySelectorAll('[data-published-row]').forEach(row=>{
@@ -144,7 +158,7 @@
         const checked=Boolean(s.researcherId)||locked;
         const disabled=other||locked||support;
         const ownerSelect=admin?`<select data-slot-owner="${index}"><option value="${esc(myId)}">${esc(state.user.name)}</option>${state.researchers.filter(r=>r.researcherId!==myId).map(r=>`<option value="${esc(r.researcherId)}" ${s.researcherId===r.researcherId?'selected':''}>${esc(r.name)}${s.researcherId===r.researcherId?'':'（請求支援）'}</option>`).join('')}</select>`:`<span class="meta">${esc(s.researcherName||'尚未有人填寫')}</span>`;
-        const timeInput=admin?`<input type="time" data-start-index="${index}" value="${esc(s.start)}" ${locked?'disabled':''}><input class="custom-end-input" type="time" data-end-index="${index}" value="${esc(s.end)}" ${day.mode==='custom'?'':'hidden'} ${locked?'disabled':''}><span class="end-time" data-end-label="${index}" ${day.mode==='custom'?'hidden':''}>– ${esc(s.end)}</span>`:`<span class="end-time">${esc(s.start)}–${esc(s.end)}</span>`;
+        const timeInput=admin?`<div class="time-pair"><label class="field"><span>開始時間</span><input type="time" data-start-index="${index}" value="${esc(s.start)}" ${locked?'disabled':''}></label><span class="time-separator" aria-hidden="true">至</span><label class="field"><span>結束時間</span><input class="custom-end-input" type="time" data-end-index="${index}" value="${esc(s.end)}" ${day.mode==='custom'?'':'hidden'} ${locked?'disabled':''}><output class="time-readout end-time" data-end-label="${index}" ${day.mode==='custom'?'hidden':''}>${esc(s.end)}</output></label></div>`:`<span class="end-time">${esc(s.start)}–${esc(s.end)}</span>`;
         return `<div class="schedule-editor-row ${locked?'is-locked':''}"><label class="checkrow"><input type="checkbox" data-day-slot data-index="${index}" ${checked?'checked':''} ${disabled?'disabled':''}>時段 ${index+1}</label><div class="schedule-editor-times">${timeInput}</div>${ownerSelect}<div class="meta">${support?'等待你回覆支援請求':locked?'受試者已報名':s.supportRequest?'請求支援':s.status==='draft_available'?'已填寫':'可安排'}</div></div>`;
       }).join('');
       const customRows=(day.customSlots||[]).map(s=>{
@@ -160,9 +174,9 @@
       const checks=[...document.querySelectorAll('[data-day-slot]')];
       $('#selectAllDaySlots').addEventListener('change',e=>{checks.filter(box=>!box.disabled).forEach(box=>box.checked=e.target.checked)});
       checks.forEach(box=>box.addEventListener('change',()=>{$('#selectAllDaySlots').checked=checks.filter(x=>!x.disabled).length>0&&checks.filter(x=>!x.disabled).every(x=>x.checked)}));
-      document.querySelectorAll('[data-start-index]').forEach(input=>input.addEventListener('change',()=>{const end=document.querySelector(`[data-end-label="${input.dataset.startIndex}"]`);if(end)end.textContent='– '+addMinutesLabel(input.value,60)}));
+      document.querySelectorAll('[data-start-index]').forEach(input=>input.addEventListener('input',()=>{const end=document.querySelector(`[data-end-label="${input.dataset.startIndex}"]`);if(end)end.textContent=addMinutesLabel(input.value,60)}));
       $('#fullyCustom')?.addEventListener('change',e=>{document.querySelectorAll('.custom-end-input').forEach(input=>{input.hidden=!e.target.checked;const label=document.querySelector(`[data-end-label="${input.dataset.endIndex}"]`);if(label)label.hidden=e.target.checked});document.querySelectorAll('[data-extra-start],[data-extra-end]').forEach(input=>{input.disabled=!e.target.checked||Boolean(input.closest('.custom-slot-row')?.querySelector('[data-remove-custom-slot]')?.disabled)});});
-      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{const reason=button.dataset.daySupport==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(button.dataset.daySupport==='decline'&&!reason)return;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,button.dataset.daySupport,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.daySupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
       $('#saveDaySlots').addEventListener('click',async()=>{
         const selectedIndexes=checks.filter(box=>box.checked).map(box=>Number(box.dataset.index));
         const mode=admin&&$('#fullyCustom')?.checked?'custom':'standard';
@@ -286,6 +300,11 @@
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
     const bridgeRequests=new Map();
+    const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
+    const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
+    let activeWriteKey='',activeWriteControl=null;
+    document.addEventListener('click',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
+    document.addEventListener('submit',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
     function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
     function isBridgeOrigin(origin){
       try{
@@ -355,17 +374,61 @@
       }));
     }
     function api(name,...args){
-      if(window.google&&window.google.script&&window.google.script.run){
-        return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)});
+      const isWrite=WRITE_METHODS.has(name),start=performance.now();
+      if(isWrite&&activeWriteKey)return Promise.reject(new Error('上一項操作仍在處理，請稍候；完成前不需要再按一次。'));
+      if(isWrite){
+        activeWriteKey=name;
+        const focused=document.activeElement,form=focused?.form;
+        activeWriteControl=focused?.matches?.('button,[type="submit"]')?focused:form?.querySelector?.('[type="submit"]')||null;
+        if(activeWriteControl){activeWriteControl.dataset.requestOriginalHtml=activeWriteControl.innerHTML;activeWriteControl.dataset.requestOriginalDisabled=String(activeWriteControl.disabled);activeWriteControl.disabled=true;activeWriteControl.innerHTML=`<span class="button-spinner" aria-hidden="true"></span>${esc(WRITE_MESSAGES[name]||'處理中…')}`}
+        document.documentElement.classList.add('request-pending');
+        setRequestStatus(WRITE_MESSAGES[name]||'正在送出，請稍候…');
       }
-      return bridgeApi(name,args);
+      const request=window.google&&window.google.script&&window.google.script.run
+        ?new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)})
+        :bridgeApi(name,args);
+      return request.then(value=>{
+        if(isWrite&&document.querySelector('#flash'))setRequestStatus('已收到回應，正在更新畫面…');
+        return value;
+      }).catch(error=>{
+        throw error;
+      }).finally(()=>{
+        const elapsed=Math.round(performance.now()-start);
+        console.info('[研究工作台效能]',name,elapsed+' ms');
+        if(isWrite){
+          if(activeWriteControl?.isConnected){activeWriteControl.innerHTML=activeWriteControl.dataset.requestOriginalHtml||activeWriteControl.textContent;activeWriteControl.disabled=activeWriteControl.dataset.requestOriginalDisabled==='true';delete activeWriteControl.dataset.requestOriginalHtml;delete activeWriteControl.dataset.requestOriginalDisabled}
+          activeWriteControl=null;activeWriteKey='';document.documentElement.classList.remove('request-pending');
+        }
+      });
     }
-    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else alert(err.message||String(err))}
-    function flash(text){const n=$('#flash');if(n){n.classList.remove('error');n.textContent=text;n.hidden=false}}
+    function setRequestStatus(text){const n=$('#flash');if(n){n.hidden=false;n.classList.remove('error');n.classList.add('is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=text}}
+    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.remove('is-pending');n.classList.add('error');n.setAttribute('role','alert');n.textContent=err.message||String(err)}else showMessage('操作失敗',err.message||String(err))}
+    function flash(text){const n=$('#flash');if(n){n.classList.remove('error','is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=text;n.hidden=false}}
     function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
     function modal(html){$('#modalbox').className='modalbox';$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
     function closeModal(){$('#modal').classList.remove('show')}
     $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+    function showMessage(title,message){modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn primary" type="button" id="dismissMessage">知道了</button></div>`);$('#dismissMessage').addEventListener('click',closeModal)}
+    function preserveDialogContent(){const box=$('#modalbox'),wasOpen=$('#modal').classList.contains('show');return{box,wasOpen,className:box.className,nodes:wasOpen?[...box.childNodes]:[]}}
+    function restoreDialogContent(snapshot){if(!snapshot.wasOpen){closeModal();return}snapshot.box.replaceChildren(...snapshot.nodes);snapshot.box.className=snapshot.className}
+    function askForReason(title,message,placeholder='請輸入原因'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><form id="reasonForm"><div class="field"><label for="reasonInput">原因（必填）</label><textarea id="reasonInput" name="reason" required maxlength="500" placeholder="${esc(placeholder)}"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelReason">取消</button><button class="btn primary" type="submit">確認送出</button></div></form>`);
+      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
+      $('#reasonForm').addEventListener('submit',event=>{event.preventDefault();const value=$('#reasonInput').value.trim();if(!value){$('#reasonInput').setCustomValidity('請填寫原因。');$('#reasonInput').reportValidity();return}finish(value)});
+      $('#reasonInput').addEventListener('input',event=>event.target.setCustomValidity(''));
+      $('#cancelReason').addEventListener('click',()=>finish(''));
+      $('#reasonInput').focus();
+    })}
+    function confirmAction(title,message,confirmLabel='確認'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn" type="button" id="cancelConfirm">取消</button><button class="btn primary" type="button" id="acceptConfirm">${esc(confirmLabel)}</button></div>`);
+      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
+      $('#cancelConfirm').addEventListener('click',()=>finish(false));
+      $('#acceptConfirm').addEventListener('click',()=>finish(true));
+    })}
+    window.askForReason=askForReason;
+    window.confirmAction=confirmAction;
 
     if(MODE==='researcher') renderResearcherAction();
     else if(MODE==='ack') renderAck();
@@ -416,22 +479,31 @@
     function isSessionError(error){return /請重新登入|登入已逾時|帳號權限已變更|尚未加入研究團隊|沒有此操作權限/.test(String(error&&error.message||error))}
     function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',load)}
     async function load(){
-      const requestId=++bootstrapRequestSequence;
+      const requestId=++bootstrapRequestSequence,started=performance.now();
+      const initialMonthKey=calendarMonthKey(availabilityMonth||new Date()),monthRequest=++availabilityRequestSequence;
+      availabilityLoading=true;availabilityLoadError='';
+      const monthPromise=api('getMonthSchedule',sessionToken,initialMonthKey).then(plan=>({plan}),error=>({error}));
+      if(state){draw();setRequestStatus('正在更新工作台資料…')}
       try{
         const nextState=await api('getBootstrap',sessionToken);
         if(requestId!==bootstrapRequestSequence)return;
         state=nextState;
-        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));
-        const monthKey=calendarMonthKey(availabilityMonth),monthRequest=++availabilityRequestSequence;
-        availabilityLoading=true;availabilityLoadError='';
-        const plan=await api('getMonthSchedule',sessionToken,monthKey);
+        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||initialMonthKey);
+        const monthKey=calendarMonthKey(availabilityMonth);
+        draw();
+        if(monthKey!==initialMonthKey)monthPromise.then(()=>{});
+        const result=monthKey===initialMonthKey?await monthPromise:{plan:await api('getMonthSchedule',sessionToken,monthKey)};
+        if(result.error)throw result.error;
+        const plan=result.plan;
         if(requestId!==bootstrapRequestSequence||monthRequest!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
         availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;draw();
       }catch(error){
-        if(requestId!==bootstrapRequestSequence)return;
+        if(requestId!==bootstrapRequestSequence||(!isSessionError(error)&&monthRequest!==availabilityRequestSequence))return;
         availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);
         if(isSessionError(error)){sessionToken='';clearSessionToken();state=null;renderLogin();showError(error);return}
         if(state){draw();showError(error)}else renderLoadError(error);
+      }finally{
+        console.info('[研究工作台效能] load',Math.round(performance.now()-started)+' ms');
       }
     }
     function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
@@ -486,7 +558,7 @@
       const formSyncAlert=admin&&state.formSync?.pending?`<div class="alert error">報名表同步失敗，系統會在背景重試；目前表單選項可能尚未反映最新班表。${esc(state.formSync.error||'')}</div>`:'';
       return `${formSyncAlert}${effectsAlert}${mailAlert}<div class="metrics">${metric('已保留／完成',`${booked} / ${state.target}`,'目標 119 位')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
     }
-    function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span></h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
+    function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span>${['confirmed','completed'].includes(a.status)?` <span class="tag ${a.acknowledgedAt?'green':'amber'}">${a.acknowledgedAt?'已確認收到':'等待收到確認'}</span>`:''}</h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}${a.acknowledgedAt?' · 收到確認 '+esc(a.acknowledgedAt):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
     function calendarDate(year,monthIndex,day){return `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`}
     function calendarMonthTitle(month){return `${month.getFullYear()} 年 ${month.getMonth()+1} 月`}
     function shiftCalendarMonth(month,delta){return new Date(month.getFullYear(),month.getMonth()+delta,1)}
@@ -512,8 +584,8 @@
     function researcherResponseForm(a){return `<form class="response-form" data-response="${esc(a.applicationId)}"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="grid"><div class="field"><label>無法執行原因</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>補充說明（無法執行時必填）</label><input name="detail" placeholder="請簡短說明"></div></div><button class="btn primary" type="submit">送出研究者回覆</button></form>`}
     function renderAppointments(admin){
       const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));
-      const calendarItems=apps.map(a=>{const slot=state.slots.find(s=>s.slotId===a.slotId);return slot?{date:slot.date,start:slot.start,end:slot.end,name:a.name,researcherName:a.researcherName,color:a.researcherColor,status:a.status}:null}).filter(Boolean);
-      const renderAppointment=a=>`<div class="appointment-calendar-event" style="--person:${esc(a.color)}"><strong>${esc(a.start)}–${esc(a.end)}</strong><span>${esc(a.name)}</span><span>${esc(a.researcherName)}</span></div>`;
+      const calendarItems=apps.map(a=>{const slot=state.slots.find(s=>s.slotId===a.slotId);return slot?{date:slot.date,start:slot.start,end:slot.end,name:a.name,researcherName:a.researcherName,color:a.researcherColor,status:a.status,acknowledgedAt:a.acknowledgedAt}:null}).filter(Boolean);
+      const renderAppointment=a=>`<div class="appointment-calendar-event" style="--person:${esc(a.color)}"><strong>${esc(a.start)}–${esc(a.end)}</strong><span>${esc(a.name)}</span><span>${esc(a.researcherName)}</span>${a.status==='confirmed'?`<span class="tag ${a.acknowledgedAt?'green':'amber'}">${a.acknowledgedAt?'已確認收到':'等待收到確認'}</span>`:''}</div>`;
       const calendarUrl='https://calendar.google.com/calendar/u/0/r?cid='+encodeURIComponent(state.calendarId||'');
       const mine=state.applications.filter(a=>a.status==='confirmed'&&a.assignedResearcherId===state.user.researcherId).sort((a,b)=>a.slot.localeCompare(b.slot));
       const changeCards=(state.scheduleChanges||[]).filter(c=>c.status!=='cancelled').sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,10).map(c=>{
@@ -558,8 +630,8 @@
         $('#retryAvailabilityMonth')?.addEventListener('click',()=>loadAvailabilityMonth({force:true}));
         $('#submitMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#submitMyMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
-        $('#publishMonth')?.addEventListener('click',async()=>{if(!confirm(`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
-        document.querySelectorAll('[data-schedule-support]').forEach(button=>button.addEventListener('click',async()=>{const reason=button.dataset.scheduleSupport==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(button.dataset.scheduleSupport==='decline'&&!reason)return;try{if(availabilityPlan.status==='published')await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,button.dataset.scheduleSupport,reason);else await api('setScheduleSupportResponse',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.date,button.dataset.slot,button.dataset.scheduleSupport,reason);await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+        $('#publishMonth')?.addEventListener('click',async()=>{if(!await confirmAction('發布班表',`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`,'發布班表'))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
+        document.querySelectorAll('[data-schedule-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.scheduleSupport,reason=decision==='decline'?await askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{if(availabilityPlan.status==='published')await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);else await api('setScheduleSupportResponse',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.date,button.dataset.slot,decision,reason);await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
         document.querySelectorAll('.assign-btn').forEach(b=>b.addEventListener('click',()=>{const select=document.querySelector(`[data-assign="${b.dataset.slot}"]`);if(!select.value){showError(new Error('請先選擇研究者。'));return}AvailabilityUI.submitSlotAssignment(b.dataset.slot,select.value).catch(showError)}));
       }
       if(view==='appointments'){
@@ -567,7 +639,7 @@
         document.querySelectorAll('[data-request-change]').forEach(button=>button.addEventListener('click',()=>openScheduleChangeRequest(button.dataset.requestChange)));
         document.querySelectorAll('[data-respond-change]').forEach(button=>button.addEventListener('click',async()=>{
           const decision=button.dataset.respondChange;
-          const reason=decision==='decline'?prompt('請填寫婉拒臨時異動的理由：'):'';
+          const reason=decision==='decline'?await askForReason('婉拒臨時異動','請說明無法接受這項異動的原因。'):'';
           if(decision==='decline'&&!String(reason||'').trim())return;
           button.disabled=true;
           try{await api('respondSessionChange',sessionToken,button.dataset.change,decision,reason||'');await load();flash(decision==='accept'?'已接受異動，系統已更新研究團隊日曆。':'已婉拒異動，管理者會收到理由。')}
@@ -580,24 +652,24 @@
           if(!reason){showError(new Error('請填寫安排或取消的說明。'));return}
           if(decision==='assign'&&!target){showError(new Error('請先選擇支援研究者。'));return}
           const warning=decision==='cancel'?'確定取消這位受試者的場次並寄出通知嗎？':'會寄出支援確認信；原時間會保留到研究者接受。要繼續嗎？';
-          if(!confirm(warning))return;
+          if(!await confirmAction('確認處理異動',warning,decision==='cancel'?'取消場次':'安排支援'))return;
           button.disabled=true;
           try{const result=await api('resolveScheduleChange',sessionToken,id,decision,target,reason);await load();flash(result.status==='pending_researcher'?'已寄出支援確認邀請。':'已取消場次並通知受試者。')}
           catch(error){button.disabled=false;showError(error)}
         }));
       }
       if(view==='workflow'){
-        document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=prompt('請填寫不符合資格或需改期的原因：')||'';if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
+        document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=await askForReason('不符合資格／請改期','請填寫處理原因，系統會依此通知報名者。','例如：不符合研究條件，或原時段無法安排');if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
         document.querySelectorAll('[data-request-support]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.requestSupport,rid=document.querySelector(`[data-support="${id}"]`).value,msg=document.querySelector(`[data-support-message="${id}"]`).value;callAndReload('requestSupport',id,rid,msg)}));
-        document.querySelectorAll('[data-recheck]').forEach(button=>button.addEventListener('click',async()=>{const id=button.dataset.recheck,message=document.querySelector(`[data-recheck-message="${id}"]`)?.value.trim()||'';if(!message){showError(new Error('請填寫再次確認的說明。'));return}if(!confirm('系統會重新寄出確認邀請給原負責研究者；對方再次接受前，場次仍維持待協調。要繼續嗎？'))return;button.disabled=true;try{const result=await api('requestOriginalResearcherAgain',sessionToken,id,message);await load();flash(`已請 ${result.researcherName} 再次確認。`)}catch(error){button.disabled=false;showError(error)}}));
+        document.querySelectorAll('[data-recheck]').forEach(button=>button.addEventListener('click',async()=>{const id=button.dataset.recheck,message=document.querySelector(`[data-recheck-message="${id}"]`)?.value.trim()||'';if(!message){showError(new Error('請填寫再次確認的說明。'));return}if(!await confirmAction('再次邀請原研究者','系統會重新寄出確認邀請；對方再次接受前，場次仍維持待協調。','寄出邀請'))return;button.disabled=true;try{const result=await api('requestOriginalResearcherAgain',sessionToken,id,message);await load();flash(`已請 ${result.researcherName} 再次確認。`)}catch(error){button.disabled=false;showError(error)}}));
         document.querySelectorAll('[data-sensitive]').forEach(b=>b.addEventListener('click',async()=>{try{const d=await api('getSensitiveApplication',sessionToken,b.dataset.sensitive);modal(`<h2>敏感資格資料</h2><p>身分證字號：<strong>${esc(d.nationalId||'未填')}</strong></p><p>檢查碼格式：${d.idValid==='true'?'通過':'需人工核對'}</p><p>戶籍地址：${esc(d.homeAddress||'未填')}</p><div class="notice">只用於管理者核對資格或重複報名，請勿複製到一般通知或研究者行程。</div><button class="btn" onclick="closeModal()">關閉</button>`)}catch(e){showError(e)}}));
-        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){alert('無法執行時，原因與補充說明都必須填寫。');return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
+        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因與補充說明都必須填寫。'));return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
       }
       if(view==='sessions')document.querySelectorAll('.session-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form);callAndReload('updateAttendance',form.dataset.session,d.get('attendance'),d.has('result'),d.has('blacklist'),d.get('note'))}));
       if(view==='notes')$('#saveNote')?.addEventListener('click',()=>callAndReload('addOverallNote',{date:$('#noteDate').value,note:$('#noteText').value}));
       if(view==='researchers'){
         $('#researcherForm')?.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target);callAndReload('addResearcher',{name:d.get('name'),email:d.get('email'),color:d.get('color')})});
-        document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!confirm(`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
+        document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!await confirmAction('移除研究者',`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`,'移除研究者'))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
       }
       if(view==='settings'){
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
@@ -612,16 +684,45 @@
     }
 
     async function renderResearcherAction(){
-      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCHER CONFIRMATION</div><h1>研究者確認</h1><div id="flash" class="alert">正在讀取指派資料…</div><div id="action"></div></section>`;
-      try{const d=await api('requestResearcherAction',LINK_TOKEN);$('#flash').textContent=d.support?'這是額外的「請求支援」，你未曾填寫該時段可收。請確認是否願意支援。':d.actionType==='reschedule'?'受試者提出改期；原時段暫時保留，請確認新時段。':'請確認你能否執行這場實驗。';$('#action').innerHTML=`<div class="card"><h3>${esc(d.participantName)} · ${esc(d.slot)}</h3><div class="meta">負責研究者：${esc(d.researcherName)}<br>${esc(d.managerMessage)}</div></div><form id="answer"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="field"><label>無法執行原因類別</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>具體理由（無法執行時必填）</label><textarea name="detail" placeholder="請說明原因"></textarea></div><button class="btn primary">送出回覆</button></form>`;$('#answer').addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(e.target);if(d.get('decision')==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因類別與具體理由都必須填寫。'));return}try{await api('respondResearcher',LINK_TOKEN,d.get('decision'),d.get('reason'),d.get('detail'));$('#action').innerHTML='';$('#flash').className='alert';$('#flash').textContent='已記錄你的回覆。'}catch(err){showError(err)}})}catch(e){showError(e)}
+      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCHER CONFIRMATION</div><h1>研究者確認</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取指派資料…</div><div id="action"></div></section>`;
+      try{
+        const d=await api('requestResearcherAction',LINK_TOKEN);
+        $('#flash').textContent=d.support?'這是額外的「請求支援」，你未曾填寫該時段可收。請確認是否願意支援。':d.actionType==='reschedule'?'受試者提出改期；原時段暫時保留，請確認新時段。':'請確認你能否執行這場實驗。';
+        $('#action').innerHTML=`<div class="card"><h3>${esc(d.participantName)} · ${esc(d.slot)}</h3><div class="meta">負責研究者：${esc(d.researcherName)}<br>${esc(d.managerMessage)}</div></div><form id="answer"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="field"><label>無法執行原因類別</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>具體理由（無法執行時必填）</label><textarea name="detail" placeholder="請說明原因"></textarea></div><button class="btn primary" type="submit">送出回覆</button></form>`;
+        $('#answer').addEventListener('submit',async e=>{
+          e.preventDefault();const form=e.currentTarget,d=new FormData(form);
+          if(d.get('decision')==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因類別與具體理由都必須填寫。'));return}
+          try{await api('respondResearcher',LINK_TOKEN,d.get('decision'),d.get('reason'),d.get('detail'));$('#action').innerHTML='';flash('已記錄你的回覆。')}
+          catch(err){showError(err)}
+        });
+      }catch(error){showError(error)}
     }
     async function renderAck(){
-      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">CONFIRMATION</div><h1>確認已收到錄取通知</h1><div id="flash" class="alert">正在確認…</div><div id="action"></div></section>`;
-      try{const d=await api('acknowledgeParticipant',LINK_TOKEN);$('#flash').textContent=`謝謝 ${d.name}，系統已記錄你收到通知。`;$('#action').innerHTML='<p class="help">請以錄取信中的實驗時間與地點為準。</p>'}catch(e){showError(e)}
+      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">CONFIRMATION</div><h1>確認已收到錄取通知</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取確認資料…</div><div id="action"></div></section>`;
+      try{
+        const details=await api('getParticipantAck',LINK_TOKEN);
+        if(details.alreadyConfirmed){
+          flash(`謝謝 ${details.name}，系統已記錄你確認收到通知並會依約到場。`);
+          $('#action').innerHTML=`<div class="card"><strong>${esc(details.slot)}</strong><p class="help">請以最新錄取信中的時間與地點為準。如需改期，請使用錄取信中的改期連結。</p><span class="tag green">已確認收到</span></div>`;
+          return;
+        }
+        flash(`請確認你已收到通知，並會依約參加：${details.slot}`);
+        $('#action').innerHTML=`<div class="card"><p><strong>實驗時間</strong><br>${esc(details.slot)}</p><p class="ack-emphasis"><strong>請按下方按鈕，告訴研究團隊你已收到通知並會依約到場。</strong></p><p class="help">不用另外回覆電子郵件。若需要改期，請回到錄取信使用「查看其他時段／申請改期」連結。</p><button class="btn primary ack-confirm-button" id="confirmParticipantAck" type="button">確認收到，我會依約到場</button></div>`;
+        $('#confirmParticipantAck').addEventListener('click',async buttonEvent=>{
+          const button=buttonEvent.currentTarget;button.disabled=true;
+          try{const result=await api('acknowledgeParticipant',LINK_TOKEN);flash(`謝謝 ${result.name}，系統已記錄你確認收到通知並會依約到場。`);$('#action').innerHTML=`<div class="card"><strong>${esc(result.slot||details.slot)}</strong><p class="help">請以最新錄取信中的時間與地點為準。</p><span class="tag green">已確認收到</span></div>`}
+          catch(error){button.disabled=false;showError(error)}
+        });
+      }catch(error){showError(error)}
     }
     async function renderReschedule(){
-      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESCHEDULE REQUEST</div><h1>申請改期</h1><div id="flash" class="alert">正在讀取可選時段…</div><div id="action"></div></section>`;
-      try{const d=await api('getRescheduleOptions',LINK_TOKEN);$('#flash').textContent=`${d.name}，目前預約：${d.currentSlot}。選擇的新時間會先保留，等研究者確認後才會替換原預約。`;$('#action').innerHTML=d.slots.length?`<form id="reschedule"><div class="field"><label>新實驗時段</label><select name="slot" required>${d.slots.map(s=>`<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('')}</select></div><button class="btn primary">送出改期申請</button></form>`:'<div class="empty">目前沒有可選時段，請直接回覆錄取信與研究團隊聯絡。</div>';$('#reschedule')?.addEventListener('submit',async e=>{e.preventDefault();try{const result=await api('requestParticipantReschedule',LINK_TOKEN,new FormData(e.target).get('slot'));$('#action').textContent=result.message;$('#flash').textContent='已收到改期申請'}catch(err){showError(err)}})}catch(e){showError(e)}
+      $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESCHEDULE REQUEST</div><h1>申請改期</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取可選時段…</div><div id="action"></div></section>`;
+      try{
+        const d=await api('getRescheduleOptions',LINK_TOKEN);
+        $('#flash').textContent=`${d.name}，目前預約：${d.currentSlot}。選擇的新時間會先保留，等研究者確認後才會替換原預約。`;
+        $('#action').innerHTML=d.slots.length?`<form id="reschedule"><div class="field"><label>新實驗時段</label><select name="slot" required>${d.slots.map(s=>`<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('')}</select></div><button class="btn primary" type="submit">送出改期申請</button></form>`:'<div class="empty">目前沒有可選時段，請直接回覆錄取信與研究團隊聯絡。</div>';
+        $('#reschedule')?.addEventListener('submit',async e=>{e.preventDefault();try{const result=await api('requestParticipantReschedule',LINK_TOKEN,new FormData(e.currentTarget).get('slot'));$('#action').textContent=result.message;flash('已收到改期申請；新時段待研究者確認，原時段仍保留。')}catch(error){showError(error)}});
+      }catch(error){showError(error)}
     }
   </script>
 
