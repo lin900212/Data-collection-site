@@ -118,7 +118,7 @@
       const error=message=>{const box=$('#publishedEditorError');box.textContent=message;box.hidden=false};
       $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
       document.querySelectorAll('[data-published-auto-end]').forEach(output=>document.querySelector(`[data-published-start="${output.dataset.publishedAutoEnd}"]`)?.addEventListener('input',event=>{output.textContent=addMinutesLabel(event.target.value,60)}));
-      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(decision==='decline'&&!reason)return;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
       $('#savePublishedSlots').addEventListener('click',async()=>{
         const changes=[];
         document.querySelectorAll('[data-published-row]').forEach(row=>{
@@ -162,7 +162,7 @@
       checks.forEach(box=>box.addEventListener('change',()=>{$('#selectAllDaySlots').checked=checks.filter(x=>!x.disabled).length>0&&checks.filter(x=>!x.disabled).every(x=>x.checked)}));
       document.querySelectorAll('[data-start-index]').forEach(input=>input.addEventListener('change',()=>{const end=document.querySelector(`[data-end-label="${input.dataset.startIndex}"]`);if(end)end.textContent='– '+addMinutesLabel(input.value,60)}));
       $('#fullyCustom')?.addEventListener('change',e=>{document.querySelectorAll('.custom-end-input').forEach(input=>{input.hidden=!e.target.checked;const label=document.querySelector(`[data-end-label="${input.dataset.endIndex}"]`);if(label)label.hidden=e.target.checked});document.querySelectorAll('[data-extra-start],[data-extra-end]').forEach(input=>{input.disabled=!e.target.checked||Boolean(input.closest('.custom-slot-row')?.querySelector('[data-remove-custom-slot]')?.disabled)});});
-      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{const reason=button.dataset.daySupport==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(button.dataset.daySupport==='decline'&&!reason)return;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,button.dataset.daySupport,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+      document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.daySupport,reason=decision==='decline'?await window.askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
       $('#saveDaySlots').addEventListener('click',async()=>{
         const selectedIndexes=checks.filter(box=>box.checked).map(box=>Number(box.dataset.index));
         const mode=admin&&$('#fullyCustom')?.checked?'custom':'standard';
@@ -360,12 +360,33 @@
       }
       return bridgeApi(name,args);
     }
-    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else alert(err.message||String(err))}
+    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.add('error');n.textContent=err.message||String(err)}else showMessage('操作失敗',err.message||String(err))}
     function flash(text){const n=$('#flash');if(n){n.classList.remove('error');n.textContent=text;n.hidden=false}}
     function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
     function modal(html){$('#modalbox').className='modalbox';$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
     function closeModal(){$('#modal').classList.remove('show')}
     $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+    function showMessage(title,message){modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn primary" type="button" id="dismissMessage">知道了</button></div>`);$('#dismissMessage').addEventListener('click',closeModal)}
+    function preserveDialogContent(){const box=$('#modalbox'),wasOpen=$('#modal').classList.contains('show');return{box,wasOpen,className:box.className,nodes:wasOpen?[...box.childNodes]:[]}}
+    function restoreDialogContent(snapshot){if(!snapshot.wasOpen){closeModal();return}snapshot.box.replaceChildren(...snapshot.nodes);snapshot.box.className=snapshot.className}
+    function askForReason(title,message,placeholder='請輸入原因'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><form id="reasonForm"><div class="field"><label for="reasonInput">原因（必填）</label><textarea id="reasonInput" name="reason" required maxlength="500" placeholder="${esc(placeholder)}"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelReason">取消</button><button class="btn primary" type="submit">確認送出</button></div></form>`);
+      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
+      $('#reasonForm').addEventListener('submit',event=>{event.preventDefault();const value=$('#reasonInput').value.trim();if(!value){$('#reasonInput').setCustomValidity('請填寫原因。');$('#reasonInput').reportValidity();return}finish(value)});
+      $('#reasonInput').addEventListener('input',event=>event.target.setCustomValidity(''));
+      $('#cancelReason').addEventListener('click',()=>finish(''));
+      $('#reasonInput').focus();
+    })}
+    function confirmAction(title,message,confirmLabel='確認'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn" type="button" id="cancelConfirm">取消</button><button class="btn primary" type="button" id="acceptConfirm">${esc(confirmLabel)}</button></div>`);
+      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
+      $('#cancelConfirm').addEventListener('click',()=>finish(false));
+      $('#acceptConfirm').addEventListener('click',()=>finish(true));
+    })}
+    window.askForReason=askForReason;
+    window.confirmAction=confirmAction;
 
     if(MODE==='researcher') renderResearcherAction();
     else if(MODE==='ack') renderAck();
@@ -558,8 +579,8 @@
         $('#retryAvailabilityMonth')?.addEventListener('click',()=>loadAvailabilityMonth({force:true}));
         $('#submitMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#submitMyMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
-        $('#publishMonth')?.addEventListener('click',async()=>{if(!confirm(`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
-        document.querySelectorAll('[data-schedule-support]').forEach(button=>button.addEventListener('click',async()=>{const reason=button.dataset.scheduleSupport==='decline'?prompt('請填寫婉拒支援的理由：')||'':'';if(button.dataset.scheduleSupport==='decline'&&!reason)return;try{if(availabilityPlan.status==='published')await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,button.dataset.scheduleSupport,reason);else await api('setScheduleSupportResponse',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.date,button.dataset.slot,button.dataset.scheduleSupport,reason);await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
+        $('#publishMonth')?.addEventListener('click',async()=>{if(!await confirmAction('發布班表',`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`,'發布班表'))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
+        document.querySelectorAll('[data-schedule-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.scheduleSupport,reason=decision==='decline'?await askForReason('婉拒支援請求','請說明無法支援的原因。'):'';if(decision==='decline'&&!reason)return;try{if(availabilityPlan.status==='published')await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);else await api('setScheduleSupportResponse',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.date,button.dataset.slot,decision,reason);await load();flash('已回覆支援請求。')}catch(err){showError(err)}}));
         document.querySelectorAll('.assign-btn').forEach(b=>b.addEventListener('click',()=>{const select=document.querySelector(`[data-assign="${b.dataset.slot}"]`);if(!select.value){showError(new Error('請先選擇研究者。'));return}AvailabilityUI.submitSlotAssignment(b.dataset.slot,select.value).catch(showError)}));
       }
       if(view==='appointments'){
@@ -567,7 +588,7 @@
         document.querySelectorAll('[data-request-change]').forEach(button=>button.addEventListener('click',()=>openScheduleChangeRequest(button.dataset.requestChange)));
         document.querySelectorAll('[data-respond-change]').forEach(button=>button.addEventListener('click',async()=>{
           const decision=button.dataset.respondChange;
-          const reason=decision==='decline'?prompt('請填寫婉拒臨時異動的理由：'):'';
+          const reason=decision==='decline'?await askForReason('婉拒臨時異動','請說明無法接受這項異動的原因。'):'';
           if(decision==='decline'&&!String(reason||'').trim())return;
           button.disabled=true;
           try{await api('respondSessionChange',sessionToken,button.dataset.change,decision,reason||'');await load();flash(decision==='accept'?'已接受異動，系統已更新研究團隊日曆。':'已婉拒異動，管理者會收到理由。')}
@@ -580,24 +601,24 @@
           if(!reason){showError(new Error('請填寫安排或取消的說明。'));return}
           if(decision==='assign'&&!target){showError(new Error('請先選擇支援研究者。'));return}
           const warning=decision==='cancel'?'確定取消這位受試者的場次並寄出通知嗎？':'會寄出支援確認信；原時間會保留到研究者接受。要繼續嗎？';
-          if(!confirm(warning))return;
+          if(!await confirmAction('確認處理異動',warning,decision==='cancel'?'取消場次':'安排支援'))return;
           button.disabled=true;
           try{const result=await api('resolveScheduleChange',sessionToken,id,decision,target,reason);await load();flash(result.status==='pending_researcher'?'已寄出支援確認邀請。':'已取消場次並通知受試者。')}
           catch(error){button.disabled=false;showError(error)}
         }));
       }
       if(view==='workflow'){
-        document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=prompt('請填寫不符合資格或需改期的原因：')||'';if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
+        document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=await askForReason('不符合資格／請改期','請填寫處理原因，系統會依此通知報名者。','例如：不符合研究條件，或原時段無法安排');if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
         document.querySelectorAll('[data-request-support]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.requestSupport,rid=document.querySelector(`[data-support="${id}"]`).value,msg=document.querySelector(`[data-support-message="${id}"]`).value;callAndReload('requestSupport',id,rid,msg)}));
-        document.querySelectorAll('[data-recheck]').forEach(button=>button.addEventListener('click',async()=>{const id=button.dataset.recheck,message=document.querySelector(`[data-recheck-message="${id}"]`)?.value.trim()||'';if(!message){showError(new Error('請填寫再次確認的說明。'));return}if(!confirm('系統會重新寄出確認邀請給原負責研究者；對方再次接受前，場次仍維持待協調。要繼續嗎？'))return;button.disabled=true;try{const result=await api('requestOriginalResearcherAgain',sessionToken,id,message);await load();flash(`已請 ${result.researcherName} 再次確認。`)}catch(error){button.disabled=false;showError(error)}}));
+        document.querySelectorAll('[data-recheck]').forEach(button=>button.addEventListener('click',async()=>{const id=button.dataset.recheck,message=document.querySelector(`[data-recheck-message="${id}"]`)?.value.trim()||'';if(!message){showError(new Error('請填寫再次確認的說明。'));return}if(!await confirmAction('再次邀請原研究者','系統會重新寄出確認邀請；對方再次接受前，場次仍維持待協調。','寄出邀請'))return;button.disabled=true;try{const result=await api('requestOriginalResearcherAgain',sessionToken,id,message);await load();flash(`已請 ${result.researcherName} 再次確認。`)}catch(error){button.disabled=false;showError(error)}}));
         document.querySelectorAll('[data-sensitive]').forEach(b=>b.addEventListener('click',async()=>{try{const d=await api('getSensitiveApplication',sessionToken,b.dataset.sensitive);modal(`<h2>敏感資格資料</h2><p>身分證字號：<strong>${esc(d.nationalId||'未填')}</strong></p><p>檢查碼格式：${d.idValid==='true'?'通過':'需人工核對'}</p><p>戶籍地址：${esc(d.homeAddress||'未填')}</p><div class="notice">只用於管理者核對資格或重複報名，請勿複製到一般通知或研究者行程。</div><button class="btn" onclick="closeModal()">關閉</button>`)}catch(e){showError(e)}}));
-        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){alert('無法執行時，原因與補充說明都必須填寫。');return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
+        document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因與補充說明都必須填寫。'));return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
       }
       if(view==='sessions')document.querySelectorAll('.session-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form);callAndReload('updateAttendance',form.dataset.session,d.get('attendance'),d.has('result'),d.has('blacklist'),d.get('note'))}));
       if(view==='notes')$('#saveNote')?.addEventListener('click',()=>callAndReload('addOverallNote',{date:$('#noteDate').value,note:$('#noteText').value}));
       if(view==='researchers'){
         $('#researcherForm')?.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target);callAndReload('addResearcher',{name:d.get('name'),email:d.get('email'),color:d.get('color')})});
-        document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!confirm(`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
+        document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!await confirmAction('移除研究者',`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`,'移除研究者'))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
       }
       if(view==='settings'){
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
