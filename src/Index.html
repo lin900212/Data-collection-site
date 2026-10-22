@@ -13,7 +13,7 @@
   </style>
 <style>
     .availability-modal{width:min(920px,100%)}
-    .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(120px,.6fr) minmax(270px,1.35fr) minmax(170px,.9fr) minmax(130px,.8fr)}
+    .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(105px,.55fr) minmax(270px,1.5fr) minmax(150px,.9fr) minmax(100px,.65fr)}
     .availability-modal .schedule-editor-times{gap:10px}
     .availability-modal .schedule-editor-times .field{flex:1;min-width:0;margin:0}
     .availability-modal .schedule-editor-times input{min-height:42px;padding:8px 10px;font-variant-numeric:tabular-nums}
@@ -26,8 +26,8 @@
     .availability-modal .custom-slot-row>.meta{grid-column:1/-1}
     .availability-modal .custom-slot-row>.checkrow{white-space:nowrap}
     @media(max-width:900px){
-      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(115px,.65fr) minmax(230px,1.35fr) minmax(160px,1fr)}
-      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row)>.meta{grid-column:1/-1}
+      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row){grid-template-columns:minmax(82px,.55fr) minmax(210px,1.45fr) minmax(120px,.85fr) minmax(80px,.55fr)}
+      .availability-modal .schedule-editor-row:not(.published-slot-row):not(.custom-slot-row)>.meta{grid-column:auto;font-size:11px}
       .availability-modal .published-slot-row,.availability-modal .custom-slot-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
       .availability-modal .published-slot-row>.support-actions,.availability-modal .custom-slot-row>.meta{grid-column:1/-1}
       .availability-modal .published-slot-row>.meta,.availability-modal .published-slot-row>.tag,.availability-modal .published-slot-row>.checkrow{grid-column:auto}
@@ -57,6 +57,7 @@
     .ack-confirm-button{min-height:48px}
     .availability-modal .time-pair{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:end;gap:8px;width:100%;min-width:0}
     .availability-modal .time-pair>.field{display:grid;grid-template-rows:auto 42px;gap:6px;min-width:0;margin:0}
+    .availability-modal .time-pair [hidden]{display:none!important}
     .availability-modal .time-pair>.field>span{font-size:11px;color:var(--muted);font-weight:750}
     .availability-modal .time-pair input[type="time"],.availability-modal .time-readout{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;height:42px;min-height:42px;padding:6px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums}
     .availability-modal .time-readout{background:#f5f8f5;font-weight:750}
