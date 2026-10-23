@@ -243,6 +243,7 @@
     }
     function isValidTime24h(time){return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(time||''))}
     function normalizeTimeEntry(time){const value=String(time||'').trim();if(isValidTime24h(value))return value;const partial=value.match(/^((?:[01]\d|2[0-3])):([0-5])$/);if(partial)return partial[1]+':'+partial[2]+'0';const digits=value.replace(/\D/g,'');if(/^\d{3,4}$/.test(digits)){const normalized=digits.length===3?(digits[0]==='0'?digits.slice(0,2)+':'+digits[2]+'0':'0'+digits[0]+':'+digits.slice(1)):digits.slice(0,2)+':'+digits.slice(2);return isValidTime24h(normalized)?normalized:value}return value}
+    function normalizeStoredSlotTimes(slots){return (slots||[]).map(slot=>{const start=normalizeTimeEntry(slot.start),end=normalizeTimeEntry(slot.end);return Object.assign({},slot,{start:isValidTime24h(start)?start:String(slot.start||''),end:isValidTime24h(end)?end:String(slot.end||'')})})}
     function bind24HourFields(root=document){root.querySelectorAll('[data-time-24h]').forEach(input=>{
       if(input.dataset.timeBound)return;input.dataset.timeBound='1';input.type='text';input.inputMode='numeric';input.maxLength=5;input.placeholder='HH:mm';input.autocomplete='off';
       input.addEventListener('input',()=>{input.value=input.value.replace(/[^0-9:]/g,'').slice(0,5)});
@@ -263,7 +264,7 @@
 
     function openPublishedAvailabilityEditor(date,admin){
       const day=availabilityPlan.days?.[date]||{mode:availabilityPlan.mode||'standard',lunchBreak:true,slots:[]},myId=state.user.researcherId||'';
-      const slots=(day.slots||[]).slice().sort((a,b)=>String(a.start).localeCompare(String(b.start))).map(s=>Object.assign({},s));
+      const slots=normalizeStoredSlotTimes(day.slots).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
       let working=slots.map(s=>Object.assign({},s)),workingLunch=day.lunchBreak!==false;
       const scheduleEdits=[];
       const protectedSlot=s=>Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold'].includes(s.status);
@@ -315,7 +316,7 @@
     function openAvailabilityEditor(date,admin){
       if(availabilityPlan?.status==='published')return openPublishedAvailabilityEditor(date,admin);
       const plan=availabilityPlan||{},day=plan.days?.[date]||{slots:(plan.template||defaultAvailabilitySlots).map((t,index)=>({index,start:t[0],end:t[1],researcherId:'',status:'open'})),customSlots:[],lunchBreak:true,mode:'standard'};
-      const myId=state.user.researcherId||'',slots=(day.slots||[]).map(s=>Object.assign({},s)),customSlots=(day.customSlots||[]).map(s=>Object.assign({},s));
+      const myId=state.user.researcherId||'',slots=normalizeStoredSlotTimes(day.slots),customSlots=normalizeStoredSlotTimes(day.customSlots);
       let workingSlots=slots.map(s=>Object.assign({},s)),workingCustomSlots=customSlots.map(s=>Object.assign({},s)),workingLunch=day.lunchBreak!==false;
       const scheduleEdits=[];
       const locked=s=>Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold','support_pending'].includes(s.status);
@@ -471,7 +472,7 @@
       closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
-    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
+    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,normalizeStoredSlotTimes,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
   })();
 </script>
 
