@@ -522,7 +522,7 @@
     const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null;
+    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0;
     const bridgeRequests=new Map();
     const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','syncResearchCalendarBatch','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',syncResearchCalendarBatch:'正在更新 Google 預留時段…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
@@ -555,6 +555,7 @@
       if(message.type==='research-desk:ready'){
         bridgeSource=event.source;
         bridgeOrigin=event.origin;
+        console.info('[研究工作台效能] bridge ready',Math.round(performance.now()-bridgeStartedAt)+' ms');
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
         if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
         return;
@@ -569,9 +570,10 @@
       if(bridgeReady)return bridgeReady;
       if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
       bridgeChannel=createBridgeChannel();
+      bridgeStartedAt=performance.now();
       bridgeReady=new Promise((resolve,reject)=>{
         bridgeReadyResolve=resolve;bridgeReadyReject=reject;
-        bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請重新整理頁面。')),15000);
+        bridgeReadyTimer=setTimeout(()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請稍後重試。')),30000);
         const frame=document.createElement('iframe');
         bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
         frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
@@ -589,13 +591,16 @@
       return bridgeReady;
     }
     function bridgeApi(name,args){
-      return connectBridge().then(()=>new Promise((resolve,reject)=>{
+      return connectBridge().then(()=>{
+        const requestStarted=performance.now();
+        return new Promise((resolve,reject)=>{
         const id='rpc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
         const timer=setTimeout(()=>{bridgeRequests.delete(id);reject(bridgeError('後端沒有在期限內回覆，請重試。'))},60000);
         bridgeRequests.set(id,{resolve,reject,timer});
         if(!bridgeOrigin||!bridgeSource){clearTimeout(timer);bridgeRequests.delete(id);reject(bridgeError('Apps Script 連線尚未完成，請重試。'));return}
         bridgeSource.postMessage({type:'research-desk:rpc',channel:bridgeChannel,id,method:name,args},bridgeOrigin);
-      }));
+        }).finally(()=>console.info('[研究工作台效能] bridge RPC '+name,Math.round(performance.now()-requestStarted)+' ms'));
+      });
     }
     function api(name,...args){
       const isWrite=WRITE_METHODS.has(name),start=performance.now();
@@ -930,9 +935,11 @@
       }catch(error){showError(error)}
     }
     async function renderAck(){
-      $('#root').innerHTML=`<section class="panel auth compact-action"><h1>確認參加</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取時段…</div><div id="action"></div></section>`;
+      $('#root').innerHTML=`<section class="panel auth compact-action"><h1>確認參加</h1><div id="flash" class="alert" role="status" aria-live="polite">正在連線並讀取確認資料…</div><div id="action"></div></section>`;
+      let slowTimer=setTimeout(()=>flash('連線需要較久，請留在此頁；目前仍在讀取確認資料。'),8000);
       try{
         const details=await api('getParticipantAck',LINK_TOKEN);
+        clearTimeout(slowTimer);slowTimer=null;
         if(details.alreadyConfirmed){
           flash('已記錄，謝謝。');
           $('#action').innerHTML=`<div class="ack-card"><strong>${esc(details.slot)}</strong><span class="tag green">已確認參加</span><p class="help">如需改期，請使用錄取信中的連結。</p></div>`;
@@ -945,7 +952,7 @@
           try{const result=await api('acknowledgeParticipant',LINK_TOKEN);flash('已記錄，你已確認參加。');$('#action').innerHTML=`<div class="ack-card"><strong>${esc(result.slot||details.slot)}</strong><span class="tag green">已確認參加</span></div>`}
           catch(error){button.disabled=false;button.textContent='確認收到，我會依約到場';flash(`記錄失敗：${error.message||String(error)}`)}
         });
-      }catch(error){flash(`無法讀取確認資料：${error.message||String(error)}`)}
+      }catch(error){clearTimeout(slowTimer);flash(`無法讀取確認資料：${error.message||String(error)}`)}
     }
     async function renderReschedule(){
       $('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESCHEDULE REQUEST</div><h1>申請改期</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取可選時段…</div><div id="action"></div></section>`;
