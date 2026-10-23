@@ -522,7 +522,7 @@
     const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0;
+    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeHandshakeTimer=null,bridgeStartedAt=0;
     let initialLoadHintTimer=null;
     const bridgeRequests=new Map();
     const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','syncResearchCalendarBatch','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
@@ -547,6 +547,9 @@
         return 'mt-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
       }catch(_){return 'mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
     }
+    function sendBridgeHello(frame,channel){
+      try{frame.contentWindow?.postMessage({type:'research-desk:hello',channel},'*')}catch(_){}
+    }
     window.addEventListener('message',event=>{
       // Apps Script wraps HtmlService in a Google sandbox iframe, so the sender is a nested
       // frame and cannot be compared to the outer iframe's contentWindow. Validate origin + channel.
@@ -558,6 +561,7 @@
         bridgeOrigin=event.origin;
         console.info('[研究工作台效能] bridge ready',Math.round(performance.now()-bridgeStartedAt)+' ms');
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        clearInterval(bridgeHandshakeTimer);bridgeHandshakeTimer=null;
         if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
         return;
       }
@@ -579,11 +583,17 @@
         bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
         frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
         frame.addEventListener('error',()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線失敗，請稍後重試。')),{once:true});
+        frame.addEventListener('load',()=>sendBridgeHello(frame,bridgeChannel));
         const params=new URLSearchParams({bridge:'1',parentOrigin:location.origin,channel:bridgeChannel});
         frame.src=BACKEND_URL+'?'+params.toString();
         document.body.appendChild(frame);
+        // A one-shot ready message can be lost while the cross-origin Apps Script iframe redirects.
+        // Repeat a channel-scoped hello until the bridge replies or the normal timeout fires.
+        sendBridgeHello(frame,bridgeChannel);
+        bridgeHandshakeTimer=setInterval(()=>sendBridgeHello(frame,bridgeChannel),750);
       }).catch(error=>{
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
+        clearInterval(bridgeHandshakeTimer);bridgeHandshakeTimer=null;
         bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
         if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
         bridgeReady=null;
