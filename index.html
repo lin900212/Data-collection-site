@@ -710,33 +710,23 @@
     function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><p class="subtitle" id="loadStatus">按重新載入後請留在此頁，避免重複送出。</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在重新連線…';const status=$('#loadStatus');if(status)status.textContent='正在重新連線，請留在此頁，無需再次點擊。';load()})}
     async function load(){
       const requestId=++bootstrapRequestSequence,started=performance.now();
-      const initialMonthKey=calendarMonthKey(availabilityMonth||new Date()),monthRequest=++availabilityRequestSequence;
-      availabilityLoading=true;availabilityLoadError='';
       clearTimeout(initialLoadHintTimer);
       if(!state)initialLoadHintTimer=setTimeout(()=>{
         if(requestId!==bootstrapRequestSequence||state)return;
         const status=$('#loadStatus')||$('#root .subtitle');
         if(status)status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。';
       },8000);
-      const monthPromise=api('getMonthSchedule',sessionToken,initialMonthKey).then(plan=>({plan}),error=>({error}));
       if(state){draw();setRequestStatus('正在更新工作台資料…')}
       try{
         const nextState=await api('getBootstrap',sessionToken);
         if(requestId!==bootstrapRequestSequence)return;
         state=nextState;
-        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||initialMonthKey);
-        const monthKey=calendarMonthKey(availabilityMonth);
+        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));
         draw();
-        if(monthKey!==initialMonthKey)monthPromise.then(()=>{});
-        const result=monthKey===initialMonthKey?await monthPromise:{plan:await api('getMonthSchedule',sessionToken,monthKey)};
-        if(result.error)throw result.error;
-        const plan=result.plan;
-        if(requestId!==bootstrapRequestSequence||monthRequest!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
-        availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;draw();
+        if(activeView==='availability')await loadAvailabilityMonth({force:true});
         if(state.user.role==='admin')loadAdminMailRelaySummary(sessionToken,state);
       }catch(error){
-        if(requestId!==bootstrapRequestSequence||(!isSessionError(error)&&monthRequest!==availabilityRequestSequence))return;
-        availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);
+        if(requestId!==bootstrapRequestSequence)return;
         if(isSessionError(error)){sessionToken='';clearSessionToken();state=null;renderLogin();showError(error);return}
         if(state){draw();showError(error)}else renderLoadError(error);
       }finally{
@@ -776,7 +766,7 @@
       if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
       const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
       $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${state.testMode?'測試資料僅寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
-      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
+      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw();if(activeView==='availability')loadAvailabilityMonth()}));
       $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
       bindView(activeView,admin);
     }
