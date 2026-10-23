@@ -183,7 +183,7 @@
 
 </head>
 <body>
-  <div id="root"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · TEST</div><h1>正在載入測試工作台…</h1><p class="subtitle">如果畫面沒有更新，請稍候片刻後重新整理。</p></section></div>
+  <div id="root"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · TEST</div><h1>正在載入測試工作台…</h1><p class="subtitle">請留在此頁；連線較久時，系統會顯示目前狀態。</p></section></div>
   <div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
   <script>
   window.AvailabilityUI=(()=>{
@@ -523,6 +523,7 @@
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0;
+    let initialLoadHintTimer=null;
     const bridgeRequests=new Map();
     const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','syncResearchCalendarBatch','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',syncResearchCalendarBatch:'正在更新 Google 預留時段…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
@@ -706,11 +707,17 @@
     }
 
     function isSessionError(error){return /請重新登入|登入已逾時|帳號權限已變更|尚未加入研究團隊|沒有此操作權限/.test(String(error&&error.message||error))}
-    function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',load)}
+    function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><p class="subtitle" id="loadStatus">按重新載入後請留在此頁，避免重複送出。</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在重新連線…';const status=$('#loadStatus');if(status)status.textContent='正在重新連線，請留在此頁，無需再次點擊。';load()})}
     async function load(){
       const requestId=++bootstrapRequestSequence,started=performance.now();
       const initialMonthKey=calendarMonthKey(availabilityMonth||new Date()),monthRequest=++availabilityRequestSequence;
       availabilityLoading=true;availabilityLoadError='';
+      clearTimeout(initialLoadHintTimer);
+      if(!state)initialLoadHintTimer=setTimeout(()=>{
+        if(requestId!==bootstrapRequestSequence||state)return;
+        const status=$('#loadStatus')||$('#root .subtitle');
+        if(status)status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。';
+      },8000);
       const monthPromise=api('getMonthSchedule',sessionToken,initialMonthKey).then(plan=>({plan}),error=>({error}));
       if(state){draw();setRequestStatus('正在更新工作台資料…')}
       try{
@@ -726,13 +733,25 @@
         const plan=result.plan;
         if(requestId!==bootstrapRequestSequence||monthRequest!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
         availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;draw();
+        if(state.user.role==='admin')loadAdminMailRelaySummary(sessionToken,state);
       }catch(error){
         if(requestId!==bootstrapRequestSequence||(!isSessionError(error)&&monthRequest!==availabilityRequestSequence))return;
         availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);
         if(isSessionError(error)){sessionToken='';clearSessionToken();state=null;renderLogin();showError(error);return}
         if(state){draw();showError(error)}else renderLoadError(error);
       }finally{
+        clearTimeout(initialLoadHintTimer);initialLoadHintTimer=null;
         console.info('[研究工作台效能] load',Math.round(performance.now()-started)+' ms');
+      }
+    }
+    async function loadAdminMailRelaySummary(token,targetState){
+      try{
+        const summary=await api('getAdminMailRelaySummary',token);
+        if(state!==targetState)return;
+        state.mailRelay=summary;
+        if(activeView==='dashboard')draw();
+      }catch(error){
+        console.warn('[研究工作台效能] 管理者寄件狀態載入失敗',String(error&&error.message||error));
       }
     }
     function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
