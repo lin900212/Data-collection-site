@@ -178,6 +178,7 @@
     .reason-fields[hidden]{display:none!important}
     .reason-fields .field{margin:4px 0}
     .compact-form>.btn{width:100%}
+    .calendar-sync-state{margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     @media(max-width:600px){.compact-action{margin:4vh auto;padding:14px}.ack-card{padding:13px}.ack-slot{font-size:16px}.researcher-choice{grid-template-columns:1fr}}
 </style>
 
@@ -188,7 +189,16 @@
   <script>
   window.AvailabilityUI=(()=>{
     let wheelPointerHandlerBound=false;
-    let calendarSyncRunning=false;
+    function renderCalendarSyncNotice(canEditMonth,admin){
+      if(!canEditMonth)return '';
+      const researchers=(availabilityCalendarSyncMonth===calendarMonthKey(availabilityMonth)?availabilityCalendarSync?.researchers||[]:[]).filter(item=>admin||item.researcherId===state.user.researcherId);
+      const failed=researchers.filter(item=>item.status?.status==='needs_attention');
+      if(failed.length)return `<div class="alert error calendar-sync-state" role="alert"><span>日曆待處理：${failed.map(item=>esc(item.name||'研究者')).join('、')}</span>${failed.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
+      const pending=researchers.filter(item=>['pending','running','retry_scheduled'].includes(item.status?.status));
+      if(pending.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆同步中${admin?` · ${pending.map(item=>esc(item.name||'研究者')).join('、')}`:''}</div>`;
+      if(researchers.some(item=>item.status?.status==='synced'))return '<div class="tag green calendar-sync-state" role="status">研究日曆已同步</div>';
+      return '<div class="meta calendar-sync-state" role="status">儲存班表後自動同步研究日曆</div>';
+    }
     function renderAvailability(admin){
       if(availabilityLoading||availabilityLoadError){
         const status=availabilityLoading?`<div class="notice" role="status">正在載入 ${esc(calendarMonthTitle(availabilityMonth))} 班表…</div>`:`<div class="alert error" role="alert">${esc(availabilityLoadError)} <button class="btn small" id="retryAvailabilityMonth" type="button">重試</button></div>`;
@@ -215,22 +225,21 @@
       };
       const renderItem=s=>renderSlot(s);
       const rosterMonthLabel=calendarMonthTitle(calendarMonthDate(plan.month||calendarMonthKey(availabilityMonth)))+'班表';
-      const calendarSyncButton=canEditMonth?'<button class="btn" id="syncResearchCalendar" type="button">更新 Google 預留時段</button>':'';
       const phaseLabel=plan.roster?.phase==='researcher_fill'?'開放填寫中':plan.roster?.phase==='manager_review'?'管理者檢查中':plan.roster?.phase==='publish_day'?'管理者發布日':plan.roster?.phase==='late_review'?'待管理者發布':'本月排班';
       const readOnlyReason=()=>{const roster=plan.roster||{},month=String(plan.month||'');if(roster.currentMonth&&month<roster.currentMonth)return '這是過去月份，排班僅供查看。';if(roster.nextMonth&&month>roster.nextMonth)return `目前只開放本月與下個月；${roster.nextMonth}之後的月份尚未開放。`;if(roster.nextMonth&&month===roster.nextMonth&&Number(roster.day)<20&&!published)return '下月排班將於每月 20 日開放填寫。';return '此月份目前僅供查看。'};
       const workflow=published
-        ?`<div class="roster-actions"><div><strong>已發布班表${canEditMonth?' · 可微調':' · 僅供查看'}</strong><div class="help">${canEditMonth?`${admin?'管理者可調整未鎖定時段':'研究者可調整或取消自己的未報名時段'}；已報名場次請用臨時異動。`:''}${canEditMonth&&plan.publishedAt?' ':''}${canEditMonth&&plan.publishedAt?`發布時間：${esc(plan.publishedAt)}`:readOnlyReason()}</div></div><div class="actions">${calendarSyncButton}<span class="tag green">已發布</span></div></div>`
+        ?`<div class="roster-actions"><div><strong>已發布班表${canEditMonth?' · 可微調':' · 僅供查看'}</strong><div class="help">${canEditMonth?`${admin?'管理者可調整未鎖定時段':'研究者可調整或取消自己的未報名時段'}；已報名場次請用臨時異動。`:''}${canEditMonth&&plan.publishedAt?' ':''}${canEditMonth&&plan.publishedAt?`發布時間：${esc(plan.publishedAt)}`:readOnlyReason()}</div></div><div class="actions"><span class="tag green">已發布</span></div></div>`
         :!editable
         ?`<div class="roster-actions"><div><strong>此月份僅供查看</strong><div class="help">${esc(readOnlyReason())}</div></div><span class="tag">僅供查看</span></div>`
         :admin
-        ?`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${phaseLabel}</strong><div class="help">已送出 ${submittedCount} 位研究者的班表；發布前仍可修改。管理者於 28 日一次發布整月班表。</div></div><div class="actions">${calendarSyncButton}<button class="btn" id="submitMyMonth">${submitted?'本人已送出':'標記本人班表完成'}</button>${plan.roster?.canPublishDraft?'<button class="btn primary" id="publishMonth">發布班表並同步報名表</button>':''}</div></div>`
-        :`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${submitted?'已送出':'開放填寫'}</strong><div class="help">${submitted?'發布前仍可修改。':'本月可隨時調整；下月班表於每月 20 日開放，管理者 28 日發布。'}</div></div><div class="actions">${calendarSyncButton}<button class="btn primary" id="submitMonth">${submitted?'再次通知管理者':'送出班表進度'}</button></div></div>`;
+        ?`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${phaseLabel}</strong><div class="help">已送出 ${submittedCount} 位研究者的班表；發布前仍可修改。管理者於 28 日一次發布整月班表。</div></div><div class="actions"><button class="btn" id="submitMyMonth">${submitted?'本人已送出':'標記本人班表完成'}</button>${plan.roster?.canPublishDraft?'<button class="btn primary" id="publishMonth">發布班表並同步報名表</button>':''}</div></div>`
+        :`<div class="roster-actions"><div><strong>${rosterMonthLabel} · ${submitted?'已送出':'開放填寫'}</strong><div class="help">${submitted?'發布前仍可修改。':'本月可隨時調整；下月班表於每月 20 日開放，管理者 28 日發布。'}</div></div><div class="actions"><button class="btn primary" id="submitMonth">${submitted?'再次通知管理者':'送出班表進度'}</button></div></div>`;
       const help=plan.status==='published'
         ?'已發布後，研究者可微調或取消自己尚未有人報名的時段；一般時段固定 1 小時，儲存後結束時間自動計算。管理者可調整所有未報名時段或新增時段。已報名場次請使用臨時異動流程。'
         :admin
         ?'未發布前只有月曆草稿會更新。按「發布班表並同步報名表」後，系統才會更新可報名選項；每個時段只會有一位研究者。'
         :'月曆顯示整個團隊的班表。你只能勾選或移動自己的時段；若後續時段已由其他研究者填寫，系統會擋下會影響對方的調整。';
-      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">本月可持續調整；每月 20 日開放填寫下月班表。更新預留時段後，研究日曆會同步變更。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 尚未發布的草稿不會進入報名表，但可同步到研究日曆。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
+      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">本月可持續調整；每月 20 日開放填寫下月班表。儲存後自動更新研究日曆。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}${renderCalendarSyncNotice(canEditMonth,admin)}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
     }
     function isValidTime24h(time){return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(time||''))}
     function normalizeTimeEntry(time){const value=String(time||'').trim();if(isValidTime24h(value))return value;const partial=value.match(/^((?:[01]\d|2[0-3])):([0-5])$/);if(partial)return partial[1]+':'+partial[2]+'0';const digits=value.replace(/\D/g,'');if(/^\d{3,4}$/.test(digits)){const normalized=digits.length===3?(digits[0]==='0'?digits.slice(0,2)+':'+digits[2]+'0':'0'+digits[0]+':'+digits.slice(1)):digits.slice(0,2)+':'+digits.slice(2);return isValidTime24h(normalized)?normalized:value}return value}
@@ -462,29 +471,7 @@
       closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
-    async function syncResearchCalendars(){
-      if(calendarSyncRunning)return;
-      calendarSyncRunning=true;
-      let created=0,updated=0,unchanged=0,deleted=0;
-      try{
-        const month=calendarMonthKey(availabilityMonth),plan=await api('getResearchCalendarSyncPlan',sessionToken,month),targets=plan.researchers||[];
-        if(!targets.length)throw new Error('找不到可更新的研究者日曆。');
-        for(let index=0;index<targets.length;index++){
-          const target=targets[index];let offset=0,done=false;
-          do{
-            setRequestStatus(`正在更新 ${target.name} 的研究日曆（${Math.min(offset,target.count)}／${target.count}）…`);
-            const result=await api('syncResearchCalendarBatch',sessionToken,month,target.researcherId,offset,target.snapshotKey);
-            created+=Number(result.created||0);updated+=Number(result.updated||0);unchanged+=Number(result.unchanged||0);deleted+=Number(result.deleted||0);offset=Number(result.nextOffset||0);done=Boolean(result.done);
-            setRequestStatus(`正在更新第 ${index+1}／${targets.length} 位研究者的日曆（${offset}／${target.count}）…`);
-          }while(!done);
-        }
-        await loadAvailabilityMonth({force:true});await load();
-        flash(`研究日曆已更新；新增 ${created}、更新 ${updated}、未變更 ${unchanged}、移除 ${deleted} 個時段。`);
-      }catch(error){showError(error)}
-      finally{calendarSyncRunning=false}
-    }
-
-    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment,syncResearchCalendars};
+    return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
   })();
 </script>
 
@@ -510,6 +497,10 @@
     let sessionToken = readSessionToken();
     let state = null;
     let availabilityPlan = null;
+    let availabilityCalendarSync = null;
+    let availabilityCalendarSyncMonth = '';
+    let calendarSyncPollTimer = null;
+    let calendarSyncPollCount = 0;
     let authFlowSequence = 0;
     let activeView = 'dashboard';
     let availabilityMonth = null;
@@ -525,8 +516,8 @@
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeHandshakeTimer=null,bridgeStartedAt=0;
     let initialLoadHintTimer=null;
     const bridgeRequests=new Map();
-    const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','syncResearchCalendarBatch','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
-    const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',syncResearchCalendarBatch:'正在更新 Google 預留時段…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
+    const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','prepareResearchCalendars','retryResearchCalendarSync','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
+    const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
     let activeWriteKey='',activeWriteControl=null;
     document.addEventListener('click',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
     document.addEventListener('submit',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
@@ -759,16 +750,24 @@
     async function loadAvailabilityMonth(options={}){
       const monthKey=calendarMonthKey(availabilityMonth),requestId=++availabilityRequestSequence,cached=availabilityMonthCache.get(monthKey);
       availabilityLoadError='';
-      if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();return}
+      if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();refreshCalendarSyncStatus(monthKey);return}
       availabilityPlan=null;availabilityLoading=true;draw();
       try{
-        const plan=await api('getMonthSchedule',sessionToken,monthKey);
+        const [planResult,syncResult]=await Promise.allSettled([api('getMonthSchedule',sessionToken,monthKey),api('getResearchCalendarSyncStatus',sessionToken,monthKey)]);
+        if(planResult.status==='rejected')throw planResult.reason;
         if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
-        availabilityPlan=plan;availabilityMonthCache.set(monthKey,{at:Date.now(),plan});availabilityLoading=false;availabilityLoadError='';draw();
+        availabilityPlan=planResult.value;availabilityCalendarSync=syncResult.status==='fulfilled'?syncResult.value:null;availabilityCalendarSyncMonth=syncResult.status==='fulfilled'?monthKey:'';availabilityMonthCache.set(monthKey,{at:Date.now(),plan:planResult.value});availabilityLoading=false;availabilityLoadError='';calendarSyncPollCount=0;draw();scheduleCalendarSyncPoll(monthKey);
       }catch(error){
         if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
         availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);draw();showError(error);
       }
+    }
+    function calendarSyncPending(monthKey){if(monthKey&&availabilityCalendarSyncMonth!==monthKey)return false;return Boolean(availabilityCalendarSync?.researchers?.some(item=>['pending','running','retry_scheduled'].includes(item.status?.status)))}
+    function scheduleCalendarSyncPoll(monthKey){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;if(activeView!=='availability'||!calendarSyncPending(monthKey)||calendarSyncPollCount>=24)return;calendarSyncPollTimer=setTimeout(()=>{calendarSyncPollTimer=null;calendarSyncPollCount++;refreshCalendarSyncStatus(monthKey)},5000)}
+    async function refreshCalendarSyncStatus(monthKey){
+      if(activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;
+      try{const next=await api('getResearchCalendarSyncStatus',sessionToken,monthKey);if(activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;availabilityCalendarSync=next;availabilityCalendarSyncMonth=monthKey;draw();scheduleCalendarSyncPoll(monthKey)}
+      catch(error){console.warn('[研究工作台] 研究日曆狀態讀取失敗',String(error&&error.message||error))}
     }
     function draw(){
       const admin=state.user.role==='admin';
@@ -776,7 +775,7 @@
       if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
       const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
       $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${state.testMode?'測試資料僅寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
-      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw();if(activeView==='availability')loadAvailabilityMonth()}));
+      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}draw();if(activeView==='availability')loadAvailabilityMonth()}));
       $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
       bindView(activeView,admin);
     }
@@ -834,7 +833,7 @@
       const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));
       const calendarItems=apps.map(a=>{const slot=state.slots.find(s=>s.slotId===a.slotId);return slot?{date:slot.date,start:slot.start,end:slot.end,name:a.name,researcherName:a.researcherName,color:a.researcherColor,status:a.status,acknowledgedAt:a.acknowledgedAt}:null}).filter(Boolean);
       const renderAppointment=a=>`<div class="appointment-calendar-event" style="--person:${esc(a.color)}"><strong>${esc(a.start)}–${esc(a.end)}</strong><span>${esc(a.name)}</span><span>${esc(a.researcherName)}</span>${a.status==='confirmed'?`<span class="tag ${a.acknowledgedAt?'green':'amber'}">${a.acknowledgedAt?'已確認收到':'等待收到確認'}</span>`:''}</div>`;
-      const calendarLinks=[`<a class="link" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">開啟主要 Google 日曆 ↗</a>`,...(state.researchCalendars||[]).map(calendar=>`<a class="link" target="_blank" rel="noopener" href="${esc(calendar.url)}">開啟 ${esc(calendar.name)} ↗</a>`)].join('');
+      const calendarLinks=[`<a class="link" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">開啟主要 Google 日曆 ↗</a>`,...(state.researchCalendars||[]).map(calendar=>calendar.url?`<a class="link" target="_blank" rel="noopener" href="${esc(calendar.url)}">開啟 ${esc(calendar.name)} ↗</a>`:`<span class="meta">${esc(calendar.name)}研究日曆準備中</span>`)].join('');
       const calendarLinkNote=state.researchCalendars?.length?'':'<span class="meta">先在「研究者可收時間」更新預留時段，系統會建立研究日曆。</span>';
       const mine=state.applications.filter(a=>a.status==='confirmed'&&a.assignedResearcherId===state.user.researcherId).sort((a,b)=>a.slot.localeCompare(b.slot));
       const changeCards=(state.scheduleChanges||[]).filter(c=>c.status!=='cancelled').sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,10).map(c=>{
@@ -866,7 +865,7 @@
     function renderSettings(){
       const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
       const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
-      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button></div><p class="help">只有管理者發布月份班表時，表單選項才會同步。時段需距離開始至少 12 小時；達到招募目標或沒有可選時段時，系統會暫停收件。</p><p class="help">每位研究者有自己的研究日曆；更新預留時段會建立或更新事件，研究者確認錄取後，同一事件會轉為正式場次。Lin 的主要 Google 日曆會自動檢查；其他研究者請同時檢視主要與研究日曆。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
+      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button><button class="btn" id="prepareResearchCalendars">準備研究日曆</button></div><p class="help">發布月份班表時才會同步報名表；儲存班表後，系統會在背景更新研究日曆。研究者確認場次後，原預留事件會更新為正式場次。</p><p class="help">Lin 的主要 Google 日曆會自動檢查衝突；其他研究者可同時檢視主要與研究日曆。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
     }
     function bindView(view,admin){
       $('#content').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
@@ -877,7 +876,7 @@
         document.querySelectorAll('[data-day-open]').forEach(b=>b.addEventListener('click',()=>AvailabilityUI.openAvailabilityEditor(b.dataset.dayOpen,admin)));
         document.querySelectorAll('[data-adjust-slot]').forEach(b=>b.addEventListener('click',event=>{event.stopPropagation();AvailabilityUI.openDraftSlotTimeEditor(b.dataset.adjustDate,b.dataset.adjustSlot)}));
         $('#retryAvailabilityMonth')?.addEventListener('click',()=>loadAvailabilityMonth({force:true}));
-        $('#syncResearchCalendar')?.addEventListener('click',()=>AvailabilityUI.syncResearchCalendars());
+        document.querySelectorAll('[data-calendar-retry]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{await api('retryResearchCalendarSync',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.calendarRetry);await refreshCalendarSyncStatus(calendarMonthKey(availabilityMonth))}catch(error){button.disabled=false;showError(error)}}));
         $('#submitMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#submitMyMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#publishMonth')?.addEventListener('click',async()=>{if(!await confirmAction('發布班表',`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步測試報名表？已報名的月份會被系統擋下，不會覆寫。`,'發布班表'))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
@@ -923,6 +922,7 @@
       }
       if(view==='settings'){
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
+        $('#prepareResearchCalendars')?.addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;try{const result=await api('prepareResearchCalendars',sessionToken);await load();flash(`已排入 ${result.queued} 本研究日曆的準備工作。`)}catch(error){button.disabled=false;showError(error)}});
         $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${index}" value=""></label><span class="template-end">結束：—</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
         bindTemplateControls();
         $('#saveScheduleTemplate')?.addEventListener('click',async()=>{const starts=[...document.querySelectorAll('[data-template-start]')].map(input=>AvailabilityUI.normalizeTimeEntry(input.value));if(starts.some(start=>!AvailabilityUI.isValidTime24h(start))){showError(new Error('所有預設時段都需要填寫有效的 24 小時制開始時間，例如 09:30。'));return}try{await api('updateScheduleDefaults',sessionToken,{slots:starts.map(start=>[start,AvailabilityUI.addMinutesLabel(start,60)])});await load();flash('未來月份的預設時段已更新。')}catch(err){showError(err)}});
