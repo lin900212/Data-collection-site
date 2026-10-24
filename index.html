@@ -47,12 +47,16 @@
     .roster-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;margin:12px 0 16px;background:#f1f6f2;border:1px solid var(--line);border-radius:12px}.support-actions{display:flex;gap:5px;margin-top:5px}.schedule-editor-row{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);align-items:center;gap:8px;padding:10px;border:1px solid #e8eeea;border-radius:10px;background:#fff}.schedule-editor-row:last-child{border-bottom:1px solid #e8eeea}.schedule-editor-times{display:flex;align-items:center;gap:6px;min-width:0}.schedule-editor-times input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;padding:7px}.schedule-editor-row select{width:100%;min-width:0;border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px;color:var(--ink)}.schedule-editor-row .checkrow{font-weight:750;color:var(--ink)}.schedule-editor-row .meta{min-width:0;overflow-wrap:anywhere}.custom-slot-row{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;margin:7px 0;font-size:13px}.custom-slot-row .schedule-editor-times{flex-wrap:wrap}.is-locked{background:#f7f8f6}.lunch-toggle{margin:12px 0;padding:10px 12px;background:#f2f6f2;border-radius:9px}.template-row{display:grid;grid-template-columns:80px minmax(150px,240px) 1fr auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #e8eeea}.template-row .field{grid-template-columns:60px 1fr;align-items:center;margin:0}.template-row .field span{color:var(--muted);font-size:12px;font-weight:700}.researcher-row{display:flex;align-items:center;gap:10px}.researcher-row .meta{margin-right:auto}.calendar-event .support-actions .btn{padding:4px 7px;font-size:10px}.calendar-mobile-weekday{display:none}
     @media(max-width:720px){.roster-actions{align-items:flex-start;flex-direction:column}.schedule-editor-row{grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr)}.schedule-editor-row .meta{grid-column:1/-1}.template-row{grid-template-columns:60px minmax(120px,1fr) auto}.template-end{grid-column:2}.researcher-row{flex-wrap:wrap}}
   </style>
-<style>
+
+  <style>
     .calendar-panel{padding:22px}.calendar-top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin:4px 0 18px}.calendar-period{display:flex;align-items:center;gap:14px}.calendar-period h2{min-width:170px;text-align:center;font-family:"Noto Serif TC",serif;font-size:22px;margin:0}.calendar-nav{width:40px;height:40px;padding:0;border-radius:12px;font-size:22px;line-height:1}.calendar-shortcuts{display:flex;align-items:center;gap:6px}.calendar-shortcuts .btn{white-space:nowrap}.calendar-legend{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:700}.calendar-legend-item{white-space:nowrap}.calendar-scroll{overflow:auto;border:1px solid var(--line);border-radius:14px}.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(118px,1fr));min-width:840px}.calendar-weekdays{background:#f1f5f1;border-bottom:1px solid var(--line)}.calendar-weekdays div{text-align:center;padding:12px 6px;color:var(--muted);font-size:12px;font-weight:800}.calendar-grid{grid-auto-rows:minmax(126px,auto)}.calendar-day{min-width:0;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}.calendar-day:nth-child(7n){border-right:0}.calendar-day.outside{background:#f8faf8;color:#a5b2ac}.calendar-day.weekend:not(.outside){background:#fbfcfa}.calendar-day-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}.calendar-day-number{font-size:14px;font-weight:750}.calendar-weekend{font-size:10px;color:#9aa9a1}.calendar-day-add{padding:2px 8px;min-height:27px;border-radius:8px;font-size:16px;line-height:1;color:var(--green)}.calendar-events{display:grid;gap:5px}.calendar-event{border-left:3px solid var(--person,var(--green));background:color-mix(in srgb,var(--person,var(--green)) 15%,white);border-radius:7px;padding:6px 7px;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.calendar-event strong{display:block;font-size:11px;font-variant-numeric:tabular-nums}.calendar-event-name{display:block}.calendar-event .tag{margin-top:3px;padding:2px 6px;font-size:9px}.calendar-event.pending{--person:#bd8a39;background:#fff5e3}.calendar-event.booked{filter:saturate(.78)}.calendar-event.requested{outline:1px dashed #bd8a39}.calendar-section-note{margin:14px 0 0}.day-editor-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:12px 0}.day-editor-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfcfa;font-size:13px}.day-editor-option input{accent-color:var(--green)}.availability-editor-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.appointment-calendar-event{border-left:3px solid var(--person,var(--green));background:color-mix(in srgb,var(--person,var(--green)) 15%,white);border-radius:7px;padding:7px;font-size:11px;line-height:1.4}.appointment-calendar-event strong{display:block;font-size:11px}.appointment-calendar-event span{display:block}
     .calendar-event-main{display:grid;width:100%;gap:2px;padding:0;border:0;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer}.calendar-event-main.readonly{cursor:default}.calendar-event-main:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}.calendar-event-main:hover .calendar-event-name{text-decoration:underline}.calendar-event-main.readonly:hover .calendar-event-name{text-decoration:none}.calendar-event-time{display:block}.calendar-time-adjust{display:flex;width:100%;align-items:center;justify-content:space-between;gap:4px;padding:0;border:0;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer}.calendar-time-adjust strong{display:inline;font-size:11px;font-variant-numeric:tabular-nums}.calendar-time-adjust span{color:var(--green);font-size:9px;font-weight:800;white-space:nowrap}.calendar-time-adjust:hover span{text-decoration:underline}.calendar-time-adjust:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}.quick-time-end{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f5f8f5}.quick-time-end strong{font-size:20px;color:var(--green);font-variant-numeric:tabular-nums}.support-actions{display:flex;gap:5px;margin-top:5px}
     @media(max-width:680px){.calendar-panel{padding:14px}.calendar-top{align-items:flex-start}.calendar-period{gap:8px}.calendar-period h2{min-width:140px;font-size:19px}.calendar-legend{gap:7px 11px}.day-editor-list{grid-template-columns:1fr}}
     @media(max-width:600px){.calendar-scroll{overflow:visible;border:0}.calendar-weekdays{display:none}.calendar-weekdays,.calendar-grid{min-width:0}.calendar-grid{grid-template-columns:minmax(0,1fr);grid-auto-rows:auto;gap:8px}.calendar-day.outside{display:none}.calendar-day{min-height:0;padding:10px;border:1px solid var(--line);border-radius:10px}.calendar-day:nth-child(7n){border-right:1px solid var(--line)}.calendar-day-number{display:flex;align-items:baseline;gap:7px}.calendar-mobile-weekday{display:inline;color:var(--muted);font-size:11px;font-weight:600}.calendar-day-add{min-width:40px;min-height:40px}.modal{align-items:flex-end;padding:8px}.modalbox{width:100%;max-height:calc(100dvh - 16px);padding:18px;border-radius:16px;overflow:auto}.schedule-editor-row,.custom-slot-row{grid-template-columns:minmax(0,1fr)}.schedule-editor-row .meta{grid-column:auto}.schedule-editor-times input{min-width:0}.availability-editor-actions{position:sticky;bottom:-18px;z-index:1;background:#fff;padding:12px 0 4px;box-shadow:0 -8px 12px #fff}.availability-editor-actions .btn{min-height:44px}}
     @media(max-width:420px){.header{gap:8px}.brand{font-size:14px}.head-right{max-width:60%}.person{font-size:11px}.calendar-period h2{min-width:120px;font-size:17px}.calendar-nav{width:38px;height:38px}.calendar-legend{font-size:11px}.calendar-event{font-size:12px}.schedule-editor-times{width:100%}.schedule-editor-times .field{min-width:0;flex:1}.actions>.btn,.availability-editor-actions>.btn{flex:1}}
+</style>
+
+  <style>
     @keyframes request-spin{to{transform:rotate(360deg)}}
     .button-spinner{display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:-2px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:request-spin .75s linear infinite}
     .alert.is-pending{display:flex;align-items:center;gap:9px;background:#e9f3ef;color:#315f52;border:1px solid var(--line)}
@@ -60,6 +64,9 @@
     .request-pending{cursor:progress}
     .ack-emphasis{color:var(--red);font-size:16px;line-height:1.6}
     .ack-confirm-button{min-height:48px}
+</style>
+
+  <style>
     .availability-modal .time-pair{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:end;gap:8px;width:100%;min-width:0}
     .availability-modal .time-pair>.field{display:grid;grid-template-rows:auto 42px;gap:6px;min-width:0;margin:0}
     .availability-modal .time-pair [hidden]{display:none!important}
@@ -161,6 +168,9 @@
     .availability-modal .custom-slot-row .time-wheel-control{max-width:100%}
     @media(max-width:900px){.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(76px,.5fr) minmax(210px,1.3fr) minmax(150px,1fr)}}
     @media(max-width:600px){.availability-modal .schedule-editor-header{display:none}.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:6px}.availability-modal .draft-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.slot-time-range{grid-column:1/-1}.availability-modal .draft-slot-row>.slot-assignee,.availability-modal .published-slot-row>.slot-assignee{grid-column:2;grid-row:1}.availability-modal .published-slot-row>.checkrow{grid-column:1/-1;justify-self:end}.time-wheel-popover{right:-2px}}
+</style>
+
+  <style>
     .compact-action{width:min(460px,100%);margin:7vh auto;padding:20px}
     .compact-action h1{margin:0 0 8px;font-size:24px}
     .compact-action>#flash{margin:6px 0 14px;padding:0;background:transparent;color:var(--muted)}
@@ -187,8 +197,34 @@
   <div id="root"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · TEST</div><h1>正在載入測試工作台…</h1><p class="subtitle">請留在此頁；連線較久時，系統會顯示目前狀態。</p></section></div>
   <div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
   <script>
+  window.TimePicker24=(()=>{
+    let outsidePointerHandlerBound=false;
+    function isValidTime24h(time){return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(time||''))}
+    function normalizeTimeEntry(time){const value=String(time||'').trim();if(isValidTime24h(value))return value;const partial=value.match(/^((?:[01]\d|2[0-3])):([0-5])$/);if(partial)return partial[1]+':'+partial[2]+'0';const digits=value.replace(/\D/g,'');if(/^\d{3,4}$/.test(digits)){const normalized=digits.length===3?(digits[0]==='0'?digits.slice(0,2)+':'+digits[2]+'0':'0'+digits[0]+':'+digits.slice(1)):digits.slice(0,2)+':'+digits.slice(2);return isValidTime24h(normalized)?normalized:value}return value}
+    function bind24HourFields(root=document){root.querySelectorAll('[data-time-24h]').forEach(input=>{
+      if(input.dataset.timeBound)return;input.dataset.timeBound='1';input.type='text';input.inputMode='numeric';input.maxLength=5;input.placeholder='HH:mm';input.autocomplete='off';
+      input.addEventListener('input',()=>{input.value=input.value.replace(/[^0-9:]/g,'').slice(0,5)});
+      input.addEventListener('blur',()=>{const normalized=normalizeTimeEntry(input.value);if(normalized!==input.value){input.value=normalized;input.dispatchEvent(new Event('change',{bubbles:true}))}});
+      const wheel=document.createElement('div');wheel.className='time-wheel-control';input.parentNode.insertBefore(wheel,input);wheel.appendChild(input);
+      const trigger=document.createElement('button');trigger.type='button';trigger.className='time-wheel-trigger';trigger.setAttribute('aria-label','使用 24 小時制選擇時間');trigger.textContent='◷';trigger.disabled=input.disabled;wheel.appendChild(trigger);
+      const popover=document.createElement('div');popover.className='time-wheel-popover';popover.hidden=true;
+      const [initialHour='00',initialMinute='00']=(isValidTime24h(input.value)?input.value:'00:00').split(':');
+      const column=(label,count,selected)=>`<label><span>${label}</span><select size="5" aria-label="${label}">${Array.from({length:count},(_,i)=>{const value=String(i).padStart(2,'0');return `<option value="${value}" ${value===selected?'selected':''}>${value}</option>`}).join('')}</select></label>`;
+      popover.innerHTML=`${column('時',24,initialHour)}${column('分',60,initialMinute)}<button type="button" class="btn small">完成</button>`;wheel.appendChild(popover);
+      const selects=[...popover.querySelectorAll('select')];
+      const sync=()=>{if(selects[0].value&&selects[1].value){input.value=selects[0].value+':'+selects[1].value;input.dispatchEvent(new Event('input',{bubbles:true}))}};
+      selects.forEach(select=>select.addEventListener('change',sync));
+      trigger.addEventListener('click',()=>{popover.hidden=!popover.hidden;if(!popover.hidden){const [hour,minute]=(isValidTime24h(input.value)?input.value:'00:00').split(':');selects[0].value=hour;selects[1].value=minute;selects[0].focus()}});
+      popover.querySelector('button').addEventListener('click',()=>{popover.hidden=true;input.dispatchEvent(new Event('change',{bubbles:true}));input.focus()});
+    });if(!outsidePointerHandlerBound){document.addEventListener('pointerdown',event=>document.querySelectorAll('.time-wheel-popover:not([hidden])').forEach(popover=>{if(!popover.parentElement?.contains(event.target))popover.hidden=true}));outsidePointerHandlerBound=true}}
+    function addMinutesLabel(time,minutes){if(!isValidTime24h(time))return '';const parts=String(time).split(':').map(Number),n=parts[0]*60+parts[1]+minutes;return String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+    return Object.freeze({isValidTime24h,normalizeTimeEntry,bind24HourFields,addMinutesLabel});
+  })();
+</script>
+
+  <script>
   window.AvailabilityUI=(()=>{
-    let wheelPointerHandlerBound=false;
+    const {isValidTime24h,normalizeTimeEntry,bind24HourFields,addMinutesLabel}=window.TimePicker24;
     function renderCalendarSyncNotice(canEditMonth,admin){
       if(!canEditMonth)return '';
       const researchers=(availabilityCalendarSyncMonth===calendarMonthKey(availabilityMonth)?availabilityCalendarSync?.researchers||[]:[]).filter(item=>admin||item.researcherId===state.user.researcherId);
@@ -241,26 +277,7 @@
         :'月曆顯示整個團隊的班表。你只能勾選或移動自己的時段；若後續時段已由其他研究者填寫，系統會擋下會影響對方的調整。';
       return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">本月可持續調整；每月 20 日開放填寫下月班表。儲存後自動更新研究日曆。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}${renderCalendarSyncNotice(canEditMonth,admin)}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
     }
-    function isValidTime24h(time){return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(time||''))}
-    function normalizeTimeEntry(time){const value=String(time||'').trim();if(isValidTime24h(value))return value;const partial=value.match(/^((?:[01]\d|2[0-3])):([0-5])$/);if(partial)return partial[1]+':'+partial[2]+'0';const digits=value.replace(/\D/g,'');if(/^\d{3,4}$/.test(digits)){const normalized=digits.length===3?(digits[0]==='0'?digits.slice(0,2)+':'+digits[2]+'0':'0'+digits[0]+':'+digits.slice(1)):digits.slice(0,2)+':'+digits.slice(2);return isValidTime24h(normalized)?normalized:value}return value}
     function normalizeStoredSlotTimes(slots){return (slots||[]).map(slot=>{const start=normalizeTimeEntry(slot.start),end=normalizeTimeEntry(slot.end);return Object.assign({},slot,{start:isValidTime24h(start)?start:String(slot.start||''),end:isValidTime24h(end)?end:String(slot.end||'')})})}
-    function bind24HourFields(root=document){root.querySelectorAll('[data-time-24h]').forEach(input=>{
-      if(input.dataset.timeBound)return;input.dataset.timeBound='1';input.type='text';input.inputMode='numeric';input.maxLength=5;input.placeholder='HH:mm';input.autocomplete='off';
-      input.addEventListener('input',()=>{input.value=input.value.replace(/[^0-9:]/g,'').slice(0,5)});
-      input.addEventListener('blur',()=>{const normalized=normalizeTimeEntry(input.value);if(normalized!==input.value){input.value=normalized;input.dispatchEvent(new Event('change',{bubbles:true}))}});
-      const wheel=document.createElement('div');wheel.className='time-wheel-control';input.parentNode.insertBefore(wheel,input);wheel.appendChild(input);
-      const trigger=document.createElement('button');trigger.type='button';trigger.className='time-wheel-trigger';trigger.setAttribute('aria-label','使用 24 小時制選擇時間');trigger.textContent='◷';trigger.disabled=input.disabled;wheel.appendChild(trigger);
-      const popover=document.createElement('div');popover.className='time-wheel-popover';popover.hidden=true;
-      const [initialHour='00',initialMinute='00']=(isValidTime24h(input.value)?input.value:'00:00').split(':');
-      const column=(label,count,selected)=>`<label><span>${label}</span><select size="5" aria-label="${label}">${Array.from({length:count},(_,i)=>{const value=String(i).padStart(2,'0');return `<option value="${value}" ${value===selected?'selected':''}>${value}</option>`}).join('')}</select></label>`;
-      popover.innerHTML=`${column('時',24,initialHour)}${column('分',60,initialMinute)}<button type="button" class="btn small">完成</button>`;wheel.appendChild(popover);
-      const selects=[...popover.querySelectorAll('select')];
-      const sync=()=>{if(selects[0].value&&selects[1].value){input.value=selects[0].value+':'+selects[1].value;input.dispatchEvent(new Event('input',{bubbles:true}))}};
-      selects.forEach(select=>select.addEventListener('change',sync));
-      trigger.addEventListener('click',()=>{popover.hidden=!popover.hidden;if(!popover.hidden){const [hour,minute]=(isValidTime24h(input.value)?input.value:'00:00').split(':');selects[0].value=hour;selects[1].value=minute;selects[0].focus()}});
-      popover.querySelector('button').addEventListener('click',()=>{popover.hidden=true;input.dispatchEvent(new Event('change',{bubbles:true}));input.focus()});
-    });if(!wheelPointerHandlerBound){document.addEventListener('pointerdown',event=>document.querySelectorAll('.time-wheel-popover:not([hidden])').forEach(popover=>{if(!popover.parentElement?.contains(event.target))popover.hidden=true}));wheelPointerHandlerBound=true}}
-    function addMinutesLabel(time,minutes){if(!isValidTime24h(time))return '';const parts=String(time).split(':').map(Number),n=parts[0]*60+parts[1]+minutes;return String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
     function openPublishedAvailabilityEditor(date,admin){
       const day=availabilityPlan.days?.[date]||{mode:availabilityPlan.mode||'standard',lunchBreak:true,slots:[]},myId=state.user.researcherId||'';
@@ -300,7 +317,7 @@
       }));
       $('#publishedAddStart')?.addEventListener('change',event=>{$('#publishedAddEnd').textContent=addMinutesLabel(event.target.value,60)||'—'});
       $('#publishedLunchBreak')?.addEventListener('change',event=>{const enabled=event.target.checked,next=working.map(s=>Object.assign({},s));try{const id=day.lunchAfterSlotId||next[1]?.slotId,index=next.findIndex(s=>String(s.slotId)===String(id));if(index<0||index>=next.length-1)throw new Error('這天沒有可調整午休的位置。');shift(next,index+1,enabled?30:-30);validate(next,enabled);working=next;workingLunch=enabled;scheduleEdits.push({type:'lunch',enabled});clearError();draw()}catch(err){event.target.checked=workingLunch;error(err.message||String(err))}});
-      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援','請填寫婉拒原因。'):'';if(decision==='decline'&&!reason)return;button.disabled=true;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}catch(err){button.disabled=false;error(err.message||String(err))}}));
+      document.querySelectorAll('[data-published-support]').forEach(button=>button.addEventListener('click',async()=>{const decision=button.dataset.publishedSupport,reason=decision==='decline'?await window.askForReason('婉拒支援','請填寫婉拒原因。'):'';if(decision==='decline'&&!reason)return;button.disabled=true;try{await api('respondPublishedSlotSupport',sessionToken,button.dataset.slot,decision,reason);closeModal();await refreshAfterMutation();flash('已回覆支援請求。')}catch(err){button.disabled=false;error(err.message||String(err))}}));
       $('#savePublishedSlots').addEventListener('click',async event=>{
         const button=event.currentTarget,changes=[];
         document.querySelectorAll('[data-published-row]').forEach(row=>{const slotId=row.dataset.publishedRow,cancel=row.querySelector('[data-published-cancel]')?.checked,select=row.querySelector('[data-published-owner]'),oldOwner=row.dataset.publishedOwnerId,start=row.querySelector('[data-published-start]')?.value||row.dataset.publishedOriginalStart,end=row.querySelector('[data-published-end]')?.value||row.dataset.publishedOriginalEnd,owner=select?select.value:oldOwner,timeChanged=day.mode==='custom'&&(start!==row.dataset.publishedOriginalStart||end!==row.dataset.publishedOriginalEnd),ownerChanged=admin&&select&&select.value!==oldOwner;if(cancel){changes.push({slotId,action:'cancel'});return}if(ownerChanged||timeChanged)changes.push({slotId,action:'save',researcherId:owner,start,end})});
@@ -308,7 +325,7 @@
         if(addSlot&&(!isValidTime24h(addStart)||!isValidTime24h(addSlot.end))){error('新增時段請填寫 HH:mm。');return}
         const expectedSlots=slots.map(s=>({slotId:s.slotId,start:s.start,end:s.end,researcherId:s.researcherId||'',status:s.status||'',locked:protectedSlot(s)}));
         const input={changes,addSlot,scheduleEdits,lunchBreak:workingLunch,expectedSlots};
-        const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await load();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await load();flash('班表已儲存。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
+        const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await refreshAfterMutation();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await refreshAfterMutation();flash('班表已儲存。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
         save().catch(err=>{button.disabled=false;button.textContent='儲存';error(err.message||String(err))});
       });
       $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
@@ -382,7 +399,7 @@
             if(end>=1440)throw new Error('結束時間不能跨日。');
             target.start=input.value;target.end=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0');
             shift(next,index+1,delta);validatePreview(next,workingLunch);
-            workingSlots=next;scheduleEdits.push({type:'time',index,start:input.value});clearError();renderWorking();
+            workingSlots=next;scheduleEdits.push({type:'time',slotId:target.slotId,start:input.value});clearError();renderWorking();
           }catch(error){editorError(error.message||String(error));renderWorking()}
         })});
         document.querySelectorAll('[data-end-index]').forEach(input=>{if(input.dataset.changeBound)return;input.dataset.changeBound='1';input.addEventListener('change',()=>{
@@ -409,7 +426,7 @@
       document.querySelectorAll('[data-day-support]').forEach(button=>button.addEventListener('click',async()=>{
         const decision=button.dataset.daySupport,reason=decision==='decline'?await window.askForReason('婉拒支援','請填寫婉拒原因。'):'';
         if(decision==='decline'&&!reason)return;
-        button.disabled=true;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await load();flash('已回覆支援請求。')}
+        button.disabled=true;try{await api('setScheduleSupportResponse',sessionToken,availabilityPlan.month,date,button.dataset.slot,decision,reason);closeModal();await refreshAfterMutation();flash('已回覆支援請求。')}
         catch(error){button.disabled=false;editorError(error.message||String(error))}
       }));
       $('#saveDaySlots').addEventListener('click',async event=>{
@@ -430,8 +447,8 @@
           input.ownerCalendarConfirmedKeys=confirmedPairs;button.disabled=true;button.textContent='儲存中…';
           try{
             const result=await api('saveAvailabilityDay',sessionToken,availabilityPlan.month,date,input);
-            if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await load();openAvailabilityEditor(date,admin)});return}
-            closeModal();await load();flash(result.calendarConflictAccepted?'已確認主要日曆衝突，班表已儲存。':'班表已儲存。');
+            if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await refreshAfterMutation();openAvailabilityEditor(date,admin)});return}
+            closeModal();await refreshAfterMutation();flash(result.calendarConflictAccepted?'已確認主要日曆衝突，班表已儲存。':'班表已儲存。');
           }catch(error){button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))}
         };
         save().catch(error=>{button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))});
@@ -443,11 +460,11 @@
       return openAvailabilityEditor(date,admin);
     }
     async function addAvailabilityBatch(date,slots,researcherId,index=0,added=0,confirmedKeys=[]){
-      if(index>=slots.length){closeModal();await load();flash(`已新增 ${added} 個可收時段。`);return}
+      if(index>=slots.length){closeModal();await refreshAfterMutation();flash(`已新增 ${added} 個可收時段。`);return}
       const slot=slots[index];let result;
       try{result=await api('addAvailability',sessionToken,{date,start:slot.start,end:slot.end,researcherId},confirmedKeys)}
-      catch(err){closeModal();await load();showError(new Error(added?`已新增 ${added} 個時段；後續未完成：${err.message||err}`:(err.message||String(err))));return}
-      if(result.calendarConflict){showCalendarConflict(result,keys=>addAvailabilityBatch(date,slots,researcherId,index,added,keys),async()=>{await load();if(added)flash(`已新增 ${added} 個時段；其餘時段已取消。`)});return}
+      catch(err){closeModal();await refreshAfterMutation();showError(new Error(added?`已新增 ${added} 個時段；後續未完成：${err.message||err}`:(err.message||String(err))));return}
+      if(result.calendarConflict){showCalendarConflict(result,keys=>addAvailabilityBatch(date,slots,researcherId,index,added,keys),async()=>{await refreshAfterMutation();if(added)flash(`已新增 ${added} 個時段；其餘時段已取消。`)});return}
       return addAvailabilityBatch(date,slots,researcherId,index+1,added+1,[]);
     }
     function showCalendarConflict(result,retry,onCancel){
@@ -463,13 +480,13 @@
     async function submitAvailability(confirmedKeys=[]){
       const result=await api('addAvailability',sessionToken,{date:$('#slotDate').value,start:$('#slotStart').value,end:$('#slotEnd').value,researcherId:$('#slotResearcher')?.value||''},confirmedKeys);
       if(result.calendarConflict){showCalendarConflict(result,keys=>submitAvailability(keys));return}
-      closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
+      closeModal();await refreshAfterMutation();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
     async function submitSlotAssignment(slotId,researcherId,confirmedKeys=[]){
       const result=await api('assignUnassignedSlot',sessionToken,slotId,researcherId,confirmedKeys);
       if(result.calendarConflict){showCalendarConflict(result,keys=>submitSlotAssignment(slotId,researcherId,keys));return}
-      closeModal();await load();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
+      closeModal();await refreshAfterMutation();if(result.calendarConflictAccepted)flash('已記錄你確認可與主要日曆行程同時執行。');
     }
 
     return {renderAvailability,addMinutesLabel,isValidTime24h,normalizeTimeEntry,normalizeStoredSlotTimes,bind24HourFields,openPublishedAvailabilityEditor,openAvailabilityEditor,openDraftSlotTimeEditor,addAvailabilityBatch,showCalendarConflict,submitAvailability,submitSlotAssignment};
@@ -477,49 +494,57 @@
 </script>
 
   <script>
-    window.addEventListener('error',function(e){
-      const root=document.getElementById('root');
-      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台載入失敗</h1><div class="alert error">'+String(e.message||'前端初始化失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
-    });
-    window.addEventListener('unhandledrejection',function(e){
-      const root=document.getElementById('root');
-      if(root)root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台連線失敗</h1><div class="alert error">'+String(e.reason&&e.reason.message||e.reason||'資料載入失敗')+'</div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';
-    });
-  </script>
-<script>
-    const query = new URLSearchParams(location.search);
-    const MODE = query.get('action') || 'login';
-    const LINK_TOKEN = query.get('t') || '';
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhnV-8OJxQehl_I-21Hnvi1wTbN_gu6NdDlzOHvvEsXasfEzUDMQ3JSRY7SIPhfiEL0w/exec";
-    const AvailabilityUI = window.AvailabilityUI;
-    function readSessionToken(){try{return window.sessionStorage.getItem('mt-session')||''}catch(_){return ''}}
-    function saveSessionToken(value){try{window.sessionStorage.setItem('mt-session',value)}catch(_){}}
-    function clearSessionToken(){try{window.sessionStorage.removeItem('mt-session')}catch(_){}}
-    let sessionToken = readSessionToken();
-    let state = null;
-    let availabilityPlan = null;
-    let availabilityCalendarSync = null;
-    let availabilityCalendarSyncMonth = '';
-    let calendarSyncPollTimer = null;
-    let calendarSyncPollCount = 0;
-    let authFlowSequence = 0;
-    let activeView = 'dashboard';
-    let availabilityMonth = null;
-    let availabilityRequestSequence = 0;
-    let bootstrapRequestSequence = 0;
-    let availabilityMonthCache = new Map();
-    let availabilityLoading = false;
-    let availabilityLoadError = '';
-    let appointmentMonth = new Date();
-    const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
-    const $ = s => document.querySelector(s);
-    const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeHandshakeTimer=null,bridgeStartedAt=0;
-    let initialLoadHintTimer=null;
+    const dialogStack=[];
+    function setRequestStatus(text){const n=$('#flash');if(n){n.hidden=false;n.classList.remove('error');n.classList.add('is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=text}}
+    function showError(err){if(err&&err.code==='STALE_SESSION_RESPONSE')return;const n=$('#flash');if(n){n.hidden=false;n.classList.remove('is-pending');n.classList.add('error');n.setAttribute('role','alert');n.textContent=err.message||String(err)}else showMessage('操作失敗',err.message||String(err))}
+    function flash(text){
+      const outcome=lastWriteOutcome;lastWriteOutcome=null;clearTimeout(writeOutcomeClearTimer);writeOutcomeClearTimer=null;
+      const notice=[];
+      if(outcome&&outcome.saved&&Date.now()-outcome.at<45000){
+        if(outcome.formSyncPending)notice.push('報名表同步待處理，資料已儲存，請勿重送。');
+        if(outcome.sideEffectsQueued)notice.push(`通知／行事曆已排入背景處理（${outcome.sideEffectsQueued} 項）。`);
+        if(outcome.calendarSyncQueued)notice.push(`研究日曆已排入背景同步（${outcome.calendarSyncQueued} 本）。`);
+      }
+      const n=$('#flash');if(n){n.classList.remove('error','is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=[text,...notice].filter(Boolean).join(' ');n.hidden=false}
+    }
+    function modal(html){$('#modalbox').className='modalbox';$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
+    function closeModal(){const pending=dialogStack[dialogStack.length-1];if(pending){pending.finish(pending.cancelValue);return}$('#modal').classList.remove('show')}
+    function showMessage(title,message){modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn primary" type="button" id="dismissMessage">知道了</button></div>`);$('#dismissMessage').addEventListener('click',closeModal)}
+    function preserveDialogContent(){const box=$('#modalbox'),wasOpen=$('#modal').classList.contains('show');return{box,wasOpen,className:box.className,nodes:wasOpen?[...box.childNodes]:[]}}
+    function restoreDialogContent(snapshot){if(!snapshot.wasOpen){closeModal();return}snapshot.box.replaceChildren(...snapshot.nodes);snapshot.box.className=snapshot.className}
+    function askForReason(title,message,placeholder='請輸入原因'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><form id="reasonForm"><div class="field"><label for="reasonInput">原因（必填）</label><textarea id="reasonInput" name="reason" required maxlength="500" placeholder="${esc(placeholder)}"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelReason">取消</button><button class="btn primary" type="submit">確認送出</button></div></form>`);
+      const entry={cancelValue:'',finish:null};
+      entry.finish=value=>{if(!dialogStack.includes(entry))return;dialogStack.splice(dialogStack.lastIndexOf(entry),1);restoreDialogContent(snapshot);resolve(value)};
+      dialogStack.push(entry);
+      const finish=entry.finish;
+      $('#reasonForm').addEventListener('submit',event=>{event.preventDefault();const value=$('#reasonInput').value.trim();if(!value){$('#reasonInput').setCustomValidity('請填寫原因。');$('#reasonInput').reportValidity();return}finish(value)});
+      $('#reasonInput').addEventListener('input',event=>event.target.setCustomValidity(''));
+      $('#cancelReason').addEventListener('click',()=>finish(''));
+      $('#reasonInput').focus();
+    })}
+    function confirmAction(title,message,confirmLabel='確認'){return new Promise(resolve=>{
+      const snapshot=preserveDialogContent();
+      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn" type="button" id="cancelConfirm">取消</button><button class="btn primary" type="button" id="acceptConfirm">${esc(confirmLabel)}</button></div>`);
+      const entry={cancelValue:false,finish:null};
+      entry.finish=value=>{if(!dialogStack.includes(entry))return;dialogStack.splice(dialogStack.lastIndexOf(entry),1);restoreDialogContent(snapshot);resolve(value)};
+      dialogStack.push(entry);
+      const finish=entry.finish;
+      $('#cancelConfirm').addEventListener('click',()=>finish(false));
+      $('#acceptConfirm').addEventListener('click',()=>finish(true));
+    })}
+    window.askForReason=askForReason;
+    window.confirmAction=confirmAction;
+</script>
+
+  <script>
+    let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0;
     const bridgeRequests=new Map();
-    const WRITE_METHODS=new Set(['requestLoginCode','verifyLoginCode','acknowledgeParticipant','requestParticipantReschedule','adminReview','requestSupport','requestOriginalResearcherAgain','respondResearcher','respondResearcherInApp','updateAttendance','addOverallNote','addResearcher','removeResearcher','saveAvailabilityDay','addAvailability','assignUnassignedSlot','publishMonthSchedule','submitMonthAvailability','syncFormChoicesForAdmin','prepareResearchCalendars','retryResearchCalendarSync','setScheduleSupportResponse','respondPublishedSlotSupport','updatePublishedScheduleDay','updateScheduleDefaults','requestSessionChange','respondSessionChange','resolveScheduleChange']);
-    const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
-    let activeWriteKey='',activeWriteControl=null;
+    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","requestSessionChange","respondSessionChange","resolveScheduleChange","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode"]);
+    const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',setFormIntakeForAdmin:'正在更新報名表收件狀態…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在更新研究者權限…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
+    let activeWriteKey='',activeWriteControl=null,activeWriteSequence=0;
+    let lastWriteOutcome=null,writeOutcomeClearTimer=null;
     document.addEventListener('click',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
     document.addEventListener('submit',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
     function bridgeError(message){return new Error(message||'Apps Script 後端連線失敗。')}
@@ -539,21 +564,17 @@
         return 'mt-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
       }catch(_){return 'mt-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
     }
-    function sendBridgeHello(frame,channel){
-      try{frame.contentWindow?.postMessage({type:'research-desk:hello',channel},'*')}catch(_){}
-    }
     window.addEventListener('message',event=>{
-      // Apps Script wraps HtmlService in a Google sandbox iframe, so the sender is a nested
-      // frame and cannot be compared to the outer iframe's contentWindow. Validate origin + channel.
       if(!bridgeFrame||!isBridgeOrigin(event.origin))return;
       const message=event.data;
       if(!message||message.channel!==bridgeChannel)return;
       if(message.type==='research-desk:ready'){
-        bridgeSource=event.source;
-        bridgeOrigin=event.origin;
+        if(!bridgeSource){bridgeSource=event.source;bridgeOrigin=event.origin}
+        if(event.source!==bridgeSource||event.origin!==bridgeOrigin)return;
+        try{event.source.postMessage({type:'research-desk:ready-ack',channel:bridgeChannel},event.origin)}catch(_){return}
+        if(!bridgeReadyResolve)return;
         console.info('[研究工作台效能] bridge ready',Math.round(performance.now()-bridgeStartedAt)+' ms');
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
-        clearInterval(bridgeHandshakeTimer);bridgeHandshakeTimer=null;
         if(bridgeReadyResolve){bridgeReadyResolve();bridgeReadyResolve=null;bridgeReadyReject=null}
         return;
       }
@@ -575,17 +596,11 @@
         bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
         frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
         frame.addEventListener('error',()=>bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線失敗，請稍後重試。')),{once:true});
-        frame.addEventListener('load',()=>sendBridgeHello(frame,bridgeChannel));
         const params=new URLSearchParams({bridge:'1',parentOrigin:location.origin,channel:bridgeChannel});
         frame.src=BACKEND_URL+'?'+params.toString();
         document.body.appendChild(frame);
-        // A one-shot ready message can be lost while the cross-origin Apps Script iframe redirects.
-        // Repeat a channel-scoped hello until the bridge replies or the normal timeout fires.
-        sendBridgeHello(frame,bridgeChannel);
-        bridgeHandshakeTimer=setInterval(()=>sendBridgeHello(frame,bridgeChannel),750);
       }).catch(error=>{
         clearTimeout(bridgeReadyTimer);bridgeReadyTimer=null;
-        clearInterval(bridgeHandshakeTimer);bridgeHandshakeTimer=null;
         bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
         if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
         bridgeReady=null;
@@ -605,10 +620,19 @@
         }).finally(()=>console.info('[研究工作台效能] bridge RPC '+name,Math.round(performance.now()-requestStarted)+' ms'));
       });
     }
+    function rawApi(name,args){
+      return window.google&&window.google.script&&window.google.script.run
+        ?new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)})
+        :bridgeApi(name,args);
+    }
     function api(name,...args){
       const isWrite=WRITE_METHODS.has(name),start=performance.now();
       if(isWrite&&activeWriteKey)return Promise.reject(new Error('上一項操作仍在處理，請稍候；完成前不需要再按一次。'));
+      const requestEpoch=authEpoch;
+      let writeSequence=0;
       if(isWrite){
+        lastWriteOutcome=null;clearTimeout(writeOutcomeClearTimer);writeOutcomeClearTimer=null;
+        writeSequence=++activeWriteSequence;
         activeWriteKey=name;
         const focused=document.activeElement,form=focused?.form;
         activeWriteControl=focused?.matches?.('button,[type="submit"]')?focused:form?.querySelector?.('[type="submit"]')||null;
@@ -616,10 +640,12 @@
         document.documentElement.classList.add('request-pending');
         setRequestStatus(WRITE_MESSAGES[name]||'正在送出，請稍候…');
       }
-      const request=window.google&&window.google.script&&window.google.script.run
-        ?new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:String(e))));runner[name](...args)})
-        :bridgeApi(name,args);
-      return request.then(value=>{
+      return rawApi(name,args).then(value=>{
+        if(requestEpoch!==authEpoch){const stale=new Error('工作階段已切換，忽略舊請求回應。');stale.code='STALE_SESSION_RESPONSE';throw stale}
+        if(isWrite&&value&&value.saved===true){
+          lastWriteOutcome={saved:true,formSyncPending:Boolean(value.formSyncPending),sideEffectsQueued:Number(value.sideEffectsQueued||0),calendarSyncQueued:Number(value.calendarSyncQueued||0),at:Date.now()};
+          writeOutcomeClearTimer=setTimeout(()=>{lastWriteOutcome=null;writeOutcomeClearTimer=null},45000);
+        }
         if(isWrite&&document.querySelector('#flash'))setRequestStatus('已收到回應，正在更新畫面…');
         return value;
       }).catch(error=>{
@@ -627,157 +653,23 @@
       }).finally(()=>{
         const elapsed=Math.round(performance.now()-start);
         console.info('[研究工作台效能]',name,elapsed+' ms');
-        if(isWrite){
+        if(isWrite&&activeWriteSequence===writeSequence){
           if(activeWriteControl?.isConnected){activeWriteControl.innerHTML=activeWriteControl.dataset.requestOriginalHtml||activeWriteControl.textContent;activeWriteControl.disabled=activeWriteControl.dataset.requestOriginalDisabled==='true';delete activeWriteControl.dataset.requestOriginalHtml;delete activeWriteControl.dataset.requestOriginalDisabled}
           activeWriteControl=null;activeWriteKey='';document.documentElement.classList.remove('request-pending');
         }
       });
     }
-    function setRequestStatus(text){const n=$('#flash');if(n){n.hidden=false;n.classList.remove('error');n.classList.add('is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=text}}
-    function showError(err){const n=$('#flash');if(n){n.hidden=false;n.classList.remove('is-pending');n.classList.add('error');n.setAttribute('role','alert');n.textContent=err.message||String(err)}else showMessage('操作失敗',err.message||String(err))}
-    function flash(text){const n=$('#flash');if(n){n.classList.remove('error','is-pending');n.setAttribute('role','status');n.setAttribute('aria-live','polite');n.textContent=text;n.hidden=false}}
-    function callAndReload(fn,...args){return api(fn,sessionToken,...args).then(()=>load()).catch(showError)}
-    function modal(html){$('#modalbox').className='modalbox';$('#modalbox').innerHTML=html;$('#modal').classList.add('show')}
-    function closeModal(){$('#modal').classList.remove('show')}
-    $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
-    function showMessage(title,message){modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn primary" type="button" id="dismissMessage">知道了</button></div>`);$('#dismissMessage').addEventListener('click',closeModal)}
-    function preserveDialogContent(){const box=$('#modalbox'),wasOpen=$('#modal').classList.contains('show');return{box,wasOpen,className:box.className,nodes:wasOpen?[...box.childNodes]:[]}}
-    function restoreDialogContent(snapshot){if(!snapshot.wasOpen){closeModal();return}snapshot.box.replaceChildren(...snapshot.nodes);snapshot.box.className=snapshot.className}
-    function askForReason(title,message,placeholder='請輸入原因'){return new Promise(resolve=>{
-      const snapshot=preserveDialogContent();
-      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><form id="reasonForm"><div class="field"><label for="reasonInput">原因（必填）</label><textarea id="reasonInput" name="reason" required maxlength="500" placeholder="${esc(placeholder)}"></textarea></div><div class="actions"><button class="btn" type="button" id="cancelReason">取消</button><button class="btn primary" type="submit">確認送出</button></div></form>`);
-      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
-      $('#reasonForm').addEventListener('submit',event=>{event.preventDefault();const value=$('#reasonInput').value.trim();if(!value){$('#reasonInput').setCustomValidity('請填寫原因。');$('#reasonInput').reportValidity();return}finish(value)});
-      $('#reasonInput').addEventListener('input',event=>event.target.setCustomValidity(''));
-      $('#cancelReason').addEventListener('click',()=>finish(''));
-      $('#reasonInput').focus();
-    })}
-    function confirmAction(title,message,confirmLabel='確認'){return new Promise(resolve=>{
-      const snapshot=preserveDialogContent();
-      modal(`<h2>${esc(title)}</h2><p class="help">${esc(message)}</p><div class="actions"><button class="btn" type="button" id="cancelConfirm">取消</button><button class="btn primary" type="button" id="acceptConfirm">${esc(confirmLabel)}</button></div>`);
-      const finish=value=>{restoreDialogContent(snapshot);resolve(value)};
-      $('#cancelConfirm').addEventListener('click',()=>finish(false));
-      $('#acceptConfirm').addEventListener('click',()=>finish(true));
-    })}
-    window.askForReason=askForReason;
-    window.confirmAction=confirmAction;
+</script>
 
-    if(MODE==='researcher') renderResearcherAction();
-    else if(MODE==='ack') renderAck();
-    else if(MODE==='reschedule') renderReschedule();
-    else if(sessionToken) load(); else renderLogin();
-
-    function renderLogin(){
-      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><span class="pill">測試版</span></header><section class="panel auth"><div class="eyebrow">SECURE SIGN IN</div><h1>登入研究工作台</h1><p class="subtitle">使用已加入團隊的 Google 信箱收取一次性驗證碼。研究者只能查看自己的案件與行程。</p><div id="flash" class="alert" hidden></div><form id="loginForm"><div class="field"><label for="email">團隊電子郵件</label><input id="email" type="email" autocomplete="email" required placeholder="name@example.com"></div><button class="btn primary" type="submit">寄送登入驗證碼</button></form><form id="verifyForm" hidden><div class="field"><label for="code">6 位驗證碼</label><input id="code" inputmode="numeric" autocomplete="one-time-code" required maxlength="6"></div><div class="actions"><button class="btn primary" type="submit">驗證並登入</button><button class="btn" type="button" id="backLogin">返回</button></div></form><div class="footer">只使用測試表單與測試資料庫。身分證字號與戶籍地址僅管理者可在權限頁查看。</div></section></div>`;
-      let loginEmail='',requestPending=false,verifyPending=false,loginComplete=false;
-      const flowId=++authFlowSequence;
-      const clearLoginError=()=>{const n=$('#flash');if(n){n.hidden=true;n.classList.remove('error');n.textContent=''}};
-      $('#loginForm').addEventListener('submit',async e=>{
-        e.preventDefault();
-        if(requestPending||loginComplete)return;
-        requestPending=true;clearLoginError();
-        const button=$('#loginForm button[type="submit"]');
-        button.disabled=true;button.textContent='寄送中…';
-        try{
-          loginEmail=$('#email').value.trim();
-          await api('requestLoginCode',loginEmail);
-          if(flowId!==authFlowSequence||loginComplete)return;
-          $('#loginForm').hidden=true;$('#verifyForm').hidden=false;flash('已寄出驗證碼，請查看該信箱。');
-        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
-        finally{
-          requestPending=false;
-          if(flowId===authFlowSequence){const current=$('#loginForm button[type="submit"]');if(current){current.disabled=false;current.textContent='寄送登入驗證碼'}}
-        }
-      });
-      $('#verifyForm').addEventListener('submit',async e=>{
-        e.preventDefault();
-        if(verifyPending||loginComplete)return;
-        verifyPending=true;clearLoginError();
-        const button=$('#verifyForm button[type="submit"]'),codeInput=$('#code');
-        button.disabled=true;button.textContent='驗證中…';codeInput.disabled=true;
-        try{
-          const result=await api('verifyLoginCode',loginEmail,codeInput.value.trim());
-          if(flowId!==authFlowSequence||loginComplete)return;
-          loginComplete=true;sessionToken=result.token;saveSessionToken(sessionToken);await load();
-        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
-        finally{
-          verifyPending=false;
-          if(flowId===authFlowSequence&&!loginComplete){const current=$('#verifyForm button[type="submit"]'),input=$('#code');if(current){current.disabled=false;current.textContent='驗證並登入'}if(input)input.disabled=false}
-        }
-      });
-      $('#backLogin').addEventListener('click',()=>{if(requestPending||verifyPending)return;clearLoginError();$('#verifyForm').hidden=true;$('#loginForm').hidden=false});
-    }
-
-    function isSessionError(error){return /請重新登入|登入已逾時|帳號權限已變更|尚未加入研究團隊|沒有此操作權限/.test(String(error&&error.message||error))}
-    function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><p class="subtitle" id="loadStatus">按重新載入後請留在此頁，避免重複送出。</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在重新連線…';const status=$('#loadStatus');if(status)status.textContent='正在重新連線，請留在此頁，無需再次點擊。';load()})}
-    async function load(){
-      const requestId=++bootstrapRequestSequence,started=performance.now();
-      clearTimeout(initialLoadHintTimer);
-      if(!state)initialLoadHintTimer=setTimeout(()=>{
-        if(requestId!==bootstrapRequestSequence||state)return;
-        const status=$('#loadStatus')||$('#root .subtitle');
-        if(status)status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。';
-      },8000);
-      if(state){draw();setRequestStatus('正在更新工作台資料…')}
-      try{
-        const nextState=await api('getBootstrap',sessionToken);
-        if(requestId!==bootstrapRequestSequence)return;
-        state=nextState;
-        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));
-        draw();
-        if(activeView==='availability')await loadAvailabilityMonth({force:true});
-        if(state.user.role==='admin')loadAdminMailRelaySummary(sessionToken,state);
-      }catch(error){
-        if(requestId!==bootstrapRequestSequence)return;
-        if(isSessionError(error)){sessionToken='';clearSessionToken();state=null;renderLogin();showError(error);return}
-        if(state){draw();showError(error)}else renderLoadError(error);
-      }finally{
-        clearTimeout(initialLoadHintTimer);initialLoadHintTimer=null;
-        console.info('[研究工作台效能] load',Math.round(performance.now()-started)+' ms');
-      }
-    }
-    async function loadAdminMailRelaySummary(token,targetState){
-      try{
-        const summary=await api('getAdminMailRelaySummary',token);
-        if(state!==targetState)return;
-        state.mailRelay=summary;
-        if(activeView==='dashboard')draw();
-      }catch(error){
-        console.warn('[研究工作台效能] 管理者寄件狀態載入失敗',String(error&&error.message||error));
-      }
-    }
-    function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
-    function calendarMonthDate(key){const [year,month]=String(key).split('-').map(Number);return new Date(year,month-1,1)}
-    async function loadAvailabilityMonth(options={}){
-      const monthKey=calendarMonthKey(availabilityMonth),requestId=++availabilityRequestSequence,cached=availabilityMonthCache.get(monthKey);
-      availabilityLoadError='';
-      if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();refreshCalendarSyncStatus(monthKey);return}
-      availabilityPlan=null;availabilityLoading=true;draw();
-      try{
-        const [planResult,syncResult]=await Promise.allSettled([api('getMonthSchedule',sessionToken,monthKey),api('getResearchCalendarSyncStatus',sessionToken,monthKey)]);
-        if(planResult.status==='rejected')throw planResult.reason;
-        if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
-        availabilityPlan=planResult.value;availabilityCalendarSync=syncResult.status==='fulfilled'?syncResult.value:null;availabilityCalendarSyncMonth=syncResult.status==='fulfilled'?monthKey:'';availabilityMonthCache.set(monthKey,{at:Date.now(),plan:planResult.value});availabilityLoading=false;availabilityLoadError='';calendarSyncPollCount=0;draw();scheduleCalendarSyncPoll(monthKey);
-      }catch(error){
-        if(requestId!==availabilityRequestSequence||monthKey!==calendarMonthKey(availabilityMonth))return;
-        availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);draw();showError(error);
-      }
-    }
-    function calendarSyncPending(monthKey){if(monthKey&&availabilityCalendarSyncMonth!==monthKey)return false;return Boolean(availabilityCalendarSync?.researchers?.some(item=>['pending','running','retry_scheduled'].includes(item.status?.status)))}
-    function scheduleCalendarSyncPoll(monthKey){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;if(activeView!=='availability'||!calendarSyncPending(monthKey)||calendarSyncPollCount>=24)return;calendarSyncPollTimer=setTimeout(()=>{calendarSyncPollTimer=null;calendarSyncPollCount++;refreshCalendarSyncStatus(monthKey)},5000)}
-    async function refreshCalendarSyncStatus(monthKey){
-      if(activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;
-      try{const next=await api('getResearchCalendarSyncStatus',sessionToken,monthKey);if(activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;availabilityCalendarSync=next;availabilityCalendarSyncMonth=monthKey;draw();scheduleCalendarSyncPoll(monthKey)}
-      catch(error){console.warn('[研究工作台] 研究日曆狀態讀取失敗',String(error&&error.message||error))}
-    }
+  <script>
     function draw(){
       const admin=state.user.role==='admin';
       const nav=admin?[['dashboard','總覽'],['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
       if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
       const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
       $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${state.testMode?'測試資料僅寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
-      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}draw();if(activeView==='availability')loadAvailabilityMonth()}));
-      $('#logout').addEventListener('click',()=>{sessionToken='';clearSessionToken();renderLogin()});
+      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}draw();if(activeView==='availability')loadAvailabilityMonth();else if(stateRefreshPending)load()}));
+      $('#logout').addEventListener('click',()=>{const token=sessionToken;resetSessionState();renderLogin();if(token)rawApi('logout',[token]).catch(error=>console.warn('[研究工作台] 登出工作階段撤銷失敗',String(error&&error.message||error)))});
       bindView(activeView,admin);
     }
     function subtitleFor(view,admin){return ({dashboard:admin?'招募進度與待處理案件。':'你的待辦與近期場次。',availability:'每場 60 分鐘，場次至少間隔 30 分鐘。',workflow:admin?'處理資格審核與研究者確認。':'確認指派給你的場次。',appointments:'已確認場次與臨時異動。',sessions:'記錄出席與實驗結果。',notes:'團隊共用觀察。',researchers:'管理研究團隊與排班顏色。',settings:'管理測試表單與預設時段。'}[view]||'')}
@@ -791,6 +683,14 @@
       if(view==='notes')return renderNotes();
       if(view==='researchers')return renderResearchers();
       return renderSettings();
+    }
+    async function refreshAfterMutation(){
+      if(activeView==='availability'){
+        stateRefreshPending=true;
+        await loadAvailabilityMonth({force:true});
+        return;
+      }
+      await load();
     }
     const statusName={review:'需管理者審核',researcher_pending:'等研究者確認',needs_coordination:'待協調',reschedule_pending:'改期待確認',confirmed:'已錄取',completed:'已完成',no_show:'未到',rejected:'未錄取'};
     function metric(label,value,hint){return `<div class="metric"><small>${label}</small><strong>${value}</strong><span class="help">${hint}</span></div>`}
@@ -866,7 +766,7 @@
     function renderSettings(){
       const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
       const rows=template.map((s,i)=>`<div class="template-row"><strong>時段 ${i+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${i}" value="${esc(s[0])}"></label><span class="template-end">結束：${esc(AvailabilityUI.addMinutesLabel(s[0],60))}</span><button class="btn small danger" type="button" data-template-remove="${i}">移除</button></div>`).join('');
-      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn primary" id="syncForm">同步可報名時段到表單</button><button class="btn" id="prepareResearchCalendars">準備研究日曆</button></div><p class="help">發布月份班表時才會同步報名表；儲存班表後，系統會在背景更新研究日曆。研究者確認場次後，原預留事件會更新為正式場次。</p><p class="help">Lin 的主要 Google 日曆會自動檢查衝突；其他研究者可同時檢視主要與研究日曆。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
+      return `<section class="panel"><h2>測試資源</h2><div class="notice">一般測試通知會依目前測試路由寄送；不會因修改排班預設而發布正式表單。</div><div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">開啟測試表單</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">開啟測試工作流程資料庫</a><button class="btn" id="syncForm">更新報名時段</button><button class="btn primary" id="openForm">開放收件</button><button class="btn danger" id="pauseForm">暫停收件</button><button class="btn" id="prepareResearchCalendars">準備研究日曆</button></div><p class="help">背景同步只更新時段，或在沒有可報名場次時暫停收件；重新開放必須由管理者按「開放收件」。發布月份班表時才會同步報名時段；儲存班表後，系統會在背景更新研究日曆。研究者確認場次後，原預留事件會更新為正式場次。</p><p class="help">Lin 的主要 Google 日曆會自動檢查衝突；其他研究者可同時檢視主要與研究日曆。</p></section><section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section><section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到測試報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立測試日曆事件。</td></tr></tbody></table></section>`
     }
     function bindView(view,admin){
       $('#content').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
@@ -922,7 +822,9 @@
         document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!await confirmAction('移除研究者',`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`,'移除研究者'))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
       }
       if(view==='settings'){
-        $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已同步：${r.openSlots} 個可報名時段；表單${r.formAccepting?'開放':'暫停'}收件。`);load()}).catch(showError));
+        $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已更新 ${r.openSlots} 個可報名時段；收件狀態依目前表單設定。`);load()}).catch(showError));
+        $('#openForm')?.addEventListener('click',async()=>{if(!await confirmAction('開放報名表收件','系統會更新可報名時段，並在有可報名場次時開放測試表單。','開放收件'))return;try{const result=await api('setFormIntakeForAdmin',sessionToken,true);flash(result.formAccepting?`已開放收件，目前有 ${result.openSlots} 個可報名時段。`:'目前沒有可報名時段，表單維持暫停。');await load()}catch(error){showError(error)}});
+        $('#pauseForm')?.addEventListener('click',async()=>{if(!await confirmAction('暫停報名表收件','系統會立即停止接收新的報名。','暫停收件'))return;try{await api('setFormIntakeForAdmin',sessionToken,false);flash('已暫停報名表收件。');await load()}catch(error){showError(error)}});
         $('#prepareResearchCalendars')?.addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;try{const result=await api('prepareResearchCalendars',sessionToken);await load();flash(`已排入 ${result.queued} 本研究日曆的準備工作。`)}catch(error){button.disabled=false;showError(error)}});
         $('#addTemplateSlot')?.addEventListener('click',()=>{const rows=[...document.querySelectorAll('[data-template-start]')],index=rows.length;const row=document.createElement('div');row.className='template-row';row.innerHTML=`<strong>時段 ${index+1}</strong><label class="field"><span>開始</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h data-template-start="${index}" value=""></label><span class="template-end">結束：—</span><button class="btn small danger" type="button" data-template-remove="${index}">移除</button>`;$('#scheduleTemplateRows').appendChild(row);bindTemplateControls()});
         bindTemplateControls();
@@ -935,6 +837,9 @@
       document.querySelectorAll('[data-template-start]').forEach(input=>{if(input.dataset.bound)return;input.dataset.bound='1';input.addEventListener('blur',()=>{input.value=AvailabilityUI.normalizeTimeEntry(input.value);input.closest('.template-row').querySelector('.template-end').textContent='結束：'+(AvailabilityUI.addMinutesLabel(input.value,60)||'—')})});
     }
 
+</script>
+
+  <script>
     async function renderResearcherAction(){
       $('#root').innerHTML=`<section class="panel auth compact-action"><h1>研究者確認</h1><div id="flash" class="alert" role="status" aria-live="polite">正在讀取場次…</div><div id="action"></div></section>`;
       try{
@@ -982,6 +887,179 @@
         $('#action').innerHTML=d.slots.length?`<form id="reschedule"><div class="field"><label>新實驗時段</label><select name="slot" required>${d.slots.map(s=>`<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('')}</select></div><button class="btn primary" type="submit">送出改期申請</button></form>`:'<div class="empty">目前沒有可選時段，請直接回覆錄取信與研究團隊聯絡。</div>';
         $('#reschedule')?.addEventListener('submit',async e=>{e.preventDefault();try{const result=await api('requestParticipantReschedule',LINK_TOKEN,new FormData(e.currentTarget).get('slot'));$('#action').textContent=result.message;flash('已收到改期申請；新時段待研究者確認，原時段仍保留。')}catch(error){showError(error)}});
       }catch(error){showError(error)}
+    }
+</script>
+
+  <script>
+    window.addEventListener('error',function(e){
+      const root=document.getElementById('root');
+      if(root){root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台載入失敗</h1><div class="alert error"></div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';root.querySelector('.alert').textContent=String(e.message||'前端初始化失敗')}
+    });
+    window.addEventListener('unhandledrejection',function(e){
+      const root=document.getElementById('root');
+      if(root){root.innerHTML='<section class="panel auth"><div class="eyebrow">FRONTEND ERROR</div><h1>工作台連線失敗</h1><div class="alert error"></div><p class="help">請將此錯誤訊息提供給管理者，以便修復測試版。</p></section>';root.querySelector('.alert').textContent=String(e.reason&&e.reason.message||e.reason||'資料載入失敗')}
+    });
+  </script>
+<script>
+    const query = new URLSearchParams(location.search);
+    const MODE = query.get('action') || 'login';
+    const LINK_TOKEN = query.get('t') || '';
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhnV-8OJxQehl_I-21Hnvi1wTbN_gu6NdDlzOHvvEsXasfEzUDMQ3JSRY7SIPhfiEL0w/exec";
+    const AvailabilityUI = window.AvailabilityUI;
+    function readSessionToken(){try{return window.sessionStorage.getItem('mt-session')||''}catch(_){return ''}}
+    function saveSessionToken(value){try{window.sessionStorage.setItem('mt-session',value)}catch(_){}}
+    function clearSessionToken(){try{window.sessionStorage.removeItem('mt-session')}catch(_){}}
+    function resetSessionState(){
+      authEpoch++;authFlowSequence++;bootstrapRequestSequence++;availabilityRequestSequence++;
+      lastWriteOutcome=null;clearTimeout(writeOutcomeClearTimer);writeOutcomeClearTimer=null;
+      clearSessionToken();clearTimeout(initialLoadHintTimer);initialLoadHintTimer=null;
+      clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;calendarSyncPollCount=0;
+      if(activeWriteControl?.isConnected){activeWriteControl.innerHTML=activeWriteControl.dataset.requestOriginalHtml||activeWriteControl.textContent;activeWriteControl.disabled=activeWriteControl.dataset.requestOriginalDisabled==='true'}
+      activeWriteControl=null;activeWriteKey='';activeWriteSequence++;document.documentElement.classList.remove('request-pending');
+      const staleError=new Error('工作階段已切換。');staleError.code='STALE_SESSION_RESPONSE';
+      bridgeRequests.forEach(pending=>{clearTimeout(pending.timer);pending.reject(staleError)});bridgeRequests.clear();
+      while(dialogStack.length){const pending=dialogStack[dialogStack.length-1];pending.finish(pending.cancelValue)}
+      closeModal();sessionToken='';state=null;availabilityPlan=null;availabilityCalendarSync=null;availabilityCalendarSyncMonth='';
+      availabilityMonth=null;availabilityMonthCache=new Map();availabilityLoading=false;availabilityLoadError='';activeView='dashboard';stateRefreshPending=false;appointmentMonth=new Date();
+    }
+    let initialLoadHintTimer=null;
+    let sessionToken = readSessionToken();
+    let authEpoch = 0;
+    let state = null;
+    let availabilityPlan = null;
+    let availabilityCalendarSync = null;
+    let availabilityCalendarSyncMonth = '';
+    let calendarSyncPollTimer = null;
+    let calendarSyncPollCount = 0;
+    let authFlowSequence = 0;
+    let activeView = 'dashboard';
+    let availabilityMonth = null;
+    let availabilityRequestSequence = 0;
+    let bootstrapRequestSequence = 0;
+    let availabilityMonthCache = new Map();
+    let availabilityLoading = false;
+    let availabilityLoadError = '';
+    let stateRefreshPending = false;
+    let appointmentMonth = new Date();
+    const defaultAvailabilitySlots = [['09:30','10:30'],['11:00','12:00'],['13:00','14:00'],['14:30','15:30'],['16:00','17:00'],['17:30','18:30']];
+    const $ = s => document.querySelector(s);
+    const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function callAndReload(fn,...args){const token=sessionToken,epoch=authEpoch;return api(fn,token,...args).then(value=>{if(epoch!==authEpoch||token!==sessionToken)return null;return load().then(()=>{if(epoch===authEpoch&&token===sessionToken)flash(value?.message||'已儲存。')})}).catch(showError)}
+    $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+    if(MODE==='researcher') renderResearcherAction();
+    else if(MODE==='ack') renderAck();
+    else if(MODE==='reschedule') renderReschedule();
+    else if(sessionToken) load(); else renderLogin();
+
+    function renderLogin(){
+      $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><span class="pill">測試版</span></header><section class="panel auth"><div class="eyebrow">SECURE SIGN IN</div><h1>登入研究工作台</h1><p class="subtitle">使用已加入團隊的 Google 信箱收取一次性驗證碼。研究者只能查看自己的案件與行程。</p><div id="flash" class="alert" hidden></div><form id="loginForm"><div class="field"><label for="email">團隊電子郵件</label><input id="email" type="email" autocomplete="email" required placeholder="name@example.com"></div><button class="btn primary" type="submit">寄送登入驗證碼</button></form><form id="verifyForm" hidden><div class="field"><label for="code">6 位驗證碼</label><input id="code" inputmode="numeric" autocomplete="one-time-code" required maxlength="6"></div><div class="actions"><button class="btn primary" type="submit">驗證並登入</button><button class="btn" type="button" id="backLogin">返回</button></div></form><div class="footer">只使用測試表單與測試資料庫。身分證字號與戶籍地址僅管理者可在權限頁查看。</div></section></div>`;
+      let loginEmail='',requestPending=false,verifyPending=false,loginComplete=false;
+      const flowId=++authFlowSequence;
+      const clearLoginError=()=>{const n=$('#flash');if(n){n.hidden=true;n.classList.remove('error');n.textContent=''}};
+      $('#loginForm').addEventListener('submit',async e=>{
+        e.preventDefault();
+        if(requestPending||loginComplete)return;
+        requestPending=true;clearLoginError();
+        const button=$('#loginForm button[type="submit"]');
+        button.disabled=true;button.textContent='寄送中…';
+        try{
+          loginEmail=$('#email').value.trim();
+          await api('requestLoginCode',loginEmail);
+          if(flowId!==authFlowSequence||loginComplete)return;
+          $('#loginForm').hidden=true;$('#verifyForm').hidden=false;flash('已寄出驗證碼，請查看該信箱。');
+        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
+        finally{
+          requestPending=false;
+          if(flowId===authFlowSequence){const current=$('#loginForm button[type="submit"]');if(current){current.disabled=false;current.textContent='寄送登入驗證碼'}}
+        }
+      });
+      $('#verifyForm').addEventListener('submit',async e=>{
+        e.preventDefault();
+        if(verifyPending||loginComplete)return;
+        verifyPending=true;clearLoginError();
+        const button=$('#verifyForm button[type="submit"]'),codeInput=$('#code');
+        button.disabled=true;button.textContent='驗證中…';codeInput.disabled=true;
+        try{
+          const result=await api('verifyLoginCode',loginEmail,codeInput.value.trim());
+          if(flowId!==authFlowSequence||loginComplete)return;
+          loginComplete=true;resetSessionState();sessionToken=result.token;saveSessionToken(sessionToken);await load();
+        }catch(err){if(flowId===authFlowSequence&&!loginComplete)showError(err)}
+        finally{
+          verifyPending=false;
+          if(flowId===authFlowSequence&&!loginComplete){const current=$('#verifyForm button[type="submit"]'),input=$('#code');if(current){current.disabled=false;current.textContent='驗證並登入'}if(input)input.disabled=false}
+        }
+      });
+      $('#backLogin').addEventListener('click',()=>{if(requestPending||verifyPending)return;clearLoginError();$('#verifyForm').hidden=true;$('#loginForm').hidden=false});
+    }
+
+    function isSessionError(error){return /請重新登入|登入已逾時|帳號權限已變更|尚未加入研究團隊|沒有此操作權限/.test(String(error&&error.message||error))}
+    function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><p class="subtitle" id="loadStatus">按重新載入後請留在此頁，避免重複送出。</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在重新連線…';const status=$('#loadStatus');if(status)status.textContent='正在重新連線，請留在此頁，無需再次點擊。';load()})}
+    async function load(){
+      if(!sessionToken)return;
+      const token=sessionToken,epoch=authEpoch;
+      const requestId=++bootstrapRequestSequence,started=performance.now();
+      clearTimeout(initialLoadHintTimer);
+      if(!state)initialLoadHintTimer=setTimeout(()=>{
+        if(requestId!==bootstrapRequestSequence||epoch!==authEpoch||state)return;
+        const status=$('#loadStatus')||$('#root .subtitle');
+        if(status)status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。';
+      },8000);
+      if(state){draw();setRequestStatus('正在更新工作台資料…')}
+      try{
+        const nextState=await api('getBootstrap',token);
+        if(requestId!==bootstrapRequestSequence||epoch!==authEpoch||token!==sessionToken)return;
+        state=nextState;
+        stateRefreshPending=false;
+        if(!availabilityMonth)availabilityMonth=calendarMonthDate(state.scheduleCycle?.currentMonth||calendarMonthKey(new Date()));
+        draw();
+        if(activeView==='availability')await loadAvailabilityMonth({force:true});
+        if(state.user.role==='admin')loadAdminMailRelaySummary(token,state,epoch);
+      }catch(error){
+        if(requestId!==bootstrapRequestSequence||epoch!==authEpoch||token!==sessionToken)return;
+        if(isSessionError(error)){resetSessionState();renderLogin();showError(error);rawApi('logout',[token]).catch(()=>{});return}
+        if(state){draw();showError(error)}else renderLoadError(error);
+      }finally{
+        if(requestId===bootstrapRequestSequence){clearTimeout(initialLoadHintTimer);initialLoadHintTimer=null}
+        console.info('[研究工作台效能] load',Math.round(performance.now()-started)+' ms');
+      }
+    }
+    async function loadAdminMailRelaySummary(token,targetState,epoch){
+      try{
+        const summary=await api('getAdminMailRelaySummary',token);
+        if(state!==targetState||epoch!==authEpoch||token!==sessionToken)return;
+        state.mailRelay=summary;
+        if(activeView==='dashboard')draw();
+      }catch(error){
+        console.warn('[研究工作台效能] 管理者寄件狀態載入失敗',String(error&&error.message||error));
+      }
+    }
+    function calendarMonthKey(month){return `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`}
+    function calendarMonthDate(key){const [year,month]=String(key).split('-').map(Number);return new Date(year,month-1,1)}
+    async function loadAvailabilityMonth(options={}){
+      if(!state||!sessionToken||!availabilityMonth)return;
+      const token=sessionToken,epoch=authEpoch;
+      const monthKey=calendarMonthKey(availabilityMonth),requestId=++availabilityRequestSequence,cached=availabilityMonthCache.get(monthKey);
+      availabilityLoadError='';
+      if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();refreshCalendarSyncStatus(monthKey);return}
+      availabilityPlan=null;availabilityLoading=true;draw();
+      try{
+        const [planResult,syncResult]=await Promise.allSettled([api('getMonthSchedule',token,monthKey),api('getResearchCalendarSyncStatus',token,monthKey)]);
+        if(planResult.status==='rejected')throw planResult.reason;
+        if(requestId!==availabilityRequestSequence||epoch!==authEpoch||token!==sessionToken||monthKey!==calendarMonthKey(availabilityMonth))return;
+        availabilityPlan=planResult.value;availabilityCalendarSync=syncResult.status==='fulfilled'?syncResult.value:null;availabilityCalendarSyncMonth=syncResult.status==='fulfilled'?monthKey:'';availabilityMonthCache.set(monthKey,{at:Date.now(),plan:planResult.value});availabilityLoading=false;availabilityLoadError='';calendarSyncPollCount=0;draw();scheduleCalendarSyncPoll(monthKey);
+      }catch(error){
+        if(requestId!==availabilityRequestSequence||epoch!==authEpoch||token!==sessionToken||monthKey!==calendarMonthKey(availabilityMonth))return;
+        availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);draw();showError(error);
+      }
+    }
+    function calendarSyncPending(monthKey){if(monthKey&&availabilityCalendarSyncMonth!==monthKey)return false;return Boolean(availabilityCalendarSync?.researchers?.some(item=>['pending','running','retry_scheduled'].includes(item.status?.status)))}
+    function scheduleCalendarSyncPoll(monthKey){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;if(activeView!=='availability'||!calendarSyncPending(monthKey)||calendarSyncPollCount>=24)return;calendarSyncPollTimer=setTimeout(()=>{calendarSyncPollTimer=null;calendarSyncPollCount++;refreshCalendarSyncStatus(monthKey)},5000)}
+    async function refreshCalendarSyncStatus(monthKey){
+      if(!sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;
+      const token=sessionToken,epoch=authEpoch;
+      try{const next=await api('getResearchCalendarSyncStatus',token,monthKey);if(epoch!==authEpoch||token!==sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;availabilityCalendarSync=next;availabilityCalendarSyncMonth=monthKey;draw();scheduleCalendarSyncPoll(monthKey)}
+      catch(error){console.warn('[研究工作台] 研究日曆狀態讀取失敗',String(error&&error.message||error))}
     }
   </script>
 
