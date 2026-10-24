@@ -70,6 +70,72 @@
 </style>
 
   <style>
+  .records-view{max-width:1040px;margin:0 auto;display:grid;gap:10px}
+  .records-count{color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
+  .records-entry,.records-compose,.records-history{background:#fff;border:1px solid var(--line);border-radius:14px}
+  .records-entry{overflow:hidden}
+  .records-summary{list-style:none;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;min-height:70px;padding:13px 18px;cursor:pointer}
+  .records-summary::-webkit-details-marker,.records-note-summary::-webkit-details-marker{display:none}
+  .records-summary-main{min-width:0;display:flex;align-items:baseline;gap:14px}
+  .records-summary-main>strong{font-size:15px;white-space:nowrap}
+  .records-meta{min-width:0;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .records-summary-end{display:flex;align-items:center;gap:18px}
+  .records-status{padding:5px 9px;border-radius:999px;background:#f1f4f1;color:#687970;font-size:11px;font-weight:700;white-space:nowrap}
+  .records-status.has-value{background:#e5f2ec;color:#246a58}
+  .records-expand{color:var(--green);font-size:12px;font-weight:750;white-space:nowrap}
+  .records-entry[open] .records-expand>span,.records-note-entry[open] .records-expand{display:inline-block;transform:rotate(180deg)}
+  .records-editor{border-top:1px solid #edf1ee;padding:15px 18px 17px}
+  .records-fields{display:grid;grid-template-columns:minmax(180px,.8fr) repeat(2,minmax(170px,1fr));align-items:end;gap:12px}
+  .records-field{min-width:0;display:grid;gap:6px;color:var(--muted);font-size:11px;font-weight:750}
+  .records-field select,.records-field input,.records-field textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font:inherit;font-size:14px;padding:9px 11px}
+  .records-field select,.records-field input{height:42px}
+  .records-field textarea{min-height:76px;resize:vertical;line-height:1.55}
+  .records-check{min-height:42px;display:flex;align-items:center;gap:9px;padding:0 11px;border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:13px;font-weight:650;white-space:nowrap}
+  .records-check input{width:16px;height:16px;margin:0;accent-color:var(--green)}
+  .records-note-field{margin-top:13px}
+  .records-actions{display:flex;justify-content:flex-end;margin-top:12px}
+  .records-actions .btn{min-width:96px}
+  .records-compose,.records-history{padding:18px}
+  .records-compose-head,.records-history-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .records-compose h2,.records-history h2{margin:0;font-size:16px}
+  .records-date-field{width:min(220px,45%)}
+  .records-compose-text{margin-top:12px}
+  .records-compose-text textarea{min-height:100px}
+  .records-history{display:grid;gap:8px}
+  .records-history-head{margin-bottom:2px}
+  .records-note-entry{border:1px solid #e8eeea;border-radius:10px;overflow:hidden}
+  .records-note-summary{list-style:none;display:grid;grid-template-columns:110px 130px minmax(0,1fr) 14px;align-items:center;gap:12px;min-height:48px;padding:10px 13px;cursor:pointer}
+  .records-note-summary time,.records-note-author{font-size:12px;font-weight:700;white-space:nowrap}
+  .records-note-author{color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+  .records-note-preview{font-size:12px;color:#52675e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .records-note-summary>.records-expand{font-size:14px}
+  .records-note-full{border-top:1px solid #edf1ee;padding:13px;color:#40574e;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+  .records-history .empty{padding:20px}
+  @media(max-width:760px){
+    .records-summary{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:12px 13px}
+    .records-summary-main{display:grid;gap:3px}
+    .records-summary-main>strong{font-size:14px}
+    .records-meta{font-size:11px}
+    .records-summary-end{gap:8px}
+    .records-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .records-fields>.records-field{grid-column:1/-1}
+    .records-check{white-space:normal;font-size:12px}
+    .records-editor{padding:12px 13px 14px}
+    .records-compose,.records-history{padding:14px}
+    .records-note-summary{grid-template-columns:88px minmax(0,1fr) 14px;gap:8px;padding:10px}
+    .records-note-author{display:none}
+  }
+  @media(max-width:420px){
+    .records-summary-end{align-items:flex-end;flex-direction:column;gap:5px}
+    .records-status{font-size:10px;padding:4px 7px}
+    .records-expand{font-size:11px}
+    .records-date-field{width:48%}
+    .records-note-summary{grid-template-columns:76px minmax(0,1fr) 12px;gap:6px}
+    .records-note-summary time,.records-note-preview{font-size:11px}
+  }
+</style>
+
+  <style>
     .availability-modal .time-pair{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:end;gap:8px;width:100%;min-width:0}
     .availability-modal .time-pair>.field{display:grid;grid-template-rows:auto 42px;gap:6px;min-width:0;margin:0}
     .availability-modal .time-pair [hidden]{display:none!important}
@@ -665,25 +731,112 @@
 </script>
 
   <script>
+  const RecordsUI = (() => {
+    const attendanceOptions = ['出席', '遲到', '未到'];
+
+    function renderSessions() {
+      const apps = (state.applications || [])
+        .filter(app => ['confirmed', 'completed', 'no_show'].includes(app.status))
+        .slice()
+        .sort((a, b) => String(a.slot || '').localeCompare(String(b.slot || '')));
+      const rows = apps.map(app => {
+        const record = (state.records || []).find(item => item.applicationId === app.applicationId) || {};
+        const attendance = record.attendance || '';
+        const attendanceLabel = attendance || '尚未紀錄';
+        return `<details class="records-entry">
+          <summary class="records-summary">
+            <span class="records-summary-main"><strong>${esc(app.name)}</strong><span class="records-meta">${esc(app.slot)} <span aria-hidden="true">·</span> ${esc(app.researcherName)}</span></span>
+            <span class="records-summary-end"><span class="records-status ${attendance ? 'has-value' : ''}">${esc(attendanceLabel)}</span><span class="records-expand">編輯 <span aria-hidden="true">⌄</span></span></span>
+          </summary>
+          <form class="records-editor" data-session="${esc(app.applicationId)}">
+            <div class="records-fields">
+              <label class="records-field"><span>出席狀況</span><select name="attendance"><option value="">尚未紀錄</option>${attendanceOptions.map(value => `<option value="${value}" ${attendance === value ? 'selected' : ''}>${value}</option>`).join('')}</select></label>
+              <label class="records-check"><input type="checkbox" name="result" ${record.requestedResult === 'TRUE' ? 'checked' : ''}><span>希望收到研究結果</span></label>
+              <label class="records-check"><input type="checkbox" name="blacklist" ${record.blacklist === 'TRUE' ? 'checked' : ''}><span>列入黑名單</span></label>
+            </div>
+            <label class="records-field records-note-field"><span>個別狀況</span><textarea name="note" placeholder="記錄與本次實驗相關的情況">${esc(record.individualNote || '')}</textarea></label>
+            <div class="records-actions"><button class="btn primary" type="submit">儲存</button></div>
+          </form>
+        </details>`;
+      }).join('');
+      return `<section class="records-view"><div class="records-count">${apps.length} 個場次</div>${rows || '<div class="empty">目前沒有可記錄的場次</div>'}</section>`;
+    }
+
+    function todayInTaipei() {
+      return new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    }
+
+    function authorName(email) {
+      const address = String(email || '');
+      const researcher = (state.researchers || []).find(item => String(item.email || '').toLowerCase() === address.toLowerCase());
+      return researcher?.name || (address.toLowerCase() === String(state.user?.email || '').toLowerCase() ? state.user.name : address);
+    }
+
+    function renderNotes() {
+      const notes = (state.notes || []).slice().reverse();
+      const history = notes.map(item => {
+        const note = String(item.note || '');
+        const preview = note.replace(/\s+/g, ' ').trim();
+        return `<details class="records-note-entry">
+          <summary class="records-note-summary"><time>${esc(item.date || '')}</time><span class="records-note-author">${esc(authorName(item.observerId))}</span><span class="records-note-preview">${esc(preview.length > 96 ? `${preview.slice(0, 96)}…` : preview)}</span><span class="records-expand" aria-hidden="true">⌄</span></summary>
+          <div class="records-note-full">${esc(note)}</div>
+        </details>`;
+      }).join('');
+      return `<div class="records-view records-notes-view">
+        <section class="records-compose">
+          <div class="records-compose-head"><h2>新增札記</h2><label class="records-field records-date-field"><span>日期</span><input id="noteDate" type="date" value="${todayInTaipei()}" required></label></div>
+          <label class="records-field records-compose-text"><span>札記</span><textarea id="noteText" placeholder="記下值得團隊留意的觀察" required></textarea></label>
+          <div class="records-actions"><button class="btn primary" id="saveNote" type="button">儲存札記</button></div>
+        </section>
+        <section class="records-history"><div class="records-history-head"><h2>歷史札記</h2><span class="records-count">${notes.length} 則</span></div>${history || '<div class="empty">尚無札記</div>'}</section>
+      </div>`;
+    }
+
+    function bind(view) {
+      if (view === 'sessions') {
+        document.querySelectorAll('.records-editor').forEach(form => form.addEventListener('submit', event => {
+          event.preventDefault();
+          const data = new FormData(form);
+          callAndReload('updateAttendance', form.dataset.session, data.get('attendance'), data.has('result'), data.has('blacklist'), data.get('note'));
+        }));
+      }
+      if (view === 'notes') {
+        $('#saveNote')?.addEventListener('click', () => {
+          const date = $('#noteDate').value;
+          const note = $('#noteText').value.trim();
+          if (!date || !note) {
+            showError(new Error('請填寫日期與札記。'));
+            return;
+          }
+          callAndReload('addOverallNote', {date, note});
+        });
+      }
+    }
+
+    return {renderSessions, renderNotes, bind};
+  })();
+</script>
+
+  <script>
     function draw(){
       const admin=state.user.role==='admin';
       const nav=admin?[['dashboard','總覽'],['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
       if(!nav.some(x=>x[0]===activeView))activeView='dashboard';
-      const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體觀察札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
+      const title=({dashboard:admin?'招募總覽':'我的工作台',availability:admin?'研究者可收時間':'團隊可收時間',workflow:'審核流程',appointments:admin?'實驗行程':'我的實驗行程',sessions:'實驗紀錄',notes:'整體札記',researchers:'研究團隊',settings:'連線設定'})[activeView];
       $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK · TEST</small></div><div class="head-right"><span class="pill">${state.testMode?'測試模式｜通知僅寄至管理者設定的測試信箱':'正式寄送模式'}</span><span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${state.testMode?'測試資料僅寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
       document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}draw();if(activeView==='availability')loadAvailabilityMonth();else if(stateRefreshPending)load()}));
       $('#logout').addEventListener('click',()=>{const token=sessionToken;resetSessionState();renderLogin();if(token)rawApi('logout',[token]).catch(error=>console.warn('[研究工作台] 登出工作階段撤銷失敗',String(error&&error.message||error)))});
       bindView(activeView,admin);
     }
-    function subtitleFor(view,admin){return ({dashboard:admin?'招募進度與待處理案件。':'你的待辦與近期場次。',availability:'每場 60 分鐘，場次至少間隔 30 分鐘。',workflow:admin?'處理資格審核與研究者確認。':'確認指派給你的場次。',appointments:'已確認場次與臨時異動。',sessions:'記錄出席與實驗結果。',notes:'團隊共用觀察。',researchers:'管理研究團隊與排班顏色。',settings:'管理測試表單與預設時段。'}[view]||'')}
+    function subtitleFor(view,admin){return ({dashboard:admin?'招募進度與待處理案件。':'你的待辦與近期場次。',availability:'每場 60 分鐘，場次至少間隔 30 分鐘。',workflow:admin?'處理資格審核與研究者確認。':'確認指派給你的場次。',appointments:'已確認場次與臨時異動。',sessions:'記錄出席、結果需求、黑名單與個別狀況。',notes:admin?'管理者可查看全部；研究者僅查看自己的札記。':'僅顯示你新增的札記。',researchers:'管理研究團隊與排班顏色。',settings:'管理測試表單與預設時段。'}[view]||'')}
 
     function renderView(view,admin){
       if(view==='dashboard')return renderDashboard(admin);
       if(view==='availability')return AvailabilityUI.renderAvailability(admin);
       if(view==='workflow')return renderWorkflow(admin);
       if(view==='appointments')return renderAppointments(admin);
-      if(view==='sessions')return renderSessions(admin);
-      if(view==='notes')return renderNotes();
+      if(view==='sessions')return RecordsUI.renderSessions();
+      if(view==='notes')return RecordsUI.renderNotes();
       if(view==='researchers')return renderResearchers();
       return renderSettings();
     }
@@ -763,8 +916,6 @@
       $('#cancelScheduleChange').addEventListener('click',closeModal);
       form.addEventListener('submit',async event=>{event.preventDefault();const targetValue=kind.value==='swap'?form.elements.swapTarget.value:kind.value==='cover'?form.elements.coverTarget.value:'';if(kind.value!=='manager'&&!targetValue){showError(new Error('請先選擇互換場次或代班研究者。'));return}const submit=form.querySelector('[type="submit"]');submit.disabled=true;try{const result=await api('requestSessionChange',sessionToken,applicationId,kind.value,targetValue,form.elements.reason.value.trim());closeModal();await load();flash(result.message)}catch(error){submit.disabled=false;showError(error)}});
     }
-    function renderSessions(admin){const apps=state.applications.filter(a=>['confirmed','completed','no_show'].includes(a.status));return `<section class="panel"><h2>實驗紀錄</h2>${apps.map(a=>{const rec=state.records.find(r=>r.applicationId===a.applicationId)||{};return `<form class="session-form card" data-session="${esc(a.applicationId)}"><div class="card-top"><div><h3>${esc(a.name)}</h3><div class="meta">${esc(a.slot)} · ${esc(a.researcherName)}</div></div></div><div class="grid"><div class="field"><label>出席狀況</label><select name="attendance"><option value="">尚未紀錄</option>${['出席','遲到','未到'].map(x=>`<option ${rec.attendance===x?'selected':''}>${x}</option>`).join('')}</select></div><label class="checkrow"><input type="checkbox" name="result" ${rec.requestedResult==='TRUE'?'checked':''}>受試者主動想收到研究結果</label><label class="checkrow"><input type="checkbox" name="blacklist" ${rec.blacklist==='TRUE'?'checked':''}>黑名單（原因填在備註）</label></div><div class="field"><label>受試者個別狀況</label><textarea name="note" placeholder="例如：不專心作答、看過答案、做過相似測驗">${esc(rec.individualNote||'')}</textarea></div><button class="btn primary" type="submit">儲存紀錄</button></form>`}).join('')||'<div class="empty">確認錄取後，場次會出現在這裡</div>'}</section>`}
-    function renderNotes(){return `<section class="panel"><h2>新增整體觀察</h2><div class="grid"><div class="field"><label>日期</label><input id="noteDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>觀察札記</label><textarea id="noteText" placeholder="例如：動作情境下受試者明顯喘，可能影響後續認知作業表現"></textarea></div></div><button class="btn primary" id="saveNote">儲存札記</button></section><section class="panel"><h2>研究觀察紀錄</h2>${state.notes.slice().reverse().map(n=>`<div class="card"><div class="meta">${esc(n.date)} · ${esc(n.observerId)}</div><div>${esc(n.note)}</div></div>`).join('')||'<div class="empty">尚無整體觀察札記</div>'}</section>`}
     function renderResearchers(){return `<section class="panel"><h2>新增研究者</h2><p class="help">新增後，研究者可用團隊信箱收取一次性登入碼。</p><form id="researcherForm"><div class="grid"><div class="field"><label>研究者姓名</label><input name="name" required placeholder="只填名字"></div><div class="field"><label>研究者 Email</label><input name="email" type="email" required></div><div class="field"><label>月曆顏色</label><input name="color" type="color" value="#2b8678"></div></div><button class="btn primary">加入研究者</button></form></section><section class="panel"><h2>研究團隊</h2>${state.researchers.map(r=>`<div class="slotline researcher-row" style="--person:${esc(r.color)}"><span class="color-dot" style="--person:${esc(r.color)}"></span><strong>${esc(r.name)}</strong><span class="meta">${esc(r.email||'研究者帳號')}</span>${r.researcherId!==state.user.researcherId?`<button class="btn small danger" data-remove-researcher="${esc(r.researcherId)}" data-name="${esc(r.name)}">移除</button>`:'<span class="tag">你</span>'}</div>`).join('')||'<div class="empty">尚未加入其他研究者</div>'}<p class="help">移除會立即停用登入並撤銷既有工作階段。若仍有待確認或已排定案件，需先完成支援或改期。</p></section>`}
     function renderSettings(){
       const template=state.scheduleDefaults?.slots||defaultAvailabilitySlots;
@@ -773,6 +924,7 @@
     }
     function bindView(view,admin){
       $('#content').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;draw()}));
+      if(view==='sessions'||view==='notes')RecordsUI.bind(view);
       if(view==='availability'){
         document.querySelectorAll('[data-calendar-nav^="availability:"]').forEach(b=>b.addEventListener('click',()=>{availabilityMonth=shiftCalendarMonth(availabilityMonth,Number(b.dataset.calendarNav.split(':')[1]));loadAvailabilityMonth().catch(showError)}));
         document.querySelectorAll('[data-calendar-goto^="availability:"]').forEach(b=>b.addEventListener('click',()=>{availabilityMonth=calendarMonthDate(b.dataset.calendarGoto.split(':')[1]);loadAvailabilityMonth().catch(showError)}));
@@ -818,8 +970,6 @@
         document.querySelectorAll('[data-sensitive]').forEach(b=>b.addEventListener('click',async()=>{try{const d=await api('getSensitiveApplication',sessionToken,b.dataset.sensitive);modal(`<h2>敏感資格資料</h2><p>身分證字號：<strong>${esc(d.nationalId||'未填')}</strong></p><p>檢查碼格式：${d.idValid==='true'?'通過':'需人工核對'}</p><p>戶籍地址：${esc(d.homeAddress||'未填')}</p><div class="notice">只用於管理者核對資格或重複報名，請勿複製到一般通知或研究者行程。</div><button class="btn" onclick="closeModal()">關閉</button>`)}catch(e){showError(e)}}));
         document.querySelectorAll('.response-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),decision=d.get('decision');if(decision==='decline'&&(!d.get('reason')||!d.get('detail'))){showError(new Error('無法執行時，原因與補充說明都必須填寫。'));return}if(LINK_TOKEN)callAndReload('respondResearcher',LINK_TOKEN,decision,d.get('reason'),d.get('detail'));else callAndReload('respondResearcherInApp',form.dataset.response,decision,d.get('reason'),d.get('detail'))}));
       }
-      if(view==='sessions')document.querySelectorAll('.session-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form);callAndReload('updateAttendance',form.dataset.session,d.get('attendance'),d.has('result'),d.has('blacklist'),d.get('note'))}));
-      if(view==='notes')$('#saveNote')?.addEventListener('click',()=>callAndReload('addOverallNote',{date:$('#noteDate').value,note:$('#noteText').value}));
       if(view==='researchers'){
         $('#researcherForm')?.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target);callAndReload('addResearcher',{name:d.get('name'),email:d.get('email'),color:d.get('color')})});
         document.querySelectorAll('[data-remove-researcher]').forEach(button=>button.addEventListener('click',async()=>{if(!await confirmAction('移除研究者',`移除 ${button.dataset.name}？此操作會立即停用登入；若仍有已排實驗，系統會要求先完成協調。`,'移除研究者'))return;try{await api('removeResearcher',sessionToken,button.dataset.removeResearcher);await load();flash('研究者已停用，登入權限已撤銷。')}catch(err){showError(err)}}));
