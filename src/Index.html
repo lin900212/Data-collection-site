@@ -747,7 +747,7 @@
     }
     function rawApi(name,args){
       return window.google&&window.google.script&&window.google.script.run
-        ?new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(bridgeError(e&&e.message?e.message:String(e))));runner.dispatchApi_(name,args)})
+        ?new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(bridgeError(e&&e.message?e.message:String(e))));runner.dispatchApi(name,args)})
         :bridgeApi(name,args);
     }
     function api(name,...args){
