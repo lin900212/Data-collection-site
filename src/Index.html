@@ -1486,6 +1486,7 @@
     }
 
     function isSessionError(error){return Boolean(error&&['SESSION_EXPIRED','ACCOUNT_INACTIVE'].includes(error.code))}
+    function renderStudyLoading(studyId){const study=availableStudies.find(item=>item.studyId===studyId);const name=study&&study.name?study.name:'所選實驗';$('#root').innerHTML=`<div class="wrap"><section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>正在載入實驗</h1><p class="subtitle">「${esc(name)}」資料載入中；完成前不顯示其他實驗資料。</p></section></div>`}
     function renderLoadError(error){$('#root').innerHTML=`<section class="panel auth"><div class="eyebrow">RESEARCH DESK · CONNECTION</div><h1>工作台暫時無法載入</h1><p class="alert error">${esc(error&&error.message||error||'連線失敗')}</p><p class="subtitle" id="loadStatus">按重新載入後請留在此頁，避免重複送出。</p><button class="btn primary" id="retryLoad">重新載入</button></section>`;$('#retryLoad').addEventListener('click',event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在重新連線…';const status=$('#loadStatus');if(status)status.textContent='正在重新連線，請留在此頁，無需再次點擊。';load()})}
     function renderStudyPicker(studies){
       const options=(studies||[]).filter(study=>study&&study.studyId);
@@ -1501,6 +1502,7 @@
       studyEpoch++;bootstrapRequestSequence++;availabilityRequestSequence++;
       activeStudyId=studyId;saveStudyId(studyId);state=null;availabilityPlan=null;availabilityCalendarSync=null;availabilityCalendarSyncMonth='';
       availabilityMonth=null;availabilityMonthCache=new Map();availabilityLoading=false;availabilityLoadError='';activeView='dashboard';stateRefreshPending=false;
+      renderStudyLoading(studyId);
       load();
     }
     async function load(){
