@@ -662,6 +662,7 @@
 
   <script>
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0,bridgeFrameLoadCount=0;
+    const BRIDGE_READY_TIMEOUT_MS=15000,BRIDGE_READY_MAX_ATTEMPTS=2;
     const bridgeRequests=new Map();
     const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport"]);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',setFormIntakeForAdmin:'正在更新報名表收件狀態…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',retryResearcherCalendarAccess:'正在重試日曆權限…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在停用研究者…',updateResearcher:'正在更新研究者角色…',reactivateResearcher:'正在恢復研究者…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
@@ -712,7 +713,7 @@
       clearTimeout(pending.timer);bridgeRequests.delete(message.id);
       message.ok?pending.resolve(message.value):pending.reject(bridgeError(message.error));
     });
-    function connectBridge(){
+    function connectBridge(attempt=1){
       if(window.google&&window.google.script&&window.google.script.run)return Promise.resolve();
       if(bridgeReady)return bridgeReady;
       if(!BACKEND_URL)return Promise.reject(bridgeError('尚未設定 Apps Script 後端網址。'));
@@ -722,9 +723,10 @@
       bridgeReady=new Promise((resolve,reject)=>{
         bridgeReadyResolve=resolve;bridgeReadyReject=reject;
         bridgeReadyTimer=setTimeout(()=>{
-          console.warn('[研究工作台效能] bridge ready timeout',JSON.stringify({elapsedMs:Math.round(performance.now()-bridgeStartedAt),frameLoads:bridgeFrameLoadCount}));
-          bridgeReadyReject&&bridgeReadyReject(bridgeError('Apps Script 連線逾時，請稍後重試。'));
-        },30000);
+          console.warn('[研究工作台效能] bridge ready timeout',JSON.stringify({elapsedMs:Math.round(performance.now()-bridgeStartedAt),frameLoads:bridgeFrameLoadCount,attempt}));
+          const error=bridgeError('Apps Script 連線逾時，請稍後重試。');error.code='BRIDGE_TIMEOUT';
+          bridgeReadyReject&&bridgeReadyReject(error);
+        },BRIDGE_READY_TIMEOUT_MS);
         const frame=document.createElement('iframe');
         bridgeFrame=frame;frame.title='安全連接研究工作台';frame.setAttribute('aria-hidden','true');
         frame.style.cssText='position:absolute;width:1px;height:1px;left:-10000px;border:0';
@@ -738,6 +740,10 @@
         bridgeReadyResolve=null;bridgeReadyReject=null;bridgeOrigin='';bridgeSource=null;
         if(bridgeFrame){bridgeFrame.remove();bridgeFrame=null}
         bridgeReady=null;
+        if(error&&error.code==='BRIDGE_TIMEOUT'&&attempt<BRIDGE_READY_MAX_ATTEMPTS){
+          console.warn('[研究工作台效能] retry bridge connection',JSON.stringify({nextAttempt:attempt+1,maxAttempts:BRIDGE_READY_MAX_ATTEMPTS}));
+          return connectBridge(attempt+1);
+        }
         throw error;
       });
       return bridgeReady;
