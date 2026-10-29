@@ -664,9 +664,9 @@
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0,bridgeFrameLoadCount=0;
     const BRIDGE_READY_TIMEOUT_MS=15000,BRIDGE_READY_MAX_ATTEMPTS=2;
     const bridgeRequests=new Map();
-    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport"]);
+    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport","updateStudyFormBinding"]);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',setFormIntakeForAdmin:'正在更新報名表收件狀態…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',retryResearcherCalendarAccess:'正在重試日曆權限…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在停用研究者…',updateResearcher:'正在更新研究者角色…',reactivateResearcher:'正在恢復研究者…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
-    Object.assign(WRITE_MESSAGES,{saveStudyDraft:'正在檢查並儲存實驗草稿…',activateStudyDraft:'正在檢查並啟用實驗…',setStudyLifecycleStatus:'正在更新實驗狀態…',previewStudyHistoryImport:'正在讀取並檢查歷史資料…'});
+    Object.assign(WRITE_MESSAGES,{saveStudyDraft:'正在檢查並儲存實驗草稿…',activateStudyDraft:'正在檢查並啟用實驗…',setStudyLifecycleStatus:'正在更新實驗狀態…',previewStudyHistoryImport:'正在讀取並檢查歷史資料…',updateStudyFormBinding:'正在檢查並儲存欄位版本…'});
     let activeWriteKey='',activeWriteControl=null,activeWriteSequence=0;
     let lastWriteOutcome=null,writeOutcomeClearTimer=null;
     document.addEventListener('click',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
@@ -899,6 +899,7 @@
 </script>
 
   <script>
+    let studyFormBindingEditorData=null;
     function draw(){
       const admin=state.user.role==='admin';
       const nav=admin?[['dashboard','總覽'],...(state.canCreateStudies?[['experiments','實驗管理']]:[]),['availability','研究者可收時間'],['workflow','審核流程'],['appointments','實驗行程'],['sessions','實驗紀錄'],['notes','整體札記'],['researchers','研究團隊'],['settings','連線設定']]:[['dashboard','我的首頁'],['availability','團隊可收時間'],['workflow','審核流程'],['appointments','我的實驗行程'],['sessions','實驗紀錄'],['notes','整體札記']];
@@ -1030,8 +1031,53 @@
       const resources=`<section class="panel"><h2>${testMode?'測試資源':'招募資源'}</h2>${testMode?'<div class="notice">通知會轉寄至管理者設定的測試信箱；請勿在此環境收取真實報名。</div>':''}<div class="actions"><a class="btn" target="_blank" href="${esc(state.formUrl)}">${testMode?'開啟測試表單':'開啟報名表'}</a><a class="btn" target="_blank" href="${esc(state.databaseUrl)}">${testMode?'開啟測試工作流程資料庫':'開啟工作流程資料庫'}</a><button class="btn" id="syncForm">更新報名時段</button><button class="btn primary" id="openForm">開放收件</button><button class="btn danger" id="pauseForm">暫停收件</button><button class="btn" id="prepareResearchCalendars">準備研究日曆</button></div><p class="help">發布月份班表時會同步報名時段；儲存班表後，系統會在背景更新研究日曆。研究者確認場次後，原預留事件會更新為正式場次。</p><p class="help">Lin 的主要 Google 日曆會自動檢查衝突；其他研究者可同時檢視主要與研究日曆。</p></section>`;
       const schedule=`<section class="panel"><h2>未來月份的預設時段</h2><p class="help">此設定只套用到尚未建立的月份班表；已建立或已發布月份不會被改寫。每場 1 小時、場次間至少 30 分鐘，最晚 18:30。</p><div id="scheduleTemplateRows">${rows}</div><div class="actions"><button class="btn" id="addTemplateSlot" type="button">＋ 新增預設時段</button><button class="btn primary" id="saveScheduleTemplate" type="button">儲存預設</button></div></section>`;
       const capacity=`<section class="panel"><div class="panel-head"><div><h2>新場次預設名額</h2><p class="help">只套用到尚未設定單場名額的場次；既有預約不會被移除。</p></div></div><div class="capacity-default-row"><label for="defaultSlotCapacity">每場名額</label><input id="defaultSlotCapacity" type="number" min="1" step="1" inputmode="numeric" value="${defaultSlotCapacity}"><button class="btn primary" id="saveDefaultSlotCapacity" type="button">儲存預設名額</button></div></section>`;
+      const formBinding=state.study?.lifecycleManaged?`<section class="panel"><div class="panel-head"><div><h2>表單欄位對應</h2><p class="help">查看此實驗的表單題目與姓名、身分識別、時段及 Email 對應。更新會建立新版本，不改寫既有回覆。</p></div><button class="btn" id="editStudyFormBinding" type="button">檢查欄位</button></div></section>`:'';
       const mailFlow=`<section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立研究日曆事件。</td></tr></tbody></table></section>`;
-      return lifecycle+resources+schedule+capacity+mailFlow;
+      return lifecycle+resources+formBinding+schedule+capacity+mailFlow;
+    }
+    function studyFormBindingQuestionOptions(schema,selected,allowedTypes,emptyLabel){
+      const items=(schema?.items||[]).filter(item=>!allowedTypes||allowedTypes.includes(item.type));
+      return `<option value="">${esc(emptyLabel||'不映射')}</option>`+items.map(item=>`<option value="${esc(item.itemId)}" ${String(item.itemId)===String(selected||'')?'selected':''}>${esc(item.title||'未命名題目')} · ${esc(item.itemId)}</option>`).join('');
+    }
+    function renderStudyFormBindingEditor(data){
+      const fields=data.mapping?.fields||studyWizardDefaultMapping(data.schema).fields,formId=data.schema.formId;
+      const textTypes=['TEXT'],slotTypes=['MULTIPLE_CHOICE','LIST'];
+      const selectedEmail=fields.email?.source==='respondent'?'respondent':fields.email?.itemId||'';
+      const emailOptions=(data.schema.respondentEmailCollected===true?`<option value="respondent" ${selectedEmail==='respondent'?'selected':''}>Google 自動收集 Email</option>`:'')+studyFormBindingQuestionOptions(data.schema,selectedEmail==='respondent'?'':selectedEmail,textTypes,'選擇 Email 題目');
+      const field=(key,label,types)=>`<label class="field"><span>${label}</span><select data-study-form-binding="${key}">${studyFormBindingQuestionOptions(data.schema,fields[key],types,'選擇表單題目')}</select></label>`;
+      const core=`<div class="grid">${field('name','姓名',textTypes)}${field('identity','身分識別',textTypes)}${field('slot','報名時段',slotTypes)}<label class="field"><span>Email</span><select data-study-form-binding="email">${emailOptions}</select></label></div>`;
+      const optionalKeys=Object.keys(fields).filter(key=>!['name','identity','slot','email'].includes(key)).sort();
+      const optionalLabels={school:'學校',department:'系所',age:'年齡',sex:'性別',phone:'電話'};
+      const optional=optionalKeys.length?`<h3>其他已設定欄位</h3><div class="grid">${optionalKeys.map(key=>`<label class="field"><span>${esc(optionalLabels[key]||key)}</span><select data-study-form-binding-extra="${esc(key)}">${studyFormBindingQuestionOptions(data.schema,fields[key],null,'不映射')}</select></label>`).join('')}</div>`:'';
+      const notice=data.formAccepting?'目前表單仍開放收件；請先暫停表單，再更新欄位對應。'
+        :!data.canReadAcceptance?'目前無法確認表單收件狀態，欄位對應暫不可更新。'
+        :data.schemaMatchesCurrent?'儲存會新增不可變更的欄位版本；既有回覆與既有案件不會被改寫。'
+        :'表單題目或欄位對應已變更。請核對下方題目名稱與 ID，再儲存新版本；既有回覆與案件不會被改寫。';
+      const disabled=data.formAccepting||!data.canReadAcceptance?'disabled':'';
+      return `<h2>檢查表單欄位</h2><p class="help">${esc(data.formTitle||'')}</p><p class="meta">回覆分頁：${esc(data.responseTabName)} · 目前版本：${Number(data.schemaVersion)||'尚未設定'}</p>${data.schemaMatchesCurrent?'':`<div class="alert error">表單題目或目前映射與已保存版本不同；需重新核對後才能處理新回覆。</div>`}<p class="notice">${esc(notice)}</p>${core}${optional}<div class="actions"><button class="btn" type="button" onclick="closeModal()">取消</button><button class="btn primary" type="button" data-save-study-form-binding data-form-id="${esc(formId)}" data-schema-fingerprint="${esc(data.schemaFingerprint)}" ${disabled}>儲存欄位版本</button></div>`;
+    }
+    async function openStudyFormBindingEditor(button){
+      const original=button.innerHTML;button.disabled=true;button.textContent='正在讀取表單題目…';
+      try{
+        const data=await api('getStudyFormBinding',sessionToken);studyFormBindingEditorData={studyId:activeStudyId,data};modal(renderStudyFormBindingEditor(data));
+        $('#modalbox')?.querySelector('[data-save-study-form-binding]')?.addEventListener('click',async event=>{
+          const save=event.currentTarget,editor=studyFormBindingEditorData;
+          if(!editor||editor.studyId!==activeStudyId){showError(new Error('目前實驗已切換，請重新檢查欄位。'));return}
+          const mappingFields=Object.assign({},editor.data.mapping?.fields||{}),root=$('#modalbox');
+          ['name','identity','slot'].forEach(key=>mappingFields[key]=root.querySelector(`[data-study-form-binding="${key}"]`)?.value||'');
+          const email=root.querySelector('[data-study-form-binding="email"]')?.value||'';
+          mappingFields.email=email==='respondent'?{source:'respondent'}:{source:'item',itemId:email};
+          root.querySelectorAll('[data-study-form-binding-extra]').forEach(select=>{const key=select.dataset.studyFormBindingExtra;if(select.value)mappingFields[key]=select.value;else delete mappingFields[key]});
+          if(!mappingFields.name||!mappingFields.identity||!mappingFields.slot||!(mappingFields.email.source==='respondent'||mappingFields.email.itemId)){
+            showError(new Error('請選擇姓名、身分識別、時段及 Email 的欄位。'));return;
+          }
+          save.disabled=true;
+          try{
+            const result=await api('updateStudyFormBinding',sessionToken,{formId:editor.data.schema.formId,fields:mappingFields},editor.data.schemaFingerprint);
+            closeModal();studyFormBindingEditorData=null;flash(result.message||'欄位對應已更新。');
+          }catch(error){save.disabled=false;showError(error)}
+        });
+      }catch(error){showError(error)}finally{button.disabled=false;button.innerHTML=original}
     }
     function studyWizardNew(){
       return {step:1,name:'',formEditUrl:'',inspection:null,responseTabId:'',mapping:null,targetCount:'',slotCapacity:1,minNoticeHours:12,location:'',members:[],historyPolicy:'not_applicable',historyStatus:'not_configured',historySourceUrl:'',historySheets:[],historySheetId:'',historyIdentityColumnIndex:'',historyNameColumnIndex:'',historyFirstDataRow:2,historyLastDataRow:'',historyPreview:null,historyPreviewFingerprint:'',historyConfirmEmpty:false,historyImportConfirmed:false};
@@ -1302,6 +1348,7 @@
         document.querySelectorAll('[data-retry-member-calendar]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{await api('retryResearcherCalendarAccess',sessionToken,button.dataset.retryMemberCalendar);await load();flash('已重新排入日曆權限同步。')}catch(error){button.disabled=false;showError(error)}}));
       }
       if(view==='settings'){
+        $('#editStudyFormBinding')?.addEventListener('click',event=>openStudyFormBindingEditor(event.currentTarget));
         document.querySelectorAll('[data-study-status]').forEach(button=>button.addEventListener('click',async()=>{
           const next=button.dataset.studyStatus,labels={paused:'暫停實驗',active:'恢復實驗',archived:'封存實驗'},messages={paused:'系統會立即關閉此實驗的報名表。',active:'實驗會恢復使用，但表單仍維持暫停收件。',archived:'封存後此實驗將不能再進入工作台；案件與背景工作須先結清。'};
           if(!await confirmAction(labels[next],messages[next],labels[next]))return;
