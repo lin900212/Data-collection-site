@@ -1039,6 +1039,15 @@
       const items=(schema?.items||[]).filter(item=>!allowedTypes||allowedTypes.includes(item.type));
       return `<option value="">${esc(emptyLabel||'不映射')}</option>`+items.map(item=>`<option value="${esc(item.itemId)}" ${String(item.itemId)===String(selected||'')?'selected':''}>${esc(item.title||'未命名題目')} · ${esc(item.itemId)}</option>`).join('');
     }
+    function studyOptionalFormFields(){
+      return [
+        {key:'school',label:'現就讀學校',patterns:[/現就讀學校|就讀學校|學校/],types:['TEXT','LIST','MULTIPLE_CHOICE']},
+        {key:'department',label:'系所',patterns:[/系所|科系|學系/],types:['TEXT','LIST','MULTIPLE_CHOICE']},
+        {key:'age',label:'年齡',patterns:[/年齡|歲數/],types:['TEXT']},
+        {key:'sex',label:'性別',patterns:[/性別/],types:['TEXT','LIST','MULTIPLE_CHOICE']},
+        {key:'phone',label:'電話',patterns:[/電話|手機/],types:['TEXT']}
+      ];
+    }
     function renderStudyFormBindingEditor(data){
       const fields=data.mapping?.fields||studyWizardDefaultMapping(data.schema).fields,formId=data.schema.formId;
       const textTypes=['TEXT'],slotTypes=['MULTIPLE_CHOICE','LIST'];
@@ -1046,9 +1055,10 @@
       const emailOptions=(data.schema.respondentEmailCollected===true?`<option value="respondent" ${selectedEmail==='respondent'?'selected':''}>Google 自動收集 Email</option>`:'')+studyFormBindingQuestionOptions(data.schema,selectedEmail==='respondent'?'':selectedEmail,textTypes,'選擇 Email 題目');
       const field=(key,label,types)=>`<label class="field"><span>${label}</span><select data-study-form-binding="${key}">${studyFormBindingQuestionOptions(data.schema,fields[key],types,'選擇表單題目')}</select></label>`;
       const core=`<div class="grid">${field('name','姓名',textTypes)}${field('identity','身分識別',textTypes)}${field('slot','報名時段',slotTypes)}<label class="field"><span>Email</span><select data-study-form-binding="email">${emailOptions}</select></label></div>`;
-      const optionalKeys=Object.keys(fields).filter(key=>!['name','identity','slot','email'].includes(key)).sort();
-      const optionalLabels={school:'學校',department:'系所',age:'年齡',sex:'性別',phone:'電話'};
-      const optional=optionalKeys.length?`<h3>其他已設定欄位</h3><div class="grid">${optionalKeys.map(key=>`<label class="field"><span>${esc(optionalLabels[key]||key)}</span><select data-study-form-binding-extra="${esc(key)}">${studyFormBindingQuestionOptions(data.schema,fields[key],null,'不映射')}</select></label>`).join('')}</div>`:'';
+      const knownOptionalFields=studyOptionalFormFields(),knownOptionalKeys=knownOptionalFields.map(item=>item.key);
+      const customOptionalKeys=Object.keys(fields).filter(key=>!['name','identity','slot','email'].includes(key)&&!knownOptionalKeys.includes(key)).sort();
+      const optionalKeys=knownOptionalKeys.concat(customOptionalKeys);
+      const optional=`<h3>受試者背景欄位（選填）</h3><p class="help">只對應本實驗需要的資料；未選擇的題目仍保留在原始表單回覆中。</p><div class="grid">${optionalKeys.map(key=>{const definition=knownOptionalFields.find(item=>item.key===key);return `<label class="field"><span>${esc(definition?.label||key)}</span><select data-study-form-binding-extra="${esc(key)}">${studyFormBindingQuestionOptions(data.schema,fields[key],null,'不映射')}</select></label>`}).join('')}</div>`;
       const notice=data.formAccepting?'目前表單仍開放收件；請先暫停表單，再更新欄位對應。'
         :!data.canReadAcceptance?'目前無法確認表單收件狀態，欄位對應暫不可更新。'
         :data.schemaMatchesCurrent?'儲存會新增不可變更的欄位版本；既有回覆與既有案件不會被改寫。'
@@ -1100,18 +1110,24 @@
       const name=find(/姓名|名字/,['TEXT']),identity=find(/身分證|身份證|身分證字號|身份證字號/,['TEXT']);
       const slot=find(/方便時段|報名時段|場次|時段/,['MULTIPLE_CHOICE','LIST']);
       const used=new Set([name?.itemId,identity?.itemId,slot?.itemId].filter(Boolean));
-      const email=find(/電子郵件|Email|E-mail|信箱/,['TEXT']);
-      return {formId:schema.formId,fields:{name:name?.itemId||'',identity:identity?.itemId||'',slot:slot?.itemId||'',email:schema.respondentEmailCollected===true?{source:'respondent'}:{source:'item',itemId:email?.itemId||''}}};
+      const email=items.find(item=>!used.has(item.itemId)&&item.type==='TEXT'&&/電子郵件|Email|E-mail|信箱/.test(item.title));
+      if(email)used.add(email.itemId);
+      const fields={name:name?.itemId||'',identity:identity?.itemId||'',slot:slot?.itemId||'',email:schema.respondentEmailCollected===true?{source:'respondent'}:{source:'item',itemId:email?.itemId||''}};
+      studyOptionalFormFields().forEach(definition=>{
+        const item=items.find(candidate=>!used.has(candidate.itemId)&&definition.types.includes(candidate.type)&&definition.patterns.some(pattern=>pattern.test(candidate.title)));
+        if(item){fields[definition.key]=item.itemId;used.add(item.itemId)}
+      });
+      return {formId:schema.formId,fields};
     }
     function studyWizardQuestionOptions(selected,allowedTypes){
       const schema=onboardingWizard?.inspection?.schema,items=(schema?.items||[]).filter(item=>allowedTypes.includes(item.type));
       return '<option value="">選擇表單題目</option>'+items.map(item=>'<option value="'+esc(item.itemId)+'" '+(String(item.itemId)===String(selected)?'selected':'')+'>'+esc(item.title||'未命名題目')+' · '+esc(item.itemId)+'</option>').join('');
     }
-    function studyWizardMappingField(key,label,allowedTypes){
+    function studyWizardMappingField(key,label,allowedTypes,optional=false){
       const fields=onboardingWizard.mapping?.fields||{},selected=key==='email'?(fields.email?.source==='item'?fields.email.itemId:''):fields[key]||'';
       const prefix='<label class="field"><span>'+label+'</span><select data-onboard-map="'+key+'">';
       const respondent=key==='email'&&onboardingWizard.inspection?.schema?.respondentEmailCollected===true?'<option value="respondent" '+(fields.email?.source==='respondent'?'selected':'')+'>Google 自動收集 Email</option>':'';
-      const options=studyWizardQuestionOptions(selected,allowedTypes).replace('<option value="">選擇表單題目</option>',key==='email'?'<option value="">選擇來源</option>':'<option value="">選擇表單題目</option>');
+      const options=studyWizardQuestionOptions(selected,allowedTypes).replace('<option value="">選擇表單題目</option>',optional?'<option value="">不映射</option>':key==='email'?'<option value="">選擇來源</option>':'<option value="">選擇表單題目</option>');
       return prefix+(key==='email'?respondent+options:options)+'</select></label>';
     }
     function studyWizardHistoryColumnOptions(wizard,selected){
@@ -1124,7 +1140,8 @@
         if(!wizard.inspection?.ok)return '<div class="notice">先在第一步讀取一份已連接回覆試算表的表單。</div>';
         const sheets=wizard.inspection.sheets||[];
         const tabOptions=sheets.map(sheet=>'<option value="'+esc(sheet.sheetId)+'" '+(String(sheet.sheetId)===String(wizard.responseTabId)?'selected':'')+'>'+esc(sheet.name)+' · '+esc(sheet.headers.slice(0,5).join('、')||'尚無標題列')+'</option>').join('');
-        return '<div class="grid"><label class="field"><span>表單回覆分頁</span><select data-onboard-response-tab><option value="">選擇分頁</option>'+tabOptions+'</select></label>'+studyWizardMappingField('name','姓名',['TEXT'])+studyWizardMappingField('identity','身分證字號',['TEXT'])+studyWizardMappingField('slot','報名時段',['MULTIPLE_CHOICE','LIST'])+studyWizardMappingField('email','Email',['TEXT'])+'</div><p class="help">以題目 ID 儲存欄位對應。回覆分頁只供系統確認來源，不會更動其欄位或回覆資料。</p>';
+        const optionalFields=studyOptionalFormFields().map(field=>studyWizardMappingField(field.key,field.label+'（選填）',field.types,true)).join('');
+        return '<div class="grid"><label class="field"><span>表單回覆分頁</span><select data-onboard-response-tab><option value="">選擇分頁</option>'+tabOptions+'</select></label>'+studyWizardMappingField('name','姓名',['TEXT'])+studyWizardMappingField('identity','身分證字號',['TEXT'])+studyWizardMappingField('slot','報名時段',['MULTIPLE_CHOICE','LIST'])+studyWizardMappingField('email','Email',['TEXT'])+'</div><h3>受試者背景欄位（選填）</h3><div class="grid">'+optionalFields+'</div><p class="help">以題目 ID 儲存欄位對應。背景欄位只對應本實驗需要的資料；原始回覆分頁欄位與答案不會被修改。</p>';
       }
       if(wizard.step===3){
         const imported=wizard.historyPolicy==='imported';
@@ -1149,7 +1166,8 @@
       const labels=(wizard.inspection?.schema?.items||[]).reduce((result,item)=>{result[String(item.itemId)]=item.title;return result},{});
       const value=(binding)=>binding&&binding.source==='respondent'?'Google 自動收集 Email':labels[String(binding||'')]||'未指定';
       const historyReview=wizard.historyPolicy==='imported'?'歷史名單：已固定匯入':wizard.historyPolicy==='import'&&wizard.historyPreview?'歷史名單：'+wizard.historyPreview.counts.uniqueIdentityNamePairs+' 筆（第 '+wizard.historyPreview.firstDataRow+'–'+wizard.historyPreview.lastDataRow+' 列）':'歷史名單：未匯入（仍比對本實驗）';
-      return '<div class="grid"><div><strong>實驗</strong><div>'+esc(wizard.name||'未命名')+'</div></div><div><strong>回覆分頁</strong><div>'+esc((wizard.inspection?.sheets||[]).find(sheet=>String(sheet.sheetId)===String(wizard.responseTabId))?.name||'未指定')+'</div></div><div><strong>欄位</strong><div>姓名：'+esc(value(map.name))+' · 身分證：'+esc(value(map.identity))+' · 時段：'+esc(value(map.slot))+' · Email：'+esc(value(map.email))+'</div></div><div><strong>規則</strong><div>目標 '+esc(wizard.targetCount)+' 人 · 每場 '+esc(wizard.slotCapacity)+' 人 · 提前 '+esc(wizard.minNoticeHours)+' 小時</div></div><div><strong>研究團隊</strong><div>'+esc(selected||'尚未選擇')+'</div></div><div><strong>歷史比對</strong><div>'+esc(historyReview)+'</div></div></div>'+(wizard.historyPolicy==='import'?'<label class="checkrow"><input data-onboard-history-confirm type="checkbox" '+(wizard.historyImportConfirmed?'checked':'')+'><span>確認將這份預覽名單匯入本實驗</span></label>':'')+'<div class="notice">儲存會建立草稿與工作台分頁，保留表單回覆欄位，並保持表單暫停。之後需明確啟用，再由實驗管理者開放收件。</div>';
+      const optionalSummary=Object.keys(map).filter(key=>!['name','identity','slot','email'].includes(key)).map(key=>{const field=studyOptionalFormFields().find(item=>item.key===key);return (field?.label||key)+'：'+value(map[key])}).join(' · ')||'未映射';
+      return '<div class="grid"><div><strong>實驗</strong><div>'+esc(wizard.name||'未命名')+'</div></div><div><strong>回覆分頁</strong><div>'+esc((wizard.inspection?.sheets||[]).find(sheet=>String(sheet.sheetId)===String(wizard.responseTabId))?.name||'未指定')+'</div></div><div><strong>欄位</strong><div>姓名：'+esc(value(map.name))+' · 身分證：'+esc(value(map.identity))+' · 時段：'+esc(value(map.slot))+' · Email：'+esc(value(map.email))+'<br>背景欄位：'+esc(optionalSummary)+'</div></div><div><strong>規則</strong><div>目標 '+esc(wizard.targetCount)+' 人 · 每場 '+esc(wizard.slotCapacity)+' 人 · 提前 '+esc(wizard.minNoticeHours)+' 小時</div></div><div><strong>研究團隊</strong><div>'+esc(selected||'尚未選擇')+'</div></div><div><strong>歷史比對</strong><div>'+esc(historyReview)+'</div></div></div>'+(wizard.historyPolicy==='import'?'<label class="checkrow"><input data-onboard-history-confirm type="checkbox" '+(wizard.historyImportConfirmed?'checked':'')+'><span>確認將這份預覽名單匯入本實驗</span></label>':'')+'<div class="notice">儲存會建立草稿與工作台分頁，保留表單回覆欄位，並保持表單暫停。之後需明確啟用，再由實驗管理者開放收件。</div>';
     }
     function renderStudyOnboarding(){
       const studies=onboardingData?.studies||[],wizard=onboardingWizard||(onboardingWizard=studyWizardNew());
@@ -1169,7 +1187,8 @@
         const key=event.target.dataset.onboardMap,value=event.target.value;
         wizard.mapping=wizard.mapping||studyWizardDefaultMapping(wizard.inspection.schema);
         if(key==='email')wizard.mapping.fields.email=value==='respondent'?{source:'respondent'}:{source:'item',itemId:value};
-        else wizard.mapping.fields[key]=value;
+        else if(value)wizard.mapping.fields[key]=value;
+        else delete wizard.mapping.fields[key];
       }));
       $('#content')?.querySelector('[data-onboard-target]')?.addEventListener('input',event=>{wizard.targetCount=event.target.value});
       $('#content')?.querySelector('[data-onboard-capacity]')?.addEventListener('input',event=>{wizard.slotCapacity=event.target.value});
