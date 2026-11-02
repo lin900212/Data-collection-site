@@ -508,7 +508,8 @@
       const isCustomMode=()=>admin&&Boolean($('#fullyCustom')?.checked);
       const renderWorking=()=>{workingSlots.forEach((slot,index)=>{const start=document.querySelector('[data-start-index="'+index+'"]'),end=document.querySelector('[data-end-label="'+index+'"]'),customEnd=document.querySelector('[data-end-index="'+index+'"]');if(start)start.value=slot.start;if(end)end.textContent=slot.end;if(customEnd)customEnd.value=slot.end});workingCustomSlots.forEach(slot=>{const row=document.querySelector('[data-custom-slot-row="'+slot.slotId+'"]'),start=row?.querySelector('[data-extra-start]'),end=row?.querySelector('[data-extra-end]');if(start)start.value=slot.start;if(end)end.value=slot.end})};
       const validatePreview=(candidate,lunch,customCandidate=workingCustomSlots)=>{
-        const active=[...candidate,...customCandidate].filter(s=>s.start&&s.end&&!['closed','expired'].includes(s.status)).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+        const removedIds=new Set([...document.querySelectorAll('[data-remove-custom-slot]:checked')].map(input=>String(input.dataset.removeCustomSlot)));
+        const active=[...candidate,...customCandidate.filter(slot=>!removedIds.has(String(slot.slotId)))].filter(s=>s.start&&s.end&&!['closed','expired'].includes(s.status)).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
         for(let i=0;i<active.length;i++){
           const start=active[i].start,end=active[i].end;
           if(!isValidTime24h(start)||!isValidTime24h(end)||end<=start)throw new Error('請輸入有效的 24 小時制時間。');
@@ -573,19 +574,31 @@
         if(entering){
           if(!standardSnapshot)standardSnapshot={slots:workingSlots.map(slot=>Object.assign({},slot)),customSlots:workingCustomSlots.map(slot=>Object.assign({},slot)),lunchBreak:workingLunch,editCount:scheduleEdits.length};
         }else{
-          let nextSlots,nextCustomSlots,nextLunch=workingLunch;
-          if(standardSnapshot){nextSlots=standardSnapshot.slots.map(slot=>Object.assign({},slot));nextCustomSlots=standardSnapshot.customSlots.map(slot=>Object.assign({},slot));nextLunch=standardSnapshot.lunchBreak}
+          let nextSlots,nextCustomSlots,nextLunch=workingLunch,removeUnbookedCustom=false;
+          if(standardSnapshot){
+            nextSlots=standardSnapshot.slots.map(slot=>Object.assign({},slot));nextCustomSlots=standardSnapshot.customSlots.map(slot=>Object.assign({},slot));nextLunch=standardSnapshot.lunchBreak;
+            try{validatePreview(nextSlots,nextLunch,nextCustomSlots)}catch(_){
+              const retainedCustomSlots=nextCustomSlots.filter(slot=>locked(slot));
+              try{validatePreview(nextSlots,nextLunch,retainedCustomSlots)}catch(error){event.target.checked=true;editorError(error.message||String(error));return}
+              removeUnbookedCustom=retainedCustomSlots.length<nextCustomSlots.length;
+              nextCustomSlots=retainedCustomSlots;
+            }
+          }
           else{
-            const template=Array.isArray(plan.template)&&plan.template.length?plan.template:defaultAvailabilitySlots;
-            nextSlots=workingSlots.map((slot,index)=>{const copy=Object.assign({},slot),pair=template[index];if(pair&&pair.length>=2&&!locked(copy)){copy.start=String(pair[0]);copy.end=String(pair[1])}return copy});
-            nextCustomSlots=workingCustomSlots.filter(locked);
+            nextSlots=workingSlots.map(slot=>Object.assign({},slot));nextCustomSlots=workingCustomSlots.map(slot=>Object.assign({},slot));
+            try{validatePreview(nextSlots,nextLunch,nextCustomSlots)}catch(_){
+              const template=Array.isArray(plan.template)&&plan.template.length?plan.template:defaultAvailabilitySlots;
+              nextSlots=workingSlots.map((slot,index)=>{const copy=Object.assign({},slot),pair=template[index];if(pair&&pair.length>=2&&!locked(copy)){copy.start=String(pair[0]);copy.end=String(pair[1])}return copy});
+              removeUnbookedCustom=true;
+            }
           }
           const signature=(base,extra,lunch)=>JSON.stringify({base:base.map(slot=>[slot.slotId,slot.start,slot.end,slot.researcherId,slot.status]),extra:extra.map(slot=>[slot.slotId,slot.start,slot.end,slot.researcherId,slot.status]),lunch});
-          const changed=signature(workingSlots,workingCustomSlots,workingLunch)!==signature(nextSlots,nextCustomSlots,nextLunch);
-          if(changed&&!await window.confirmAction('切回一般時段','未預約的時段會還原為切換前的設定；若原本已是完全自訂，則會套用一般時段範本並移除未預約的額外時段。已預約時段會保留。','切回一般時段')){event.target.checked=true;return}
-          const previousSlots=workingSlots,previousCustomSlots=workingCustomSlots,previousLunch=workingLunch;
+          const changed=removeUnbookedCustom||signature(workingSlots,workingCustomSlots,workingLunch)!==signature(nextSlots,nextCustomSlots,nextLunch);
+          if(changed&&!await window.confirmAction('切回一般時段','一般時段會還原為切換前的設定；若一般規則無法容納額外時段，會標記未預約的額外時段供移除。已預約時段會保留。','切回一般時段')){event.target.checked=true;return}
+          const previousSlots=workingSlots,previousCustomSlots=workingCustomSlots,previousLunch=workingLunch,previouslyRemoved=new Set([...document.querySelectorAll('[data-remove-custom-slot]:checked')].map(input=>String(input.dataset.removeCustomSlot)));
+          if(removeUnbookedCustom){const unbookedIds=new Set(workingCustomSlots.filter(slot=>!locked(slot)).map(slot=>String(slot.slotId)));document.querySelectorAll('[data-remove-custom-slot]').forEach(input=>{if(unbookedIds.has(String(input.dataset.removeCustomSlot)))input.checked=true})}
           workingSlots=nextSlots;workingCustomSlots=nextCustomSlots;workingLunch=nextLunch;
-          try{validatePreview(workingSlots,workingLunch,workingCustomSlots)}catch(error){workingSlots=previousSlots;workingCustomSlots=previousCustomSlots;workingLunch=previousLunch;event.target.checked=true;editorError(error.message||String(error));return}
+          try{validatePreview(workingSlots,workingLunch,workingCustomSlots)}catch(error){workingSlots=previousSlots;workingCustomSlots=previousCustomSlots;workingLunch=previousLunch;document.querySelectorAll('[data-remove-custom-slot]').forEach(input=>{input.checked=previouslyRemoved.has(String(input.dataset.removeCustomSlot))});event.target.checked=true;editorError(error.message||String(error));return}
           if(standardSnapshot)scheduleEdits.splice(standardSnapshot.editCount);
           standardSnapshot=null;
         }
