@@ -259,8 +259,10 @@
     .time-wheel-popover label{display:grid;gap:3px;text-align:center;color:var(--muted);font-size:10px;font-weight:700}
     .time-wheel-popover select{width:52px;height:112px;padding:2px;border:1px solid var(--line);border-radius:6px;color:var(--ink);font-variant-numeric:tabular-nums}
     .time-wheel-popover .btn{align-self:flex-end;white-space:nowrap;padding:7px 8px}
-    .availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(88px,.5fr) minmax(250px,1.35fr) minmax(170px,1fr);gap:8px;min-height:46px;padding:5px 8px}
+    .availability-modal .schedule-editor-row.draft-slot-row{grid-template-columns:minmax(88px,.5fr) minmax(250px,1.35fr) minmax(170px,1fr);gap:8px;min-height:46px;padding:5px 8px}
+    .availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(300px,1.5fr) minmax(170px,1fr) auto;gap:8px;min-height:46px;padding:5px 8px}
     .availability-modal .schedule-editor-header{grid-template-columns:minmax(88px,.5fr) minmax(250px,1.35fr) minmax(170px,1fr);gap:8px}
+    .availability-modal .published-editor-header{grid-template-columns:minmax(300px,1.5fr) minmax(170px,1fr) auto;gap:8px}
     .availability-modal .draft-slot-row .time-pair,.availability-modal .published-slot-row .time-pair{grid-template-rows:38px;align-items:center}
     .availability-modal .draft-slot-row .time-pair>.field,.availability-modal .published-slot-row .time-pair>.field{grid-template-rows:38px;min-width:0}
     .availability-modal .draft-slot-row .time-pair input[data-time-24h],.availability-modal .published-slot-row .time-pair input[data-time-24h]{height:38px;min-height:38px}
@@ -270,7 +272,7 @@
     .availability-modal .slot-number input{accent-color:var(--green)}
     .availability-modal .assignee-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .availability-modal .custom-slot-row .time-wheel-control{max-width:100%}
-    @media(max-width:900px){.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(76px,.5fr) minmax(210px,1.3fr) minmax(150px,1fr)}}
+    @media(max-width:900px){.availability-modal .schedule-editor-header,.availability-modal .schedule-editor-row.draft-slot-row{grid-template-columns:minmax(76px,.5fr) minmax(210px,1.3fr) minmax(150px,1fr)}.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(250px,1.4fr) minmax(130px,1fr) auto}.availability-modal .published-editor-header{grid-template-columns:minmax(250px,1.4fr) minmax(130px,1fr) auto}}
     @media(max-width:600px){.availability-modal .schedule-editor-header{display:none}.availability-modal .schedule-editor-row.draft-slot-row,.availability-modal .schedule-editor-row.published-slot-row{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:6px}.availability-modal .draft-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.schedule-editor-times,.availability-modal .published-slot-row>.slot-time-range{grid-column:1/-1}.availability-modal .draft-slot-row>.slot-assignee,.availability-modal .published-slot-row>.slot-assignee{grid-column:2;grid-row:1}.availability-modal .published-slot-row>.checkrow{grid-column:1/-1;justify-self:end}.time-wheel-popover{right:-2px}}
 @media(max-width:600px){
       .availability-modal .availability-add-fields.published-add-fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
@@ -388,7 +390,8 @@
         :admin
         ?'未發布前只有月曆草稿會更新。按「發布班表並同步報名表」後，系統才會更新可報名選項；每個時段只會有一位研究者。'
         :'月曆顯示整個團隊的班表。你只能勾選或移動自己的時段；若後續時段已由其他研究者填寫，系統會擋下會影響對方的調整。';
-      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">本月可持續調整；每月 20 日開放填寫下月班表。儲存後自動更新研究日曆。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}${renderCalendarSyncNotice(canEditMonth,admin)}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
+      const monthHelp=admin?'管理者可編排本月與任意未來月份；研究者每月 20 日起填寫下月。':'本月可持續調整；每月 20 日開放填寫下月班表。';
+      return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">${monthHelp} 儲存後自動更新研究日曆。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}${renderCalendarSyncNotice(canEditMonth,admin)}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
     }
     function normalizeStoredSlotTimes(slots){return (slots||[]).map(slot=>{const start=normalizeTimeEntry(slot.start),end=normalizeTimeEntry(slot.end);return Object.assign({},slot,{start:isValidTime24h(start)?start:String(slot.start||''),end:isValidTime24h(end)?end:String(slot.end||'')})})}
 
@@ -470,7 +473,7 @@
         if(addSlot&&(!isValidTime24h(addStart)||!isValidTime24h(addSlot.end))){error('新增時段請填寫 HH:mm。');return}
         const expectedSlots=slots.map(s=>({slotId:s.slotId,start:s.start,end:s.end,researcherId:s.researcherId||'',status:s.status||'',locked:protectedSlot(s)}));
         const input={changes,addSlot,scheduleEdits,lunchBreak:workingLunch,expectedSlots};
-        const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await refreshAfterMutation();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await refreshAfterMutation();flash('班表已儲存。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
+        const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await refreshAfterMutation();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await refreshAfterMutation();flash(result.formSyncPending?'班表已儲存；報名表同步待重試。':'班表已儲存，報名表已同步。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
         save().catch(err=>{button.disabled=false;button.textContent='儲存';error(err.message||String(err))});
       });
       $('#closePublishedEditor').addEventListener('click',closeModal);$('#cancelPublishedEditor').addEventListener('click',closeModal);
@@ -630,7 +633,7 @@
           try{
             const result=await api('saveAvailabilityDay',sessionToken,availabilityPlan.month,date,input);
             if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmedPairs.filter(pair=>!pair.startsWith(result.calendarSlotKey+'|')),...keys.map(key=>result.calendarSlotKey+'|'+key)]),async()=>{await refreshAfterMutation();openAvailabilityEditor(date,admin)});return}
-            closeModal();await refreshAfterMutation();flash(result.calendarConflictAccepted?'已確認主要日曆衝突，班表已儲存。':'班表已儲存。');
+            closeModal();await refreshAfterMutation();flash(result.formSyncPending?'班表已儲存；報名表同步待重試。':(result.calendarConflictAccepted?'已確認主要日曆衝突，班表已儲存並同步報名表。':'班表已儲存，報名表已同步。'));
           }catch(error){button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))}
         };
         save().catch(error=>{button.disabled=false;button.textContent='儲存';editorError(error.message||String(error))});
@@ -1005,9 +1008,10 @@
       const effects=admin&&state.sideEffects;
       const effectsAlert=effects&&(effects.pending||effects.needsReview||effects.inFlight)
         ?`<div class="alert ${effects.needsReview?'error':''}">背景寄送／行事曆作業：待處理 ${effects.pending} 項、執行中 ${effects.inFlight} 項、需檢查 ${effects.needsReview} 項。${effects.needsReview?'系統不會自動重送可能已完成的項目，請檢查 Apps Script 執行記錄後再處理。':''}</div>`:'';
-      const formSyncAlert=admin&&state.formSync?.pending?`<div class="alert error">報名表同步失敗，系統會在背景重試；目前表單選項可能尚未反映最新班表。${esc(state.formSync.error||'')}</div>`:'';
+      const formSyncAlert=admin&&state.formSync?.pending?`<div class="alert error">報名表同步尚未完成；目前表單選項可能尚未反映最新班表。${esc(state.formSync.error||'')} <button class="btn small" id="retryFormSync" type="button">立即重試同步</button></div>`:'';
       const progressAlert=admin&&state.summary.progressIssues?`<div class="alert error">有 ${state.summary.progressIssues} 筆案件的出席紀錄與狀態不一致；已完成數依出席紀錄計算，請檢查實驗紀錄。</div>`:'';
-      return `${formSyncAlert}${effectsAlert}${mailAlert}${progressAlert}<div class="metrics">${metric('已錄取',state.summary.admitted,'本實驗總計')}${metric('已完成實驗',state.summary.completed,'本實驗總計')}${metric('可報名時段',state.summary.available,'至少提前 12 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
+      const noticeHours=Number(state.scheduleDefaults?.minNoticeHours??5);
+      return `${formSyncAlert}${effectsAlert}${mailAlert}${progressAlert}<div class="metrics">${metric('已錄取',state.summary.admitted,'本實驗總計')}${metric('已完成實驗',state.summary.completed,'本實驗總計')}${metric('可報名時段',state.summary.available,'至少提前 '+noticeHours+' 小時')}${metric(admin?'需管理者審核':'等你確認',pending,'處理後會更新')}${metric('待協調',state.summary.coordination,'改期或請求支援')}</div><div class="grid"><section class="panel"><div class="panel-head"><h2>待處理</h2><button class="btn small" data-view="workflow">開啟審核流程 →</button></div>${state.applications.filter(a=>admin?['review','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)).slice(0,5).map(appCard).join('')||'<div class="empty">目前沒有待處理案件</div>'}</section><section class="panel"><div class="panel-head"><h2>接下來的實驗</h2><button class="btn small" data-view="appointments">查看行程 →</button></div>${state.applications.filter(a=>['confirmed','completed'].includes(a.status)).sort((a,b)=>a.slot.localeCompare(b.slot)).slice(0,5).map(a=>`<div class="slotline" style="--person:${a.researcherColor}"><strong>${esc(a.slot)}</strong><div>${esc(a.name)} · ${esc(a.researcherName)}</div></div>`).join('')||'<div class="empty">近期沒有已確認場次</div>'}</section></div>`;
     }
     function appCard(a){return `<article class="card"><div class="card-top"><div><h3>${esc(a.name)} <span class="tag ${a.status==='review'?'amber':a.status==='confirmed'?'green':'red'}">${esc(statusName[a.status]||a.status)}</span>${['confirmed','completed'].includes(a.status)?` <span class="tag ${a.acknowledgedAt?'green':'amber'}">${a.acknowledgedAt?'已確認收到':'等待收到確認'}</span>`:''}</h3><div class="meta">${esc(a.slot)} · ${esc(a.school||'未填學校')} · ${esc(a.age||'')} 歲${a.researcherName?' · '+esc(a.researcherName):''}${a.acknowledgedAt?' · 收到確認 '+esc(a.acknowledgedAt):''}</div></div></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">改期新時段：${esc(a.proposedSlot)} · ${esc(a.proposedResearcherName)}</div>`:''}</article>`}
     function calendarDate(year,monthIndex,day){return `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`}
@@ -1152,7 +1156,7 @@
       }catch(error){showError(error)}finally{button.disabled=false;button.innerHTML=original}
     }
     function studyWizardNew(){
-      return {step:1,name:'',formEditUrl:'',inspection:null,responseTabId:'',mapping:null,targetCount:'',slotCapacity:1,minNoticeHours:12,location:'',members:[],historyPolicy:'not_applicable',historyStatus:'not_configured',historySourceUrl:'',historySheets:[],historySheetId:'',historyIdentityColumnIndex:'',historyNameColumnIndex:'',historyFirstDataRow:2,historyLastDataRow:'',historyExcludedRows:'',historyPreview:null,historyPreviewFingerprint:'',historyConfirmEmpty:false,historyImportConfirmed:false};
+      return {step:1,name:'',formEditUrl:'',inspection:null,responseTabId:'',mapping:null,targetCount:'',slotCapacity:1,minNoticeHours:5,location:'',members:[],historyPolicy:'not_applicable',historyStatus:'not_configured',historySourceUrl:'',historySheets:[],historySheetId:'',historyIdentityColumnIndex:'',historyNameColumnIndex:'',historyFirstDataRow:2,historyLastDataRow:'',historyExcludedRows:'',historyPreview:null,historyPreviewFingerprint:'',historyConfirmEmpty:false,historyImportConfirmed:false};
     }
     function openStudyOnboardingFromPicker(){
       if(!canCreateStudies||!sessionToken)return;
@@ -1302,7 +1306,7 @@
             const draft=result.existingDraft;
             wizard.name=draft.name;wizard.responseTabId=draft.responseTabId||wizard.responseTabId;
             wizard.targetCount=draft.targetCount||'';wizard.slotCapacity=draft.slotCapacity||1;
-            wizard.minNoticeHours=draft.minNoticeHours||12;wizard.location=draft.location||'';
+            wizard.minNoticeHours=draft.minNoticeHours!==undefined&&draft.minNoticeHours!==''?draft.minNoticeHours:5;wizard.location=draft.location||'';
             wizard.historyStatus=draft.historyStatus||'not_configured';wizard.historyPolicy=draft.historyPolicy||'not_applicable';
             wizard.historySourceUrl=draft.historySourceUrl||'';wizard.historySheetId=draft.historySheetId||'';
             wizard.historyIdentityColumnIndex=draft.historyIdentityColumnIndex??'';wizard.historyNameColumnIndex=draft.historyNameColumnIndex??'';
@@ -1450,6 +1454,7 @@
           catch(error){button.disabled=false;showError(error)}
         }));
         $('#syncForm')?.addEventListener('click',()=>api('syncFormChoicesForAdmin',sessionToken).then(r=>{flash(`已更新 ${r.openSlots} 個可報名時段；收件狀態依目前表單設定。`);load()}).catch(showError));
+        $('#retryFormSync')?.addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;try{const result=await api('syncFormChoicesForAdmin',sessionToken);await load();flash(result.choicesVerified?'報名表已同步並完成讀回核對。':'報名表同步完成，請再次確認選項。')}catch(error){button.disabled=false;showError(error)}});
         $('#openForm')?.addEventListener('click',async()=>{const testMode=state.testMode||state.deploymentEnvironment==='test';if(!await confirmAction('開放報名表收件',`系統會更新可報名時段，並在有可報名場次時開放${testMode?'測試':''}表單。`,'開放收件'))return;try{const result=await api('setFormIntakeForAdmin',sessionToken,true);flash(result.formAccepting?`已開放收件，目前有 ${result.openSlots} 個可報名時段。`:'目前沒有可報名時段，表單維持暫停。');await load()}catch(error){showError(error)}});
         $('#pauseForm')?.addEventListener('click',async()=>{if(!await confirmAction('暫停報名表收件','系統會立即停止接收新的報名。','暫停收件'))return;try{await api('setFormIntakeForAdmin',sessionToken,false);flash('已暫停報名表收件。');await load()}catch(error){showError(error)}});
         $('#prepareResearchCalendars')?.addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;try{const result=await api('prepareResearchCalendars',sessionToken);await load();flash(`已排入 ${result.queued} 本研究日曆的準備工作。`)}catch(error){button.disabled=false;showError(error)}});
