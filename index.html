@@ -280,6 +280,13 @@
       .availability-modal .published-add-fields>.time-readout{grid-column:2}
       .availability-modal .published-add-fields>.add-owner{grid-column:1/-1}
     }
+    .availability-modal .published-presets-section{margin:12px 0;padding:10px 0;border-top:1px solid var(--line)}
+    .availability-modal .published-presets-section h3{margin:0 0 4px;font-size:15px}
+    .availability-modal .published-presets-section>.help{margin:0 0 8px}
+    .availability-modal .published-preset-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.7fr);gap:10px;align-items:center;padding:7px 8px;border:1px solid var(--line);border-radius:10px;margin:5px 0}
+    .availability-modal .published-preset-row select{height:38px;min-height:38px;padding:5px 8px}
+    .availability-modal .published-preset-row input[type=checkbox]{accent-color:var(--green)}
+    @media(max-width:600px){.availability-modal .published-preset-row{grid-template-columns:minmax(0,1fr)}.availability-modal .published-preset-row select{width:100%}}
     </style>
 
   <style>
@@ -430,6 +437,8 @@
     function openPublishedAvailabilityEditor(date,admin){
       const day=availabilityPlan.days?.[date]||{mode:availabilityPlan.mode||'standard',lunchBreak:true,slots:[]},myId=state.user.researcherId||'';
       const slots=normalizeStoredSlotTimes(day.slots).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+      const templateSlots=(Array.isArray(availabilityPlan.template)&&availabilityPlan.template.length?availabilityPlan.template:defaultAvailabilitySlots).map(item=>Array.isArray(item)?{start:String(item[0]),end:String(item[1])}:{start:String(item.start||''),end:String(item.end||'')});
+      const activePresetKeys=new Set(slots.filter(slot=>!['closed','expired'].includes(slot.status)).map(slot=>String(slot.start)+'|'+String(slot.end)));
       let working=slots.map(s=>Object.assign({},s)),workingLunch=day.lunchBreak!==false;
       const scheduleEdits=[];
       const protectedSlot=s=>Boolean(s.locked)||Boolean(s.applicationId)||['held','booked','completed','reschedule_hold'].includes(s.status);
@@ -443,8 +452,13 @@
         const support=slot.status==='support_pending'&&slot.researcherId===myId&&!admin?`<div class="support-actions"><button class="btn small" data-published-support="accept" data-slot="${esc(slot.slotId)}">接受</button><button class="btn small danger" data-published-support="decline" data-slot="${esc(slot.slotId)}">婉拒</button></div>`:'';
         return `<div class="schedule-editor-row published-slot-row ${locked?'is-locked':''}" data-published-row="${esc(slot.slotId)}" data-published-status="${esc(slot.status)}" data-published-owner-id="${esc(slot.researcherId||'')}" data-published-original-start="${esc(slot.start)}" data-published-original-end="${esc(slot.end)}">${times}<div class="slot-assignee">${owner}${status?`<span class="meta">${status}</span>`:''}${support}</div>${canCancel?`<label class="checkrow"><input type="checkbox" data-published-cancel="${esc(slot.slotId)}">${admin?'關閉':'取消'}</label>`:''}</div>`;
       }).join('');
+      const presetRows=day.mode==='custom'?'':templateSlots.filter(slot=>!activePresetKeys.has(slot.start+'|'+slot.end)).map(slot=>{
+        const past=new Date(date+'T'+slot.start+':00+08:00').getTime()<=Date.now();
+        const owner=admin?`<select data-published-preset-owner aria-label="${esc(slot.start)} 預設時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}" ${r.researcherId===myId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:`<span class="assignee-name">${esc(state.user.name||'本人')}</span>`;
+        return `<div class="published-preset-row"><label class="checkrow"><input type="checkbox" data-published-preset data-start="${esc(slot.start)}" data-end="${esc(slot.end)}" ${past?'disabled':''}>加入 ${esc(slot.start)}–${esc(slot.end)}${past?'（已過開始時間）':''}</label>${owner}</div>`;
+      }).join('');
       const add=admin?`<details class="availability-add-slot"><summary>＋ 新增時段</summary><div class="availability-add-fields published-add-fields"><label class="field"><span class="sr-only">開始時間</span><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" data-time-24h id="publishedAddStart" value="00:00"></label><span class="time-readout" id="publishedAddEnd">01:00</span><label class="field add-owner"><span class="sr-only">研究者</span><select id="publishedAddOwner" aria-label="新增時段研究者"><option value="">待認領</option>${state.researchers.map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></label><label class="checkrow add-slot-enable"><input id="publishedAddEnabled" type="checkbox">新增這個時段</label></div></details>`:'';
-      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜已發布</div><h2>${esc(date)} 時段</h2></div><button class="btn" type="button" id="closePublishedEditor" aria-label="關閉">×</button></div><p class="help availability-summary">每場 60 分鐘 · 間隔至少 30 分鐘 · 最晚 18:30</p><div class="schedule-editor-header published-editor-header"><span>時間</span><span>研究者</span><span>操作</span></div><div class="day-editor-list">${rows||'<div class="empty">沒有時段</div>'}</div>${day.mode==='custom'?'':`<label class="checkrow lunch-toggle"><input id="publishedLunchBreak" type="checkbox" ${workingLunch?'checked':''}>保留 1 小時午休</label>`}${add}<div id="publishedEditorError" class="alert error" role="alert" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelPublishedEditor">取消</button><button class="btn primary" id="savePublishedSlots">儲存</button></div>`);
+      modal(`<div class="panel-head"><div><div class="eyebrow">${esc(calendarMonthTitle(availabilityMonth))}｜已發布</div><h2>${esc(date)} 時段</h2></div><button class="btn" type="button" id="closePublishedEditor" aria-label="關閉">×</button></div><p class="help availability-summary">每場 60 分鐘 · 間隔至少 30 分鐘 · 最晚 18:30</p><div class="schedule-editor-header published-editor-header"><span>時間</span><span>研究者</span><span>操作</span></div><div class="day-editor-list">${rows||'<div class="empty">沒有時段</div>'}</div>${presetRows?`<section class="published-presets-section"><h3>可加入的預設時段</h3><p class="help">勾選後儲存，時段會加入班表並同步報名表。</p>${presetRows}</section>`:''}${day.mode==='custom'?'':`<label class="checkrow lunch-toggle"><input id="publishedLunchBreak" type="checkbox" ${workingLunch?'checked':''}>保留 1 小時午休</label>`}${add}<div id="publishedEditorError" class="alert error" role="alert" hidden></div><div class="availability-editor-actions"><button class="btn" type="button" id="cancelPublishedEditor">取消</button><button class="btn primary" id="savePublishedSlots">儲存</button></div>`);
       $('#modalbox').classList.add('availability-modal');bind24HourFields($('#modalbox'));
       const error=message=>{const box=$('#publishedEditorError');if(!box)return;box.textContent=message;box.hidden=false};
       const clearError=()=>{const box=$('#publishedEditorError');if(!box)return;box.textContent='';box.hidden=true};
@@ -472,7 +486,8 @@
         const addStart=$('#publishedAddStart')?.value||'',addOwner=$('#publishedAddOwner')?.value||'',addSlot=admin&&$('#publishedAddEnabled')?.checked?{start:addStart,end:addMinutesLabel(addStart,60),researcherId:addOwner}:null;
         if(addSlot&&(!isValidTime24h(addStart)||!isValidTime24h(addSlot.end))){error('新增時段請填寫 HH:mm。');return}
         const expectedSlots=slots.map(s=>({slotId:s.slotId,start:s.start,end:s.end,researcherId:s.researcherId||'',status:s.status||'',locked:protectedSlot(s)}));
-        const input={changes,addSlot,scheduleEdits,lunchBreak:workingLunch,expectedSlots};
+        const presetSlots=[...document.querySelectorAll('[data-published-preset]:checked')].map(box=>({start:box.dataset.start,end:box.dataset.end,researcherId:admin?box.closest('.published-preset-row')?.querySelector('[data-published-preset-owner]')?.value||'':''}));
+        const input={changes,addSlot,presetSlots,scheduleEdits,lunchBreak:workingLunch,expectedSlots};
         const save=async(confirmed=[])=>{input.ownerCalendarConfirmedKeys=confirmed;button.disabled=true;button.textContent='儲存中…';try{const result=await api('updatePublishedScheduleDay',sessionToken,availabilityPlan.month,date,input);if(result.calendarConflict){button.disabled=false;button.textContent='儲存';showCalendarConflict(result,keys=>save([...confirmed.filter(k=>!k.startsWith(result.calendarSlotKey+'|')),...keys.map(k=>result.calendarSlotKey+'|'+k)]),async()=>{await refreshAfterMutation();openPublishedAvailabilityEditor(date,admin)});return}closeModal();await refreshAfterMutation();flash(result.formSyncPending?'班表已儲存；報名表同步待重試。':'班表已儲存，報名表已同步。')}catch(err){button.disabled=false;button.textContent='儲存';error(err.message||String(err))}};
         save().catch(err=>{button.disabled=false;button.textContent='儲存';error(err.message||String(err))});
       });
