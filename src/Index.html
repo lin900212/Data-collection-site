@@ -397,7 +397,7 @@
         :admin
         ?'未發布前只有月曆草稿會更新。按「發布班表並同步報名表」後，系統才會更新可報名選項；每個時段只會有一位研究者。'
         :'月曆顯示整個團隊的班表。你只能勾選或移動自己的時段；若後續時段已由其他研究者填寫，系統會擋下會影響對方的調整。';
-      const monthHelp=admin?'管理者可編排本月與任意未來月份；研究者每月 20 日起填寫下月。':'本月可持續調整；每月 20 日開放填寫下月班表。';
+      const monthHelp=admin?'管理者可編排本月與任意未來月份；研究者每月 20 日起填寫下月。':'研究者每月 20 日起填寫下月班表。';
       return `<section class="panel calendar-panel"><div class="panel-head"><div><h2>研究者可收時間</h2><p class="help">${monthHelp} 儲存後自動更新研究日曆。</p></div></div>${calendarToolbar(availabilityMonth,'availability')}${workflow}${renderCalendarSyncNotice(canEditMonth,admin)}<div class="calendar-scroll"><div class="calendar-weekdays">${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'].map(d=>`<div>${d}</div>`).join('')}</div><div class="calendar-grid">${renderMonthGrid(availabilityMonth,slots,renderItem,canEditMonth)}</div></div><div class="notice calendar-section-note">${!canEditMonth?readOnlyReason():help}${published?'':' 草稿不會進入報名表。'}</div></section>${admin&&pending.length&&canEditMonth?`<section class="panel"><h2>待認領時段</h2>${pending.map(s=>`<div class="slotline"><strong>${esc(s.date)}　${esc(s.start)}–${esc(s.end)}</strong><div class="meta">尚未認領，發布前請指派或調整。</div></div>`).join('')}</section>`:''}`;
     }
     function normalizeStoredSlotTimes(slots){return (slots||[]).map(slot=>{const start=normalizeTimeEntry(slot.start),end=normalizeTimeEntry(slot.end);return Object.assign({},slot,{start:isValidTime24h(start)?start:String(slot.start||''),end:isValidTime24h(end)?end:String(slot.end||'')})})}
