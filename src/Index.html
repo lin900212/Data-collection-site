@@ -84,6 +84,42 @@
     .request-pending{cursor:progress}
     .ack-emphasis{color:var(--red);font-size:16px;line-height:1.6}
     .ack-confirm-button{min-height:48px}
+    #modalbox:has(.move-modal),#modalbox:has(.resource-modal){width:min(760px,100%)}
+    .move-modal,.resource-modal{min-width:0}
+    .move-modal h2,.resource-modal h2{margin:5px 0 12px}
+    .move-old-slot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 14px;margin:12px 0;border:1px solid var(--line);border-radius:12px;background:#f5f8f5;line-height:1.55}
+    .move-old-slot strong{white-space:nowrap}
+    .move-month-controls{display:flex;align-items:center;gap:8px;margin:14px 0;flex-wrap:wrap}
+    .move-month-controls strong{min-width:120px;text-align:center}
+    .move-date-list{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:thin}
+    .move-date-list .btn{white-space:nowrap;flex:0 0 auto}
+    .move-slot-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+    .move-slot-card{display:grid;gap:5px;min-width:0;text-align:left;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+    .move-slot-card:hover,.move-slot-card.selected{border-color:var(--green);background:#edf5f1}
+    .move-slot-card strong{font-size:15px}
+    .move-slot-card span,.move-slot-card small{color:var(--muted)}
+    .move-slot-card b{color:var(--green);font-size:12px}
+    .move-consent{padding:10px 0}
+    .move-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+    .move-compare>section,.resource-group{min-width:0;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fbfcfa}
+    .move-compare h3,.resource-group h3{margin:0 0 8px;font-size:15px}
+    .move-compare p,.resource-group p{margin:6px 0;line-height:1.55;overflow-wrap:anywhere}
+    .resource-modal{display:grid;gap:10px}
+    .resource-group ul{margin:8px 0 0;padding-left:20px}
+    .resource-group li{margin:5px 0;overflow-wrap:anywhere}
+    .resource-group a{color:var(--green);font-weight:700;overflow-wrap:anywhere}
+    .resource-group li .meta{display:block}
+    .resource-warning{color:#8b5b12;font-weight:700}
+    @media(max-width:600px){
+      #modalbox:has(.move-modal),#modalbox:has(.resource-modal){width:100%;max-height:calc(100dvh - 16px);padding:16px}
+      .move-slot-list,.move-compare{grid-template-columns:minmax(0,1fr)}
+      .move-month-controls{gap:6px}
+      .move-month-controls strong{flex:1;min-width:100px}
+      .move-old-slot{grid-template-columns:minmax(0,1fr);gap:3px}
+      .move-reason-grid{grid-template-columns:minmax(0,1fr)}
+      .resource-group{padding:12px}
+      .move-modal .actions>.btn,.resource-modal .actions>.btn{flex:1;min-height:44px}
+    }
 </style>
 
   <style>
@@ -744,7 +780,7 @@
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0,bridgeFrameLoadCount=0;
     const BRIDGE_READY_TIMEOUT_MS=15000,BRIDGE_READY_MAX_ATTEMPTS=2;
     const bridgeRequests=new Map();
-    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport","updateStudyFormBinding","updateStudyRecruitmentTarget"]);
+    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","requestAdminReschedule","cancelApplicationForAdmin","setPreAdmissionMoveEnabled","executePreAdmissionMove","resumePreAdmissionMove","resolvePreAdmissionMoveNotificationReview","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport","updateStudyFormBinding","updateStudyRecruitmentTarget"]);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',setFormIntakeForAdmin:'正在更新報名表收件狀態…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',retryResearcherCalendarAccess:'正在重試日曆權限…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在停用研究者…',updateResearcher:'正在更新研究者角色…',reactivateResearcher:'正在恢復研究者…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
     Object.assign(WRITE_MESSAGES,{saveStudyDraft:'正在檢查並儲存實驗草稿…',activateStudyDraft:'正在檢查並啟用實驗…',setStudyLifecycleStatus:'正在更新實驗狀態…',previewStudyHistoryImport:'正在讀取並檢查歷史資料…',updateStudyFormBinding:'正在檢查並儲存欄位版本…'});
     let activeWriteKey='',activeWriteControl=null,activeWriteSequence=0;
@@ -1030,6 +1066,15 @@
       bindView(activeView,admin);
     }
     function subtitleFor(view,admin){return ({dashboard:admin?'招募進度與待處理案件。':'你的待辦與近期場次。',experiments:'建立、檢查與管理各自獨立的實驗。',availability:'每場 60 分鐘，場次至少間隔 30 分鐘。',workflow:admin?'處理資格審核與研究者確認。':'確認指派給你的場次。',appointments:'已確認場次與臨時異動。',sessions:'記錄出席、結果需求、黑名單與個別狀況。',notes:admin?'管理者可查看全部；研究者僅查看自己的札記。':'僅顯示你新增的札記。',researchers:'管理研究團隊與排班顏色。',settings:'管理報名表與排班預設。'}[view]||'')}
+    function mutationResultMessage(result,fallback='操作已完成。'){
+      const messages=[result?.message||fallback];
+      if(result?.formSyncPending)messages.push('報名表同步待重試。');
+      if(result?.calendarSyncPending)messages.push('研究日曆更新已排入背景同步。');
+      if(result?.sideEffectsPending)messages.push('通知已排入背景寄送，尚不代表已寄達。');
+      if(result?.needsRecovery&&result?.operation?.notificationState==='needs_review')messages.push('原研究者通知需要管理者人工核對；系統沒有補寄。');
+      else if(result?.needsRecovery)messages.push('操作仍待恢復或檢查。');
+      return messages.join(' ');
+    }
 
     function renderView(view,admin){
       if(view==='dashboard')return renderDashboard(admin);
@@ -1086,7 +1131,7 @@
     function renderWorkflow(admin){
       const cases=state.applications.filter(a=>admin?['review','researcher_pending','needs_coordination','reschedule_pending'].includes(a.status):['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId));
       if(!cases.length)return '<section class="panel"><div class="empty">目前沒有待處理案件</div></section>';
-      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='needs_coordination'&&a.lastStatusNote?`<div class="alert">研究者回覆：${esc(a.lastStatusNote)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&a.status==='needs_coordination'&&a.assignedResearcherId?`<div class="field"><label>再次確認說明（必填）</label><input data-recheck-message="${esc(a.applicationId)}" placeholder="例如：原排班已確認，想請你再評估是否能執行"></div><button class="btn" data-recheck="${esc(a.applicationId)}">請原負責研究者再次確認</button>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)?researcherResponseForm(a):''}</section>`).join('');
+      return cases.map(a=>`<section class="panel"><div class="panel-head"><div><h2>${esc(a.name)}</h2><div class="meta">${esc(a.slot)} · ${esc(a.school)} · ${esc(a.age)} 歲 · ${esc(a.email)}</div></div><span class="tag ${a.status==='review'?'amber':'red'}">${esc(statusName[a.status]||a.status)}</span></div>${a.flags?`<div class="flags">系統提醒：${esc(a.flags)}${admin?`<button class="btn small" data-sensitive="${esc(a.applicationId)}">檢視敏感比對資料</button>`:''}</div>`:''}${a.status==='needs_coordination'&&a.lastStatusNote?`<div class="alert">研究者回覆：${esc(a.lastStatusNote)}</div>`:''}${a.status==='reschedule_pending'?`<div class="notice">新時段：${esc(a.proposedSlot)} · 負責研究者：${esc(a.proposedResearcherName)}。舊時段仍保留。</div>`:''}${admin?`<div class="actions"><button class="btn danger" data-cancel-application="${esc(a.applicationId)}">取消案件</button></div>`:''}${admin&&a.status==='review'?`<div class="actions"><button class="btn primary" data-review="approve" data-app="${esc(a.applicationId)}">審核通過，請研究者確認</button><button class="btn danger" data-review="reject" data-app="${esc(a.applicationId)}">不符合／請改期</button></div>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="actions"><button class="btn" data-pre-admission-move="${esc(a.applicationId)}">${state.preAdmissionMoveEnabled?'更換待確認時段':'檢查／恢復換場'}</button></div>`:''}${admin&&a.status==='needs_coordination'&&a.assignedResearcherId?`<div class="field"><label>再次確認說明（必填）</label><input data-recheck-message="${esc(a.applicationId)}" placeholder="例如：原排班已確認，想請你再評估是否能執行"></div><button class="btn" data-recheck="${esc(a.applicationId)}">請原負責研究者再次確認</button>`:''}${admin&&['needs_coordination','researcher_pending'].includes(a.status)?`<div class="grid"><div class="field"><label>安排支援研究者</label><select data-support="${esc(a.applicationId)}"><option value="">選擇研究者</option>${state.researchers.filter(r=>r.researcherId!==a.assignedResearcherId).map(r=>`<option value="${esc(r.researcherId)}">${esc(r.name)}</option>`).join('')}</select></div><div class="field"><label>支援原因／說明</label><input data-support-message="${esc(a.applicationId)}" placeholder="例如原負責研究者無法到校"></div></div><button class="btn" data-request-support="${esc(a.applicationId)}">寄出支援請求</button>`:''}${['researcher_pending','reschedule_pending'].includes(a.status)&&(a.assignedResearcherId===state.user.researcherId||a.proposedResearcherId===state.user.researcherId)?researcherResponseForm(a):''}</section>`).join('');
     }
     function researcherResponseForm(a){return `<form class="response-form" data-response="${esc(a.applicationId)}"><div class="actions"><label class="checkrow"><input type="radio" name="decision" value="accept" required> 可以執行</label><label class="checkrow"><input type="radio" name="decision" value="decline" required> 無法執行</label></div><div class="grid"><div class="field"><label>無法執行原因</label><select name="reason"><option value="">請選擇</option><option>臨時有課／工作</option><option>設備或場地問題</option><option>身體狀況</option><option>其他</option></select></div><div class="field"><label>補充說明（無法執行時必填）</label><input name="detail" placeholder="請簡短說明"></div></div><button class="btn primary" type="submit">送出研究者回覆</button></form>`}
     function renderAppointments(admin){
@@ -1099,7 +1144,7 @@
       });
       const calendarItems=[...grouped.values()].sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
       const renderAppointment=group=>{
-        const cases=group.applications.map(app=>`<div class="appointment-calendar-case"><span><strong>${esc(app.name)}</strong><small>${esc(statusName[app.status]||app.status)}${app.researcherName?' · '+esc(app.researcherName):''}${app.status==='confirmed'?' · '+(app.acknowledgedAt?'已確認收到':'等待收到確認'):''}</small></span>${admin&&app.status==='confirmed'?`<button class="btn small danger" type="button" data-cancel-application="${esc(app.applicationId)}">取消此人</button>`:''}</div>`).join('');
+        const cases=group.applications.map(app=>`<div class="appointment-calendar-case"><span><strong>${esc(app.name)}</strong><small>${esc(statusName[app.status]||app.status)}${app.researcherName?' · '+esc(app.researcherName):''}${app.status==='confirmed'?' · '+(app.acknowledgedAt?'已確認收到':'等待收到確認'):''}</small></span>${admin&&app.status==='confirmed'?`<button class="btn small" type="button" data-admin-reschedule="${esc(app.applicationId)}">協助改期</button><button class="btn small danger" type="button" data-cancel-application="${esc(app.applicationId)}">取消此人</button>`:''}</div>`).join('');
         const count=group.applications.length,capacity=group.capacitySummary;
         return `<details class="appointment-calendar-event appointment-calendar-group" style="--person:${esc(group.color)}"><summary><strong>${esc(group.start)}–${esc(group.end)}</strong><span>${count} 位受試者</span>${capacity?`<small>占用 ${Number(capacity.occupiedCount)||0}/${Number(capacity.capacity)||1} 席</small>`:''}</summary><div class="appointment-calendar-cases">${cases}</div></details>`;
       };
@@ -1151,7 +1196,119 @@
       const capacity=`<section class="panel"><div class="panel-head"><div><h2>新場次預設名額</h2><p class="help">只套用到尚未設定單場名額的場次；既有預約不會被移除。</p></div></div><div class="capacity-default-row"><label for="defaultSlotCapacity">每場名額</label><input id="defaultSlotCapacity" type="number" min="1" step="1" inputmode="numeric" value="${defaultSlotCapacity}"><button class="btn primary" id="saveDefaultSlotCapacity" type="button">儲存預設名額</button></div></section>`;
       const formBinding=state.study?.lifecycleManaged?`<section class="panel"><div class="panel-head"><div><h2>表單欄位對應</h2><p class="help">查看此實驗的表單題目與姓名、身分識別、時段及 Email 對應。更新會建立新版本，不改寫既有回覆。</p></div><button class="btn" id="editStudyFormBinding" type="button">檢查欄位</button></div></section>`:'';
       const mailFlow=`<section class="panel"><h2>信件流程</h2><table class="table"><tbody><tr><th>每月 20 日</th><td>通知研究者填寫下月班表，其他未開放月份僅供查看。</td></tr><tr><th>每月 25 日</th><td>提醒尚未送出者；這是進度提醒，不會鎖住修改。</td></tr><tr><th>每月 26–27 日</th><td>管理者檢查空缺與支援請求；28 日提醒尚未送出的研究者並提醒管理者發布。</td></tr><tr><th>管理者發布</th><td>整月一次同步到報名表；發布後可微調未報名時段，變更會同步更新報名表。</td></tr><tr><th>受試者確認錄取</th><td>寄出附校園位置圖的錄取信並建立研究日曆事件。</td></tr></tbody></table></section>`;
-      return lifecycle+recruitmentLimit+resources+formBinding+schedule+capacity+mailFlow;
+      const moveEnabled=Boolean(state.preAdmissionMoveEnabled);
+      const moveSettings=state.study?.lifecycleManaged?`<section class="panel"><h2>錄取前更換待確認時段</h2><p class="help">只適用於等待研究者確認或待協調的案件。新場次保留成功後會釋出原場次，案件仍需新研究者確認；不會自動錄取受試者。</p><label class="checkrow"><input id="togglePreAdmissionMove" type="checkbox" ${moveEnabled?'checked':''}> 啟用管理者更換待確認時段</label><p class="help">關閉後不接受新的更換；已開始的操作仍可從案件卡片檢查並恢復。</p></section>`:'';
+      return lifecycle+recruitmentLimit+resources+moveSettings+formBinding+schedule+capacity+mailFlow;
+    }
+    function moveReasonLabel(reason){return ({participant_unavailable:'受試者無法出席原時段',participant_requested:'受試者希望調整時間',other:'其他'})[reason]||reason||'未填'}
+    function moveDateLabel(value){const date=new Date(String(value||'')+'T12:00:00');return Number.isNaN(date.getTime())?String(value||''):date.toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'})}
+    async function openAdminReschedule(applicationId){
+      const application=state.applications.find(item=>String(item.applicationId)===String(applicationId));
+      if(!application){showError(new Error('找不到已錄取案件，請重新載入工作台。'));return}
+      let month=calendarMonthKey(new Date()),options=null,selectedDate='',selectedSlotId='';
+      const readOptions=async(keepSelection=false)=>{
+        const previous=selectedSlotId;options=await api('getAdminRescheduleOptions',sessionToken,applicationId,month);
+        const dates=new Set((options.candidates||[]).map(item=>item.date));if(!dates.has(selectedDate))selectedDate='';
+        selectedSlotId=keepSelection&&(options.candidates||[]).some(item=>String(item.slotId)===String(previous))?previous:'';render();
+      };
+      const render=()=>{
+        const candidates=options?.candidates||[],dates=[...new Set(candidates.map(item=>item.date))].sort();
+        const dateButtons=dates.map(date=>`<button class="btn small ${selectedDate===date?'primary':''}" type="button" data-admin-move-date="${esc(date)}">${esc(moveDateLabel(date))} · ${candidates.filter(item=>item.date===date).length} 場</button>`).join('');
+        const slots=candidates.filter(item=>item.date===selectedDate),slotCards=slots.map(item=>`<button class="move-slot-card ${selectedSlotId===String(item.slotId)?'selected':''}" type="button" data-admin-move-slot="${esc(item.slotId)}"><strong>${esc(item.start)}–${esc(item.end)}</strong><span>${esc(item.researcherName||'未指定研究者')}</span><small>剩餘 ${esc(item.remainingCount)} 名</small>${selectedSlotId===String(item.slotId)?'<b>已選擇</b>':''}</button>`).join('');
+        const old=options?.oldSlot;
+        modal(`<div class="move-modal"><div class="eyebrow">管理者操作 · 已錄取</div><h2>協助受試者改期</h2><p class="help"><strong>${esc(application.name)}</strong></p><div class="move-old-slot"><strong>目前場次</strong><span>${esc(old?`${old.date} ${old.start}–${old.end} · ${old.researcherName||'未指定研究者'}`:application.slot)}</span></div><div class="move-month-controls"><button class="btn small" type="button" id="adminReschedulePrev">‹</button><strong>${esc(calendarMonthTitle(calendarMonthDate(month)))}</strong><button class="btn small" type="button" id="adminRescheduleNext">›</button><button class="btn small" type="button" id="adminRescheduleReload">重新讀取</button></div>${candidates.length?`<div class="move-date-list">${dateButtons}</div>${selectedDate?`<div class="move-slot-list">${slotCards||'<div class="empty">此日期沒有可用場次</div>'}</div>`:'<div class="empty">請先選擇有場次的日期</div>'}`:'<div class="empty">此月份沒有符合條件的可用場次；可切換月份或重新讀取。</div>'}<div class="grid move-reason-grid"><label class="field"><span>改期原因</span><select id="adminRescheduleReason"><option value="">請選擇</option><option value="participant_unavailable">受試者無法出席原時段</option><option value="participant_requested">受試者希望調整時間</option><option value="other">其他</option></select></label><label class="field"><span>補充說明（選填）</span><input id="adminRescheduleDetail" maxlength="500" placeholder="必要時補充協調情形"></label></div><label class="checkrow move-consent"><input id="adminRescheduleAgreed" type="checkbox"> 已與受試者確認並同意新時段</label><div class="actions"><button class="btn" type="button" id="adminRescheduleClose">取消</button><button class="btn primary" type="button" id="adminRescheduleSubmit" ${selectedSlotId?'':'disabled'}>確認改期</button></div></div>`);
+        $('#adminReschedulePrev')?.addEventListener('click',()=>{month=calendarMonthKey(shiftCalendarMonth(calendarMonthDate(month),-1));selectedDate='';selectedSlotId='';readOptions().catch(showError)});
+        $('#adminRescheduleNext')?.addEventListener('click',()=>{month=calendarMonthKey(shiftCalendarMonth(calendarMonthDate(month),1));selectedDate='';selectedSlotId='';readOptions().catch(showError)});
+        $('#adminRescheduleReload')?.addEventListener('click',()=>readOptions(true).catch(showError));
+        document.querySelectorAll('[data-admin-move-date]').forEach(button=>button.addEventListener('click',()=>{selectedDate=button.dataset.adminMoveDate;selectedSlotId='';render()}));
+        document.querySelectorAll('[data-admin-move-slot]').forEach(button=>button.addEventListener('click',()=>{selectedSlotId=button.dataset.adminMoveSlot;render()}));
+        $('#adminRescheduleReason')?.addEventListener('change',event=>{const detail=$('#adminRescheduleDetail');detail.required=event.target.value==='other';detail.placeholder=detail.required?'請說明其他原因':'必要時補充協調情形'});
+        $('#adminRescheduleClose')?.addEventListener('click',closeModal);
+        $('#adminRescheduleSubmit')?.addEventListener('click',async event=>{
+          const button=event.currentTarget,reason=$('#adminRescheduleReason')?.value||'',detail=$('#adminRescheduleDetail')?.value.trim()||'',agreed=Boolean($('#adminRescheduleAgreed')?.checked);
+          if(!selectedSlotId||!reason||!agreed||(reason==='other'&&!detail)){showError(new Error('請選擇新時段、填寫原因，並確認受試者同意。'));return}
+          const next=candidates.find(item=>String(item.slotId)===String(selectedSlotId));
+          if(!await confirmAction('確認管理者協助改期',`受試者已同意改到 ${next?.date||''} ${next?.start||''}–${next?.end||''}。新研究者確認前，原場次會保留。`,'送出改期安排'))return;
+          button.disabled=true;button.textContent='正在保留新名額…';
+          try{const result=await api('requestAdminReschedule',sessionToken,applicationId,selectedSlotId,reason,detail,agreed);closeModal();await load();flash(mutationResultMessage(result,'已送出改期安排。'))}
+          catch(error){button.disabled=false;button.textContent='確認改期';showError(error)}
+        });
+      };
+      try{await readOptions()}catch(error){showError(error)}
+    }
+    async function openPreAdmissionMove(applicationId){
+      const application=state.applications.find(item=>String(item.applicationId)===String(applicationId));
+      if(!application){showError(new Error('找不到案件，請重新載入工作台。'));return}
+      try{
+        const status=await api('getPreAdmissionMoveStatus',sessionToken,applicationId);
+        if(status.active){showPreAdmissionMoveRecovery(applicationId,status);return}
+        if(!status.enabled){showMessage('更換功能尚未啟用','目前無待恢復操作。請管理者先在「連線設定」啟用此功能。');return}
+        const oldSlot=state.slots.find(slot=>String(slot.slotId)===String(application.slotId));
+        if(!oldSlot){showError(new Error('找不到案件原場次，請先檢查案件與預約資料。'));return}
+        let month=calendarMonthKey(new Date()),options=null,selectedDate='',selectedSlotId='',researcherFilter='',preview=null;
+        const oldLabel=`${oldSlot.date} ${oldSlot.start}–${oldSlot.end} · ${oldSlot.researcherName||application.researcherName||'未指定研究者'}`;
+        const readOptions=async(keepSelection=false)=>{
+          const previous=selectedSlotId;
+          options=await api('getPreAdmissionMoveOptions',sessionToken,applicationId,month);
+          const candidateDates=new Set((options.candidates||[]).map(item=>item.date));
+          if(!candidateDates.has(selectedDate))selectedDate='';
+          const stillAvailable=(options.candidates||[]).some(item=>String(item.slotId)===String(previous));
+          selectedSlotId=keepSelection&&stillAvailable?previous:'';
+          if(selectedSlotId&&!candidateDates.has((options.candidates||[]).find(item=>String(item.slotId)===selectedSlotId)?.date))selectedSlotId='';
+          if(researcherFilter&&!((options.candidates||[]).some(item=>String(item.researcherId)===researcherFilter)))researcherFilter='';
+          renderSelection();
+        };
+        const renderSelection=()=>{
+          const candidates=options?.candidates||[],dates=[...new Set(candidates.map(item=>item.date))].sort();
+          const filtered=candidates.filter(item=>item.date===selectedDate&&(!researcherFilter||String(item.researcherId)===researcherFilter));
+          const researchers=[...new Map(candidates.map(item=>[String(item.researcherId),item.researcherName])).entries()];
+          const dateButtons=dates.map(date=>`<button class="btn small ${selectedDate===date?'primary':''}" type="button" data-move-date="${esc(date)}">${esc(moveDateLabel(date))} · ${candidates.filter(item=>item.date===date).length} 場</button>`).join('');
+          const slotCards=filtered.map(item=>`<button class="move-slot-card ${selectedSlotId===String(item.slotId)?'selected':''}" type="button" data-move-slot="${esc(item.slotId)}"><strong>${esc(item.start)}–${esc(item.end)}</strong><span>${esc(item.researcherName)}</span><small>剩餘 ${esc(item.remainingCount)} 名</small>${selectedSlotId===String(item.slotId)?'<b>已選擇</b>':''}</button>`).join('');
+          modal(`<div class="move-modal"><div class="eyebrow">管理者操作 · 尚未錄取</div><h2>替受試者更換待確認時段</h2><p class="help"><strong>${esc(application.name)}</strong> · ${esc(statusName[application.status]||application.status)}</p><div class="move-old-slot"><strong>原安排</strong><span>${esc(oldLabel)}</span></div><div class="move-month-controls"><button class="btn small" type="button" id="movePrevMonth" aria-label="上個月">‹</button><strong>${esc(calendarMonthTitle(calendarMonthDate(month)))}</strong><button class="btn small" type="button" id="moveNextMonth" aria-label="下個月">›</button><button class="btn small" type="button" id="reloadMoveOptions">重新讀取</button></div>${candidates.length?`<div class="move-date-list">${dateButtons}</div><label class="field"><span>研究者篩選</span><select id="moveResearcherFilter"><option value="">全部研究者</option>${researchers.map(([id,name])=>`<option value="${esc(id)}" ${id===researcherFilter?'selected':''}>${esc(name)}</option>`).join('')}</select></label>${selectedDate?`<div class="move-slot-list">${slotCards||'<div class="empty">這一天沒有符合篩選的場次</div>'}</div>`:'<div class="empty">請先選擇有場次的日期</div>'}`:'<div class="empty">此月份目前沒有符合條件的場次；可切換月份或重新讀取。</div>'}<div class="grid move-reason-grid"><label class="field"><span>更換原因</span><select id="moveReason"><option value="">請選擇</option><option value="participant_unavailable">受試者無法出席原時段</option><option value="participant_requested">受試者希望調整時間</option><option value="other">其他</option></select></label><label class="field"><span>補充說明（選填）</span><input id="moveReasonDetail" maxlength="500" placeholder="必要時補充協調情形"></label></div><label class="checkrow move-consent"><input id="moveParticipantAgreed" type="checkbox"> 已與受試者確認並同意新時段</label><div class="actions"><button class="btn" type="button" id="cancelMove">取消</button><button class="btn primary" type="button" id="previewMove" ${selectedSlotId?'':'disabled'}>下一步：確認安排</button></div></div>`);
+          $('#movePrevMonth')?.addEventListener('click',()=>{month=calendarMonthKey(shiftCalendarMonth(calendarMonthDate(month),-1));selectedDate='';selectedSlotId='';readOptions().catch(showError)});
+          $('#moveNextMonth')?.addEventListener('click',()=>{month=calendarMonthKey(shiftCalendarMonth(calendarMonthDate(month),1));selectedDate='';selectedSlotId='';readOptions().catch(showError)});
+          $('#reloadMoveOptions')?.addEventListener('click',()=>readOptions(true).catch(showError));
+          document.querySelectorAll('[data-move-date]').forEach(button=>button.addEventListener('click',()=>{selectedDate=button.dataset.moveDate;selectedSlotId='';renderSelection()}));
+          document.querySelectorAll('[data-move-slot]').forEach(button=>button.addEventListener('click',()=>{selectedSlotId=button.dataset.moveSlot;renderSelection()}));
+          $('#moveResearcherFilter')?.addEventListener('change',event=>{researcherFilter=event.target.value;const remains=(options?.candidates||[]).some(item=>String(item.slotId)===selectedSlotId&&(!researcherFilter||String(item.researcherId)===researcherFilter));if(!remains)selectedSlotId='';renderSelection()});
+          $('#moveReason')?.addEventListener('change',event=>{const detail=$('#moveReasonDetail');if(event.target.value==='other'){detail.required=true;detail.placeholder='請說明其他原因'}else{detail.required=false;detail.placeholder='必要時補充協調情形'}});
+          $('#cancelMove')?.addEventListener('click',closeModal);
+          $('#previewMove')?.addEventListener('click',async event=>{
+            const button=event.currentTarget,reason=$('#moveReason')?.value||'',detail=$('#moveReasonDetail')?.value.trim()||'',agreed=Boolean($('#moveParticipantAgreed')?.checked);
+            if(!selectedSlotId||!reason||!agreed||(reason==='other'&&!detail)){showError(new Error('請選擇場次、填寫原因，並確認受試者已同意新時段。'));return}
+            button.disabled=true;button.textContent='正在核對案件與名額…';
+            try{preview=await api('previewPreAdmissionMove',sessionToken,applicationId,selectedSlotId,reason,detail,agreed);renderPreview()}
+            catch(error){button.disabled=false;button.textContent='下一步：確認安排';showError(error)}
+          });
+        };
+        const renderPreview=()=>{
+          const sameResearcher=String(preview.old?.researcherName||'')===String(preview.next?.researcherName||'');
+          modal(`<div class="move-modal"><div class="eyebrow">唯讀預覽 · 尚未儲存</div><h2>確認新安排</h2><div class="move-compare"><section><h3>原安排</h3><p>${esc(preview.old.date)} ${esc(preview.old.start)}–${esc(preview.old.end)}</p><p>${esc(preview.old.researcherName)}</p><span class="tag">原名額將釋出</span></section><section><h3>新安排</h3><p>${esc(preview.next.date)} ${esc(preview.next.start)}–${esc(preview.next.end)}</p><p>${esc(preview.next.researcherName)}</p><span class="tag">剩餘 ${esc(preview.next.remainingCount)} 名</span></section></div><p>更換原因：${esc(moveReasonLabel(preview.reason))}${preview.reasonDetail?` · ${esc(preview.reasonDetail)}`:''}</p><div class="notice">送出後會先保留新名額，再釋出原名額。新安排仍需研究者確認，尚未正式錄取受試者。</div><p class="help">系統會依原邀請狀態處理舊邀請，並安排新研究者確認及受試者通知。${sameResearcher?'新舊研究者相同，系統會沿用同一研究者的變更通知。':''}通知與日曆狀態以送出後的操作結果為準。</p><div class="actions"><button class="btn" type="button" id="backToMoveSelection">返回選擇</button><button class="btn primary" type="button" id="executeMove">更換並請研究者確認</button></div></div>`);
+          $('#backToMoveSelection')?.addEventListener('click',renderSelection);
+          $('#executeMove')?.addEventListener('click',async event=>{
+            const button=event.currentTarget;if(!await confirmAction('更換待確認時段','確認受試者已同意新時段。送出後原名額會釋出，新安排仍需研究者確認。','更換時段'))return;
+            button.disabled=true;button.textContent='正在保留新名額並更新案件…';
+            try{
+              const result=await api('executePreAdmissionMove',sessionToken,{operationId:preview.operationId,fingerprint:preview.fingerprint,applicationId,newSlotId:preview.newSlotId,reason:preview.reason,reasonDetail:preview.reasonDetail,participantAgreed:true});
+              if(result.needsRecovery){await load();showPreAdmissionMoveRecovery(applicationId,{active:true,enabled:state.preAdmissionMoveEnabled,operation:result.operation},result.message||result.error);return}
+              closeModal();await load();flash(mutationResultMessage(result,'已更換待確認時段；請留意通知與日曆同步狀態。'));
+            }catch(error){
+              try{const status=await api('getPreAdmissionMoveStatus',sessionToken,applicationId,preview?.operationId||'');if(status.operation){await load();if(status.operation.phase==='complete'&&!status.active){closeModal();flash('換場操作已完成；請以工作台目前的案件與日曆狀態為準。');return}showPreAdmissionMoveRecovery(applicationId,status,'送出結果已依操作識別碼讀回；請先查看狀態，不要重送。');return}}catch(statusError){console.warn('[研究工作台] 換場結果讀回失敗',String(statusError&&statusError.message||statusError))}
+              button.disabled=false;button.textContent='更換並請研究者確認';showError(error);
+            }
+          });
+        };
+        try{await readOptions()}catch(error){showError(error)}
+      }catch(error){showError(error)}
+    }
+    function showPreAdmissionMoveRecovery(applicationId,status,notice=''){
+      const op=status.operation||{};
+      const manualReview=Boolean(status.active&&op.notificationState==='needs_review');
+      const stateNote=manualReview?'原研究者邀請收件者無法由系統紀錄可靠核對。新安排已儲存，研究者仍可回覆；請先人工核對原通知，再記錄處理方式。系統不會補寄舊信。':status.active?'系統會核對已寫入的案件與預約，使用同一案件恢復操作，不會另開一筆換場。':op.phase==='complete'?'這筆操作已完成並封存；請以工作台目前的案件與日曆狀態為準。':'操作已封存且沒有可執行的恢復按鈕，請由管理者檢查操作紀錄。';
+      modal(`<div class="move-modal"><div class="eyebrow">換場操作狀態</div><h2>${manualReview?'原研究者通知需人工處理':op.phase==='complete'?'換場已完成':'換場需要檢查／恢復'}</h2>${notice?`<div class="notice">${esc(notice)}</div>`:''}<p>狀態：${esc(op.status||'尚無進行中的操作')} · 階段：${esc(op.phase||'—')}</p><p>通知：${esc(op.notificationState||'—')} · 日曆：${esc(op.calendarState||'—')}</p>${op.updatedAt?`<p class="meta">最後更新：${esc(op.updatedAt)}</p>`:''}${op.error?`<div class="alert error">${esc(op.error)}</div>`:''}<div class="notice">${stateNote}</div><div class="actions"><button class="btn" type="button" id="closeMoveRecovery">關閉</button>${status.active&&op.phase!=='complete'&&!manualReview?'<button class="btn primary" type="button" id="resumeMove">繼續恢復</button>':''}${manualReview?'<button class="btn primary" type="button" id="resolveMoveReview">記錄人工通知處理</button>':''}</div></div>`);
+      $('#closeMoveRecovery')?.addEventListener('click',closeModal);
+      $('#resumeMove')?.addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;button.textContent='正在核對並恢復…';try{const result=await api('resumePreAdmissionMove',sessionToken,applicationId);if(result.needsRecovery){await load();showPreAdmissionMoveRecovery(applicationId,{active:true,enabled:state.preAdmissionMoveEnabled,operation:result.operation},mutationResultMessage(result,result.message||result.error));return}closeModal();await load();flash(mutationResultMessage(result,'換場操作已完成。'))}catch(error){button.disabled=false;button.textContent='繼續恢復';showError(error)}});
+      $('#resolveMoveReview')?.addEventListener('click',async event=>{const button=event.currentTarget,note=await askForReason('記錄原研究者通知處理','請記錄你如何核對原邀請收件者或如何通知原研究者。這個操作只封存人工處理紀錄，不會寄信或重送。','例如：比對原寄件紀錄後以電話通知原研究者');if(!note)return;button.disabled=true;button.textContent='正在記錄…';try{const result=await api('resolvePreAdmissionMoveNotificationReview',sessionToken,op.operationId,note);closeModal();await load();flash(mutationResultMessage(result,'已記錄人工通知處理。'))}catch(error){button.disabled=false;button.textContent='記錄人工通知處理';showError(error)}});
     }
     function studyFormBindingQuestionOptions(schema,selected,allowedTypes,emptyLabel){
       const items=(schema?.items||[]).filter(item=>!allowedTypes||allowedTypes.includes(item.type));
@@ -1449,7 +1606,8 @@
       }
       if(view==='appointments'){
         document.querySelectorAll('[data-calendar-nav^="appointments:"]').forEach(b=>b.addEventListener('click',()=>{appointmentMonth=shiftCalendarMonth(appointmentMonth,Number(b.dataset.calendarNav.split(':')[1]));draw()}));
-        document.querySelectorAll('[data-cancel-application]').forEach(button=>button.addEventListener('click',async event=>{event.stopPropagation();const reason=await askForReason('取消此受試者場次','只會取消此受試者並釋出一個名額；同場其他受試者不受影響。請填寫原因。','例如：受試者通知無法出席');if(!reason)return;if(!await confirmAction('確認取消',`取消此受試者的場次並寄出通知？`,'取消此人'))return;button.disabled=true;try{const result=await api('cancelConfirmedApplication',sessionToken,button.dataset.cancelApplication,reason);await load();flash(result.message)}catch(error){button.disabled=false;showError(error)}}));
+        document.querySelectorAll('[data-cancel-application]').forEach(button=>button.addEventListener('click',async event=>{event.stopPropagation();const reason=await askForReason('取消受試者案件','系統會停止此案的待確認流程、釋出案件占用的預約，並通知受試者及相關研究者。請填寫原因。','例如：受試者通知不再參與');if(!reason)return;if(!await confirmAction('確認取消',`取消此案件並寄出通知？若案件正在改期，原場次與新場次都會釋出。`,'取消案件'))return;button.disabled=true;try{const result=await api('cancelApplicationForAdmin',sessionToken,button.dataset.cancelApplication,reason);await load();flash(mutationResultMessage(result))}catch(error){button.disabled=false;showError(error)}}));
+        document.querySelectorAll('[data-admin-reschedule]').forEach(button=>button.addEventListener('click',()=>openAdminReschedule(button.dataset.adminReschedule)));
         document.querySelectorAll('[data-request-change]').forEach(button=>button.addEventListener('click',()=>openScheduleChangeRequest(button.dataset.requestChange)));
         document.querySelectorAll('[data-respond-change]').forEach(button=>button.addEventListener('click',async()=>{
           const decision=button.dataset.respondChange;
@@ -1474,6 +1632,8 @@
         }));
       }
       if(view==='workflow'){
+        document.querySelectorAll('[data-cancel-application]').forEach(button=>button.addEventListener('click',async()=>{const reason=await askForReason('取消受試者案件','系統會停止此案的待確認流程、釋出案件占用的預約，並通知受試者及相關研究者。請填寫原因。','例如：受試者通知不再參與');if(!reason)return;if(!await confirmAction('確認取消',`取消此案件並寄出通知？若案件正在改期，原場次與新場次都會釋出。`,'取消案件'))return;button.disabled=true;try{const result=await api('cancelApplicationForAdmin',sessionToken,button.dataset.cancelApplication,reason);await load();flash(mutationResultMessage(result))}catch(error){button.disabled=false;showError(error)}}));
+        document.querySelectorAll('[data-pre-admission-move]').forEach(button=>button.addEventListener('click',()=>openPreAdmissionMove(button.dataset.preAdmissionMove)));
         document.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',async()=>{let reason='';if(b.dataset.review==='reject'){reason=await askForReason('不符合資格／請改期','請填寫處理原因，系統會依此通知報名者。','例如：不符合研究條件，或原時段無法安排');if(!reason)return}await callAndReload('adminReview',b.dataset.app,b.dataset.review,reason)}));
         document.querySelectorAll('[data-request-support]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.requestSupport,rid=document.querySelector(`[data-support="${id}"]`).value,msg=document.querySelector(`[data-support-message="${id}"]`).value;callAndReload('requestSupport',id,rid,msg)}));
         document.querySelectorAll('[data-recheck]').forEach(button=>button.addEventListener('click',async()=>{const id=button.dataset.recheck,message=document.querySelector(`[data-recheck-message="${id}"]`)?.value.trim()||'';if(!message){showError(new Error('請填寫再次確認的說明。'));return}if(!await confirmAction('再次邀請原研究者','系統會重新寄出確認邀請；對方再次接受前，場次仍維持待協調。','寄出邀請'))return;button.disabled=true;try{const result=await api('requestOriginalResearcherAgain',sessionToken,id,message);await load();flash(`已請 ${result.researcherName} 再次確認。`)}catch(error){button.disabled=false;showError(error)}}));
@@ -1489,6 +1649,14 @@
       }
       if(view==='settings'){
         $('#editStudyFormBinding')?.addEventListener('click',event=>openStudyFormBindingEditor(event.currentTarget));
+        $('#togglePreAdmissionMove')?.addEventListener('change',async event=>{
+          const checkbox=event.currentTarget,enabled=checkbox.checked;
+          if(!await confirmAction(enabled?'啟用錄取前換場':'停用新的錄取前換場',enabled?'管理者可為等待研究者確認或待協調的案件更換尚未錄取的場次。每次操作仍須選擇場次、確認受試者同意並再次核對。':'不接受新的換場操作；已開始的操作仍可檢查與恢復。','確認')){checkbox.checked=!enabled;return}
+          checkbox.disabled=true;
+          try{const result=await api('setPreAdmissionMoveEnabled',sessionToken,enabled);state.preAdmissionMoveEnabled=Boolean(result.enabled);await load();flash(result.message||'換場功能設定已更新。')}
+          catch(error){checkbox.checked=!enabled;showError(error)}
+          finally{if(checkbox.isConnected)checkbox.disabled=false}
+        });
         $('#saveRecruitmentTarget')?.addEventListener('click',async event=>{
           const button=event.currentTarget,input=$('#recruitmentTarget'),raw=String(input?.value||'').trim();
           if(raw&&(!/^\\d+$/.test(raw)||!Number.isSafeInteger(Number(raw))||Number(raw)<1||Number(raw)>100000)){showError(new Error('招募上限請輸入 1–100000 的整數，或留白表示不設上限。'));return}
