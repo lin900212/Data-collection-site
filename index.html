@@ -710,10 +710,10 @@
     }
     function showCalendarConflict(result,retry,onCancel){
       const rows=(result.conflicts||[]).map(event=>`<div class="calendar-conflict-item"><strong>${esc(event.title)}</strong><span>${esc(event.time)}</span></div>`).join('');
-      modal(`<div class="calendar-conflict-heading"><span class="calendar-conflict-icon" aria-hidden="true">!</span><div><div class="eyebrow">主要 GOOGLE 日曆</div><h2>這段時間已有行程</h2></div></div><p>${esc(result.date)}　${esc(result.start)}–${esc(result.end)}｜研究者：${esc(result.researcherName||'管理者本人')}</p>${result.calendarConflictChanged?'<div class="alert">行事曆在你確認期間有變動，請重新查看目前的重疊行程。</div>':''}<div class="calendar-conflict-list">${rows}</div><p class="help">這是重疊提醒，系統不會替你判斷能否同時進行。選擇繼續只會新增／指派研究時段，不會修改主要日曆中的行程。</p><div class="actions"><button class="btn" id="cancelCalendarConflict">取消排班</button><button class="btn primary" id="acceptCalendarConflict">我確認可同時執行</button></div>`);
+      modal(`<div class="calendar-conflict-heading"><span class="calendar-conflict-icon" aria-hidden="true">!</span><div><div class="eyebrow">主要 GOOGLE 日曆</div><h2>這段時間已有行程</h2></div></div><p>${esc(result.date)}　${esc(result.start)}–${esc(result.end)}｜研究者：${esc(result.researcherName||'管理者本人')}</p>${result.calendarConflictChanged?'<div class="alert">行事曆在你確認期間有變動，請重新查看目前的重疊行程。</div>':''}<div class="calendar-conflict-list">${rows}</div><p class="help">這是重疊提醒，目前尚未儲存變更。若仍要安排此時段，請按「確認並繼續排班」；系統會繼續儲存／指派時段，不會修改主要日曆中的行程。</p><div class="actions"><button class="btn" id="cancelCalendarConflict">取消排班</button><button class="btn primary" id="acceptCalendarConflict">確認並繼續排班</button></div>`);
       $('#cancelCalendarConflict').addEventListener('click',async()=>{closeModal();if(onCancel)await onCancel()});
       $('#acceptCalendarConflict').addEventListener('click',async e=>{
-        e.currentTarget.disabled=true;
+        e.currentTarget.disabled=true;e.currentTarget.textContent='正在儲存…';
         try{await retry((result.conflicts||[]).map(event=>event.key))}catch(err){closeModal();showError(err)}
       });
     }
@@ -1894,7 +1894,7 @@
       if(!state)initialLoadHintTimer=setTimeout(()=>{
         if(requestId!==bootstrapRequestSequence||epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||state)return;
         const status=$('#loadStatus')||$('#root .subtitle');
-        if(status)status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。';
+        if(status){status.style.whiteSpace='pre-line';status.textContent='連線時間較長，仍在載入工作台；請留在此頁，無需重新整理。'.replace('；','；\n')}
       },8000);
       if(state){draw();setRequestStatus('正在更新工作台資料…')}
       try{
