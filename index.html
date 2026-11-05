@@ -350,6 +350,8 @@
       const failed=researchers.filter(item=>item.status?.status==='needs_attention');
       if(failed.length)return `<div class="alert error calendar-sync-state" role="alert"><span>日曆待處理：${failed.map(item=>esc(item.name||'研究者')).join('、')}</span>${failed.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
       const pending=researchers.filter(item=>['pending','running','retry_scheduled'].includes(item.status?.status));
+      const stale=pending.filter(item=>{const updated=Date.parse(item.status?.updatedAt||'');return Number.isFinite(updated)&&Date.now()-updated>10*60*1000});
+      if(stale.length)return `<div class="alert error calendar-sync-state" role="alert"><span>日曆同步逾時，最後更新已超過 10 分鐘：${stale.map(item=>esc(item.name||'研究者')).join('、')}。請重試或檢查日曆設定。</span>${stale.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
       if(pending.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆同步中${admin?` · ${pending.map(item=>esc(item.name||'研究者')).join('、')}`:''}</div>`;
       if(researchers.some(item=>item.status?.status==='synced'))return '<div class="tag green calendar-sync-state" role="status">研究日曆已同步</div>';
       return '<div class="meta calendar-sync-state" role="status">儲存班表後自動同步研究日曆</div>';
@@ -890,11 +892,46 @@
   const RecordsUI = (() => {
     const attendanceOptions = ['出席', '遲到', '未到'];
 
+    function sessionSortKey(app, slotById) {
+      const slot = slotById.get(String(app.slotId || ''));
+      const makeKey = (dateValue, startValue) => {
+        const dateMatch = String(dateValue || '').match(/^(20\d{2})[/-](\d{1,2})[/-](\d{1,2})$/);
+        const timeMatch = String(startValue || '').match(/^(\d{1,2}):(\d{2})$/);
+        if (!dateMatch || !timeMatch) return '';
+        const [, year, monthValue, dayValue] = dateMatch;
+        const [, hourValue, minute] = timeMatch;
+        const month = Number(monthValue), day = Number(dayValue), hour = Number(hourValue), minutes = Number(minute);
+        const parsedDate = new Date(Date.UTC(Number(year), month - 1, day));
+        if (parsedDate.getUTCFullYear() !== Number(year) || parsedDate.getUTCMonth() !== month - 1 || parsedDate.getUTCDate() !== day) return '';
+        if (hour > 23 || minutes > 59) return '';
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${minute}`;
+      };
+      const slotKey = makeKey(slot?.date, slot?.start);
+      if (slotKey) return slotKey;
+      const match = String(app.slot || '').match(/(20\d{2})[/-](\d{1,2})[/-](\d{1,2})(?:\s*[（(][^）)]*[）)])?\s*(\d{1,2}):(\d{2})\s*[-–~至]/);
+      return match ? makeKey(`${match[1]}-${match[2]}-${match[3]}`, `${match[4]}:${match[5]}`) : '';
+    }
+
+    function sortSessionsForDisplay(applications, slots) {
+      const slotById = new Map((slots || []).map(slot => [String(slot.slotId || ''), slot]));
+      return applications.map((app, index) => ({app, index, key: sessionSortKey(app, slotById),
+        tieKey: app.applicationId ? `0:${String(app.applicationId)}` : `1:${String(index).padStart(12, '0')}`}))
+        .sort((a, b) => {
+          if (a.key !== b.key) {
+            if (!a.key) return 1;
+            if (!b.key) return -1;
+            return b.key.localeCompare(a.key);
+          }
+          return a.tieKey.localeCompare(b.tieKey);
+        })
+        .map(item => item.app);
+    }
+
     function renderSessions(admin) {
-      const apps = (state.applications || [])
-        .filter(app => ['confirmed', 'completed', 'no_show'].includes(app.status))
-        .slice()
-        .sort((a, b) => String(a.slot || '').localeCompare(String(b.slot || '')));
+      const apps = sortSessionsForDisplay(
+        (state.applications || []).filter(app => ['confirmed', 'completed', 'no_show'].includes(app.status)),
+        state.slots || []
+      );
       const rows = apps.map(app => {
         const record = (state.records || []).find(item => item.applicationId === app.applicationId) || {};
         const attendance = record.attendance || '';
@@ -972,7 +1009,7 @@
       }
     }
 
-    return {renderSessions, renderNotes, bind};
+    return {renderSessions, renderNotes, bind, sortSessionsForDisplay};
   })();
 </script>
 
