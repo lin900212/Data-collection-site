@@ -383,11 +383,13 @@
     function renderCalendarSyncNotice(canEditMonth,admin){
       if(!canEditMonth)return '';
       const researchers=(availabilityCalendarSyncMonth===calendarMonthKey(availabilityMonth)?availabilityCalendarSync?.researchers||[]:[]).filter(item=>admin||item.researcherId===state.user.researcherId);
+      const formatSyncTime=value=>{const date=Date.parse(String(value||''));return Number.isFinite(date)?new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(date)):''};
       const failed=researchers.filter(item=>item.status?.status==='needs_attention');
-      if(failed.length)return `<div class="alert error calendar-sync-state" role="alert"><span>日曆待處理：${failed.map(item=>esc(item.name||'研究者')).join('、')}</span>${failed.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
+      if(failed.length)return `<div class="alert error calendar-sync-state" role="alert">${failed.map(item=>{const status=item.status||{};const when=formatSyncTime(status.failedAt);return `<div><strong>日曆待處理：${esc(item.name||'研究者')}</strong>。${esc(status.error||status.retryMessage||'請管理者檢查日曆同步狀態。')}${when?` 最後失敗：${esc(when)}。`:''}</div>`}).join('')}${failed.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
       const pending=researchers.filter(item=>['pending','running','retry_scheduled'].includes(item.status?.status));
-      const stale=pending.filter(item=>{const updated=Date.parse(item.status?.updatedAt||'');return Number.isFinite(updated)&&Date.now()-updated>10*60*1000});
-      if(stale.length)return `<div class="alert error calendar-sync-state" role="alert"><span>日曆同步逾時，最後更新已超過 10 分鐘：${stale.map(item=>esc(item.name||'研究者')).join('、')}。請重試或檢查日曆設定。</span>${stale.map(item=>`<button class="btn small" type="button" data-calendar-retry="${esc(item.researcherId)}">重試</button>`).join('')}</div>`;
+      const retrying=pending.filter(item=>item.status?.status==='retry_scheduled');
+      if(pending.length&&calendarSyncPollingExpired)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆仍在背景處理，這個畫面的自動更新已暫停。<button class="btn small" type="button" data-calendar-status-refresh>重新整理</button></div>`;
+      if(retrying.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">${retrying.map(item=>{const status=item.status||{},when=formatSyncTime(status.nextAttemptAt),limit=Number(status.retryLimit)||5;return `<div><strong>${esc(item.name||'研究者')}</strong>：${esc(status.retryMessage||'同步暫時失敗，系統會自動重試。')} 自動重試 ${Number(status.attempts)||0}/${limit} 次${when?`；預計 ${esc(when)} 後重試`:''}。</div>`}).join('')}</div>`;
       if(pending.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆同步中${admin?` · ${pending.map(item=>esc(item.name||'研究者')).join('、')}`:''}</div>`;
       if(researchers.some(item=>item.status?.status==='synced'))return '<div class="tag green calendar-sync-state" role="status">研究日曆已同步</div>';
       return '<div class="meta calendar-sync-state" role="status">儲存班表後自動同步研究日曆</div>';
@@ -1060,7 +1062,7 @@
       const studies=state.availableStudies||[];
       const studyPicker=studies.length>1?`<select class="study-switcher" id="studySwitcher" aria-label="切換實驗">${studies.map(study=>`<option value="${esc(study.studyId)}" ${study.studyId===activeStudyId?'selected':''}>${esc(study.name)}</option>`).join('')}</select>`:'';
       $('#root').innerHTML=`<div class="wrap"><header class="header"><div class="brand">動作與思考研究<small>RESEARCH DESK${testEnvironment?' · TEST':''}</small></div><div class="head-right">${studyPicker}${testEnvironment?'<span class="pill">測試環境｜通知轉寄至測試信箱</span>':'<span class="pill">研究工作台</span>'}<span class="person">${esc(state.user.name)}｜${admin?'管理者':'研究者'}</span><button class="btn small" id="logout">登出</button></div></header><div class="layout"><aside class="side"><nav>${nav.map(([id,label])=>`<button class="navbtn ${activeView===id?'active':''}" data-view="${id}">${label}${id==='workflow'&&admin&&state.summary.review?` <b class="navcount">${state.summary.review}</b>`:''}</button>`).join('')}</nav></aside><main class="main"><h1 class="title">${title}</h1><p class="subtitle">${subtitleFor(activeView,admin)}</p><div id="flash" class="alert" hidden></div><div id="content">${renderView(activeView,admin)}</div><div class="footer">${testEnvironment?'測試資料只寫入隔離資源。':'資料依研究流程儲存。'}</div></main></div></div>`;
-      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView==='researchers')state.teamMembers=null;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}draw();if(activeView==='availability')loadAvailabilityMonth();else if(activeView==='experiments')loadStudyOnboarding();else if(activeView==='researchers'||stateRefreshPending)load()}));
+      document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;if(activeView==='researchers')state.teamMembers=null;if(activeView!=='availability'){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null}else{calendarSyncPollStartedAt=0;calendarSyncPollMonth='';calendarSyncStatusRequest++;calendarSyncStatusRetryPending=false;calendarSyncPollingExpired=false}draw();if(activeView==='availability')loadAvailabilityMonth();else if(activeView==='experiments')loadStudyOnboarding();else if(activeView==='researchers'||stateRefreshPending)load()}));
       $('#studySwitcher')?.addEventListener('change',event=>switchStudy(event.target.value));
       $('#logout').addEventListener('click',()=>{const token=sessionToken;resetSessionState();renderLogin();if(token)rawApi('logout',[token]).catch(error=>console.warn('[研究工作台] 登出工作階段撤銷失敗',String(error&&error.message||error)))});
       bindView(activeView,admin);
@@ -1597,7 +1599,8 @@
         document.querySelectorAll('[data-slot-capacity]').forEach(button=>button.addEventListener('click',async event=>{event.stopPropagation();const original=button.textContent;button.disabled=true;button.textContent='讀取中…';try{await AvailabilityUI.openSlotCapacityManager(button.dataset.slotCapacity)}catch(error){showError(error)}finally{button.disabled=false;button.textContent=original}}));
         document.querySelectorAll('[data-adjust-slot]').forEach(b=>b.addEventListener('click',event=>{event.stopPropagation();AvailabilityUI.openDraftSlotTimeEditor(b.dataset.adjustDate,b.dataset.adjustSlot)}));
         $('#retryAvailabilityMonth')?.addEventListener('click',()=>loadAvailabilityMonth({force:true}));
-        document.querySelectorAll('[data-calendar-retry]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{await api('retryResearchCalendarSync',sessionToken,calendarMonthKey(availabilityMonth),button.dataset.calendarRetry);await refreshCalendarSyncStatus(calendarMonthKey(availabilityMonth))}catch(error){button.disabled=false;showError(error)}}));
+        $('#content').querySelector('[data-calendar-status-refresh]')?.addEventListener('click',()=>{const monthKey=calendarMonthKey(availabilityMonth);calendarSyncPollingExpired=false;calendarSyncPollStartedAt=Date.now();calendarSyncPollMonth=monthKey;refreshCalendarSyncStatus(monthKey)});
+        document.querySelectorAll('[data-calendar-retry]').forEach(button=>button.addEventListener('click',async()=>{const monthKey=calendarMonthKey(availabilityMonth);button.disabled=true;try{calendarSyncPollStartedAt=Date.now();calendarSyncPollMonth=monthKey;calendarSyncStatusRetryPending=false;calendarSyncPollingExpired=false;await api('retryResearchCalendarSync',sessionToken,monthKey,button.dataset.calendarRetry);await refreshCalendarSyncStatus(monthKey)}catch(error){button.disabled=false;showError(error)}}));
         $('#submitMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#submitMyMonth')?.addEventListener('click',async()=>{try{const r=await api('submitMonthAvailability',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(r.message)}catch(err){showError(err)}});
         $('#publishMonth')?.addEventListener('click',async()=>{const testMode=state.testMode||state.deploymentEnvironment==='test';if(!await confirmAction('發布班表',`發布 ${calendarMonthTitle(availabilityMonth)} 班表並同步${testMode?'測試':''}報名表？已報名的月份會被系統擋下，不會覆寫。`,'發布班表'))return;try{const r=await api('publishMonthSchedule',sessionToken,calendarMonthKey(availabilityMonth));await load();flash(`已發布 ${r.month} 班表，共 ${r.count} 個可報名時段。`)}catch(err){showError(err)}});
@@ -1774,7 +1777,7 @@
       authEpoch++;studyEpoch++;authFlowSequence++;bootstrapRequestSequence++;availabilityRequestSequence++;
       lastWriteOutcome=null;clearTimeout(writeOutcomeClearTimer);writeOutcomeClearTimer=null;
       clearSessionToken();saveStudyId('');activeStudyId='';availableStudies=[];canCreateStudies=false;onboardingData=null;onboardingWizard=null;clearTimeout(initialLoadHintTimer);initialLoadHintTimer=null;
-      clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;calendarSyncPollCount=0;
+      clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;calendarSyncPollStartedAt=0;calendarSyncPollMonth='';calendarSyncStatusRequest=0;calendarSyncStatusRetryPending=false;calendarSyncPollingExpired=false;
       if(activeWriteControl?.isConnected){activeWriteControl.innerHTML=activeWriteControl.dataset.requestOriginalHtml||activeWriteControl.textContent;activeWriteControl.disabled=activeWriteControl.dataset.requestOriginalDisabled==='true'}
       activeWriteControl=null;activeWriteKey='';activeWriteSequence++;document.documentElement.classList.remove('request-pending');
       const staleError=new Error('工作階段已切換。');staleError.code='STALE_SESSION_RESPONSE';
@@ -1792,7 +1795,11 @@
     let availabilityCalendarSync = null;
     let availabilityCalendarSyncMonth = '';
     let calendarSyncPollTimer = null;
-    let calendarSyncPollCount = 0;
+    let calendarSyncPollStartedAt = 0;
+    let calendarSyncPollMonth = '';
+    let calendarSyncStatusRequest = 0;
+    let calendarSyncStatusRetryPending = false;
+    let calendarSyncPollingExpired = false;
     let authFlowSequence = 0;
     let activeView = 'dashboard';
     let availabilityMonth = null;
@@ -1870,6 +1877,7 @@
       if(!availableStudies.some(study=>study.studyId===studyId))return;
       if(activeWriteKey){const picker=$('#studySwitcher');if(picker)picker.value=activeStudyId;showError(new Error('目前有寫入操作正在處理，完成後再切換實驗。'));return}
       if(studyId===activeStudyId)return;
+      clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;calendarSyncPollStartedAt=0;calendarSyncPollMonth='';calendarSyncStatusRequest++;calendarSyncStatusRetryPending=false;calendarSyncPollingExpired=false;
       studyEpoch++;bootstrapRequestSequence++;availabilityRequestSequence++;
       activeStudyId=studyId;saveStudyId(studyId);state=null;availabilityPlan=null;availabilityCalendarSync=null;availabilityCalendarSyncMonth='';
       availabilityMonth=null;availabilityMonthCache=new Map();availabilityLoading=false;availabilityLoadError='';activeView='dashboard';stateRefreshPending=false;
@@ -1947,6 +1955,7 @@
       if(!state||!sessionToken||!availabilityMonth)return;
       const token=sessionToken,epoch=authEpoch,studyVersion=studyEpoch,studyId=activeStudyId;
       const monthKey=calendarMonthKey(availabilityMonth),requestId=++availabilityRequestSequence,cached=availabilityMonthCache.get(monthKey);
+      if(calendarSyncPollMonth!==monthKey){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;calendarSyncPollStartedAt=0;calendarSyncPollMonth='';calendarSyncStatusRequest++;calendarSyncStatusRetryPending=false;calendarSyncPollingExpired=false}
       availabilityLoadError='';
       if(!options.force&&cached&&Date.now()-cached.at<30000){availabilityPlan=cached.plan;availabilityLoading=false;draw();refreshCalendarSyncStatus(monthKey);return}
       availabilityPlan=null;availabilityLoading=true;draw();
@@ -1954,20 +1963,31 @@
         const [planResult,syncResult]=await Promise.allSettled([api('getMonthSchedule',token,monthKey),api('getResearchCalendarSyncStatus',token,monthKey)]);
         if(planResult.status==='rejected')throw planResult.reason;
         if(requestId!==availabilityRequestSequence||epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||token!==sessionToken||monthKey!==calendarMonthKey(availabilityMonth))return;
-        availabilityPlan=planResult.value;availabilityCalendarSync=syncResult.status==='fulfilled'?syncResult.value:null;availabilityCalendarSyncMonth=syncResult.status==='fulfilled'?monthKey:'';availabilityMonthCache.set(monthKey,{at:Date.now(),plan:planResult.value});availabilityLoading=false;availabilityLoadError='';calendarSyncPollCount=0;draw();scheduleCalendarSyncPoll(monthKey);
+        availabilityPlan=planResult.value;availabilityCalendarSync=syncResult.status==='fulfilled'?syncResult.value:null;availabilityCalendarSyncMonth=syncResult.status==='fulfilled'?monthKey:'';calendarSyncStatusRetryPending=syncResult.status==='rejected';availabilityMonthCache.set(monthKey,{at:Date.now(),plan:planResult.value});availabilityLoading=false;availabilityLoadError='';calendarSyncPollStartedAt=0;calendarSyncPollMonth='';calendarSyncPollingExpired=false;draw();scheduleCalendarSyncPoll(monthKey);
       }catch(error){
         if(requestId!==availabilityRequestSequence||epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||token!==sessionToken||monthKey!==calendarMonthKey(availabilityMonth))return;
         availabilityLoading=false;availabilityLoadError=String(error&&error.message||error);draw();showError(error);
       }
     }
     function calendarSyncPending(monthKey){if(monthKey&&availabilityCalendarSyncMonth!==monthKey)return false;return Boolean(availabilityCalendarSync?.researchers?.some(item=>['pending','running','retry_scheduled'].includes(item.status?.status)))}
-    function scheduleCalendarSyncPoll(monthKey){clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;if(activeView!=='availability'||!calendarSyncPending(monthKey)||calendarSyncPollCount>=24)return;calendarSyncPollTimer=setTimeout(()=>{calendarSyncPollTimer=null;calendarSyncPollCount++;refreshCalendarSyncStatus(monthKey)},5000)}
-    async function refreshCalendarSyncStatus(monthKey){
-      if(!sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;
-      const token=sessionToken,epoch=authEpoch,studyVersion=studyEpoch,studyId=activeStudyId;
-      try{const next=await api('getResearchCalendarSyncStatus',token,monthKey);if(epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||token!==sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;availabilityCalendarSync=next;availabilityCalendarSyncMonth=monthKey;draw();scheduleCalendarSyncPoll(monthKey)}
-      catch(error){console.warn('[研究工作台] 研究日曆狀態讀取失敗',String(error&&error.message||error))}
+    function scheduleCalendarSyncPoll(monthKey){
+      clearTimeout(calendarSyncPollTimer);calendarSyncPollTimer=null;
+      if(activeView!=='availability'||document.visibilityState==='hidden')return;
+      if(!calendarSyncPending(monthKey)&&!calendarSyncStatusRetryPending){calendarSyncPollingExpired=false;return}
+      if(calendarSyncPollMonth!==monthKey||!calendarSyncPollStartedAt){calendarSyncPollMonth=monthKey;calendarSyncPollStartedAt=Date.now()}
+      const elapsed=Date.now()-calendarSyncPollStartedAt;if(elapsed>=40*60*1000){if(!calendarSyncPollingExpired){calendarSyncPollingExpired=true;draw()}return}
+      const delay=elapsed<2*60*1000?5000:30000;
+      calendarSyncPollTimer=setTimeout(()=>{calendarSyncPollTimer=null;refreshCalendarSyncStatus(monthKey)},delay);
     }
+    async function refreshCalendarSyncStatus(monthKey){
+      if(!sessionToken||activeView!=='availability'||document.visibilityState==='hidden'||monthKey!==calendarMonthKey(availabilityMonth))return;
+      const token=sessionToken,epoch=authEpoch,studyVersion=studyEpoch,studyId=activeStudyId;
+      const request=++calendarSyncStatusRequest;
+      if(!calendarSyncPollStartedAt||calendarSyncPollMonth!==monthKey){calendarSyncPollStartedAt=Date.now();calendarSyncPollMonth=monthKey}
+      try{const next=await api('getResearchCalendarSyncStatus',token,monthKey);if(request!==calendarSyncStatusRequest||epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||token!==sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;availabilityCalendarSync=next;availabilityCalendarSyncMonth=monthKey;calendarSyncStatusRetryPending=false;draw();scheduleCalendarSyncPoll(monthKey)}
+      catch(error){if(request!==calendarSyncStatusRequest||epoch!==authEpoch||studyVersion!==studyEpoch||studyId!==activeStudyId||token!==sessionToken||activeView!=='availability'||monthKey!==calendarMonthKey(availabilityMonth))return;calendarSyncStatusRetryPending=true;console.warn('[研究工作台] 研究日曆狀態讀取失敗',String(error&&error.message||error));scheduleCalendarSyncPoll(monthKey)}
+    }
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&activeView==='availability'){const monthKey=calendarMonthKey(availabilityMonth);if(calendarSyncPending(monthKey)||calendarSyncStatusRetryPending)refreshCalendarSyncStatus(monthKey)}});
   </script>
 
 </body>
