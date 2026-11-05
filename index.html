@@ -391,7 +391,8 @@
       if(pending.length&&calendarSyncPollingExpired)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆仍在背景處理，這個畫面的自動更新已暫停。<button class="btn small" type="button" data-calendar-status-refresh>重新整理</button></div>`;
       if(retrying.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">${retrying.map(item=>{const status=item.status||{},when=formatSyncTime(status.nextAttemptAt),limit=Number(status.retryLimit)||5;return `<div><strong>${esc(item.name||'研究者')}</strong>：${esc(status.retryMessage||'同步暫時失敗，系統會自動重試。')} 自動重試 ${Number(status.attempts)||0}/${limit} 次${when?`；預計 ${esc(when)} 後重試`:''}。</div>`}).join('')}</div>`;
       if(pending.length)return `<div class="notice calendar-sync-state" role="status" aria-live="polite">研究日曆同步中${admin?` · ${pending.map(item=>esc(item.name||'研究者')).join('、')}`:''}</div>`;
-      if(researchers.some(item=>item.status?.status==='synced'))return '<div class="tag green calendar-sync-state" role="status">研究日曆已同步</div>';
+      const synced=researchers.filter(item=>item.status?.status==='synced');
+      if(synced.length)return `<div class="calendar-sync-state" role="status"><span class="tag green">最近一次日曆同步已完成</span>${admin?synced.map(item=>`<button class="btn small" type="button" aria-label="重新同步 ${esc(item.name||'研究者')} 的日曆" data-calendar-retry="${esc(item.researcherId)}">${synced.length>1?`重新同步 ${esc(item.name||'研究者')}`:'重新同步'}</button>`).join(''):''}</div>`;
       return '<div class="meta calendar-sync-state" role="status">儲存班表後自動同步研究日曆</div>';
     }
     function renderAvailability(admin){
