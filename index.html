@@ -159,6 +159,7 @@
   .records-entry[open] .records-expand>span,.records-note-entry[open] .records-expand{display:inline-block;transform:rotate(180deg)}
   .records-editor{border-top:1px solid #edf1ee;padding:15px 18px 17px}
   .records-fields{display:grid;grid-template-columns:minmax(180px,.8fr) repeat(2,minmax(170px,1fr));align-items:end;gap:12px}
+  .records-coding-fields{display:grid;grid-template-columns:repeat(2,minmax(170px,1fr));gap:12px;margin-top:12px}
   .records-field{min-width:0;display:grid;gap:6px;color:var(--muted);font-size:11px;font-weight:750}
   .records-field select,.records-field input,.records-field textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font:inherit;font-size:14px;padding:9px 11px}
   .records-field select,.records-field input{height:42px}
@@ -193,6 +194,7 @@
     .records-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
     .records-fields>.records-field{grid-column:1/-1}
     .records-check{white-space:normal;font-size:12px}
+    .records-coding-fields{gap:9px;grid-template-columns:repeat(2,minmax(0,1fr))}
     .records-editor{padding:12px 13px 14px}
     .records-compose,.records-history{padding:14px}
     .records-note-summary{grid-template-columns:88px minmax(0,1fr) 14px;gap:8px;padding:10px}
@@ -816,9 +818,10 @@
     let bridgeFrame=null,bridgeSource=null,bridgeChannel='',bridgeReady=null,bridgeOrigin='',bridgeReadyResolve=null,bridgeReadyReject=null,bridgeReadyTimer=null,bridgeStartedAt=0,bridgeFrameLoadCount=0;
     const BRIDGE_READY_TIMEOUT_MS=15000,BRIDGE_READY_MAX_ATTEMPTS=2;
     const bridgeRequests=new Map();
-    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","processCalendarSyncTargets","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","verifyLoginCode","requestAdminReschedule","cancelApplicationForAdmin","setPreAdmissionMoveEnabled","executePreAdmissionMove","resumePreAdmissionMove","resolvePreAdmissionMoveNotificationReview","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport","updateStudyFormBinding","updateStudyRecruitmentTarget"]);
+    const WRITE_METHODS=new Set(["acknowledgeParticipant","addAvailability","addOverallNote","addResearcher","adminReview","assignUnassignedSlot","logout","requestLoginCode","requestOriginalResearcherAgain","requestParticipantReschedule","requestSupport","respondResearcher","respondResearcherInApp","prepareResearchCalendars","retryResearchCalendarSync","processCalendarSyncTargets","saveAvailabilityDay","cancelConfirmedApplication","updatePublishedScheduleDay","respondPublishedSlotSupport","submitMonthAvailability","setFormIntakeForAdmin","setScheduleSupportResponse","publishMonthSchedule","updateScheduleDefaults","removeResearcher","updateResearcher","reactivateResearcher","retryResearcherCalendarAccess","requestSessionChange","respondSessionChange","resolveScheduleChange","setSlotCapacityForAdmin","setDefaultSlotCapacityForAdmin","syncFormChoicesForAdmin","updateAttendance","updateExperimentRecord","verifyLoginCode","requestAdminReschedule","cancelApplicationForAdmin","setPreAdmissionMoveEnabled","executePreAdmissionMove","resumePreAdmissionMove","resolvePreAdmissionMoveNotificationReview","saveStudyDraft","activateStudyDraft","setStudyLifecycleStatus","previewStudyHistoryImport","updateStudyFormBinding","updateStudyRecruitmentTarget"]);
     const WRITE_MESSAGES={requestLoginCode:'正在寄送驗證碼…',verifyLoginCode:'正在驗證並登入…',acknowledgeParticipant:'正在記錄你的確認…',requestParticipantReschedule:'正在送出改期申請…',adminReview:'正在儲存審核結果…',respondResearcher:'正在送出研究者回覆…',respondResearcherInApp:'正在送出研究者回覆…',saveAvailabilityDay:'正在儲存當日班表…',addAvailability:'正在新增可收時段…',assignUnassignedSlot:'正在指派研究者…',publishMonthSchedule:'正在發布班表並同步報名表…',submitMonthAvailability:'正在送出班表進度…',syncFormChoicesForAdmin:'正在同步報名表時段…',setFormIntakeForAdmin:'正在更新報名表收件狀態…',prepareResearchCalendars:'正在準備研究日曆…',retryResearchCalendarSync:'正在重新排入日曆同步…',retryResearcherCalendarAccess:'正在重試日曆權限…',updatePublishedScheduleDay:'正在更新已發布班表與報名表…',updateScheduleDefaults:'正在儲存預設時段…',updateAttendance:'正在儲存實驗紀錄…',addOverallNote:'正在儲存觀察札記…',removeResearcher:'正在停用研究者…',updateResearcher:'正在更新研究者角色…',reactivateResearcher:'正在恢復研究者…',requestSessionChange:'正在送出異動請求…',respondSessionChange:'正在記錄異動回覆…',resolveScheduleChange:'正在處理場次異動…'};
     Object.assign(WRITE_MESSAGES,{saveStudyDraft:'正在檢查並儲存實驗草稿…',activateStudyDraft:'正在檢查並啟用實驗…',setStudyLifecycleStatus:'正在更新實驗狀態…',previewStudyHistoryImport:'正在讀取並檢查歷史資料…',updateStudyFormBinding:'正在檢查並儲存欄位版本…'});
+    WRITE_MESSAGES.updateExperimentRecord='正在儲存實驗紀錄…';
     let activeWriteKey='',activeWriteControl=null,activeWriteSequence=0;
     let lastWriteOutcome=null,writeOutcomeClearTimer=null;
     document.addEventListener('click',event=>{if(activeWriteKey){event.preventDefault();event.stopImmediatePropagation()}},true);
@@ -980,6 +983,7 @@
   <script>
   const RecordsUI = (() => {
     const attendanceOptions = ['出席', '遲到', '未到'];
+    function recordFlagEnabled(value) { return value === true || String(value || '').trim().toUpperCase() === 'TRUE'; }
 
     function sessionSortKey(app, slotById) {
       const slot = slotById.get(String(app.slotId || ''));
@@ -1025,6 +1029,12 @@
         const record = (state.records || []).find(item => item.applicationId === app.applicationId) || {};
         const attendance = record.attendance || '';
         const attendanceLabel = attendance || '尚未紀錄';
+        const requestedResult=recordFlagEnabled(record.requestedResult),blacklisted=recordFlagEnabled(record.blacklist);
+        const participantSequence=record.participantSequence ?? '',participantGroup=record.participantGroup ?? '';
+        const codingFields=state.recordCodingEnabled===true?`<div class="records-coding-fields">
+              <label class="records-field"><span>受試者次序編號（選填）</span><input name="participantSequence" type="text" maxlength="100" autocomplete="off" value="${esc(participantSequence)}" placeholder="例如 001" data-original="${esc(participantSequence)}"></label>
+              <label class="records-field"><span>組別（選填）</span><input name="participantGroup" type="text" maxlength="100" autocomplete="off" value="${esc(participantGroup)}" placeholder="例如 A 或對照組" data-original="${esc(participantGroup)}"></label>
+            </div>`:'';
         return `<details class="records-entry">
           <summary class="records-summary">
             <span class="records-summary-main"><strong>${esc(app.name)}</strong><span class="records-meta">${esc(app.slot)} <span aria-hidden="true">·</span> ${esc(app.researcherName)}</span></span>
@@ -1032,11 +1042,12 @@
           </summary>
           <form class="records-editor" data-session="${esc(app.applicationId)}">
             <div class="records-fields">
-              <label class="records-field"><span>出席狀況</span><select name="attendance"><option value="">尚未紀錄</option>${attendanceOptions.map(value => `<option value="${value}" ${attendance === value ? 'selected' : ''}>${value}</option>`).join('')}</select></label>
-              <label class="records-check"><input type="checkbox" name="result" ${record.requestedResult === 'TRUE' ? 'checked' : ''}><span>希望收到研究結果</span></label>
-              <label class="records-check"><input type="checkbox" name="blacklist" ${record.blacklist === 'TRUE' ? 'checked' : ''}><span>列入黑名單</span></label>
+              <label class="records-field"><span>出席狀況</span><select name="attendance" data-original="${esc(attendance)}"><option value="">尚未紀錄</option>${attendanceOptions.map(value => `<option value="${value}" ${attendance === value ? 'selected' : ''}>${value}</option>`).join('')}</select></label>
+              <label class="records-check"><input type="checkbox" name="result" ${requestedResult ? 'checked' : ''} data-original="${requestedResult}"><span>希望收到研究結果</span></label>
+              <label class="records-check"><input type="checkbox" name="blacklist" ${blacklisted ? 'checked' : ''} data-original="${blacklisted}"><span>列入黑名單</span></label>
             </div>
-            <label class="records-field records-note-field"><span>個別狀況</span><textarea name="note" placeholder="記錄與本次實驗相關的情況">${esc(record.individualNote || '')}</textarea></label>
+            ${codingFields}
+            <label class="records-field records-note-field"><span>個別狀況</span><textarea name="note" data-original="${esc(record.individualNote || '')}" placeholder="記錄與本次實驗相關的情況">${esc(record.individualNote || '')}</textarea></label>
             <div class="records-actions"><button class="btn primary" type="submit">儲存</button></div>
           </form>
         </details>`;
@@ -1082,7 +1093,20 @@
         document.querySelectorAll('.records-editor').forEach(form => form.addEventListener('submit', event => {
           event.preventDefault();
           const data = new FormData(form);
-          callAndReload('updateAttendance', form.dataset.session, data.get('attendance'), data.has('result'), data.has('blacklist'), data.get('note'));
+          if(state.recordCodingEnabled!==true) {
+            callAndReload('updateAttendance', form.dataset.session, data.get('attendance'), data.has('result'), data.has('blacklist'), data.get('note'));
+            return;
+          }
+          const patch={},attendance=form.elements.attendance,results=form.elements.result,blacklist=form.elements.blacklist,note=form.elements.note;
+          if(attendance.value!==String(attendance.dataset.original||''))patch.attendance=attendance.value;
+          if(results.checked!==(results.dataset.original==='true'))patch.requestedResult=results.checked;
+          if(blacklist.checked!==(blacklist.dataset.original==='true'))patch.blacklist=blacklist.checked;
+          if(note.value!==String(note.dataset.original||''))patch.individualNote=note.value;
+          ['participantSequence','participantGroup'].forEach(name=>{
+            const field=form.elements[name];
+            if(field&&field.value!==String(field.dataset.original||''))patch[name]=field.value;
+          });
+          callAndReload('updateExperimentRecord', form.dataset.session, patch);
         }));
       }
       if (view === 'notes') {
